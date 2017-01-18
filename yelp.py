@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from collections import namedtuple
 
 def lookup(givenProvider, givenLocation):
     base_url = 'https://www.yelp.com/search?find_desc='
@@ -33,6 +34,4 @@ def lookup(givenProvider, givenLocation):
                 print(e)
                 providerPhone = 'NONE'
             print(providerPhone)
-
-
         pageNumber += 10
