@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from collections import namedtuple
+import log
 
 def findAllHospitals():
     HL = namedtuple('HL',  'Name Address City State Zip Phone Fax Link')
@@ -20,7 +21,7 @@ def findAllHospitals():
                 providerName = tag.findAll('td')[0].text
                 url_list.append(providerURL)
             except Exception as e:
-                print(e)
+                log.loggingInfo(e)
         base_url = 'http://www.wsha.org'
         for i in url_list:
             new_url = base_url+i
@@ -49,7 +50,7 @@ def findAllHospitals():
                             #business_info.append(index[1].split())
                             loop += 1
                         except Exception as e:
-                            print('My first loop ', index,  e)
+                            log.loggingInfo(e)
                     elif loop == 1:
                         try:
                             if index[0].startswith('Phone'):
@@ -81,7 +82,7 @@ def findAllHospitals():
                             business_info.append(website)
                             loop += 1
                         except Exception as e:
-                            print('My second loop ', index,  e)
+                            log.loggingInfo(e)
                     elif loop == 2:
                         loop = 0
                 try:
@@ -96,7 +97,7 @@ def findAllHospitals():
                     list_of_all.append(inst)
                     business_info = []
                 except Exception as e:
-                    print(e)
+                    log.loggingInfo(e)
                 
     return list_of_all
     

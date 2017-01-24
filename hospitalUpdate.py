@@ -34,7 +34,7 @@ def updateMulticare():
                 print(tags[0])
                 return tags[0]            
             except Exception as e:
-                log.loggingInfo('Unable to update Multicare fax number' + e)
+                log.loggingInfo(e)
 
 def updateUW():
     uw_url = 'http://www.uwmedicine.org/patient-resources/medical-records'
@@ -50,7 +50,7 @@ def updateUW():
                 try:
                     return tags[0].replace('Fax', ',').replace('Phone', ',').replace(':', '').replace('(', '').replace(')', '').replace('-', '').replace(' ', '').split(',')[2]
                 except Exception as e:
-                    log.loggingInfo('Unable to update UW fax number' + e)
+                    log.loggingInfo(e)
 
 def updateSeaMar():
     base_url = 'http://www.seamarchc.org/static_pages/contactus.php'

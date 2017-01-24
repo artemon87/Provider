@@ -8,21 +8,22 @@ def setupDB():
     return DB(conn, c)
 
 def createHospitalDB(tup):
-    tup.cursor.execute('''CREATE TABLE HOSPITAL(ID integer PRIMARY KEY,
+    tup.cursor.execute('''CREATE TABLE HOSPITAL(id INTEGER PRIMARY KEY NOT NULL,
                                        NAME varchar NOT NULL,
                                        ADDRESS varchar,
                                        CITY varchar,
                                        STATE varchar,
-                                       ZIP integer,
-                                       PHONE integer UNIQUE,
-                                       UMBRELLA varchar DEFAULT NULL);''')
+                                       ZIP varchar,
+                                       PHONE varchar DEFAULT NULL,
+                                       FAX varchar DEFAULT NULL,
+                                       LINK varchar DEFAULT NULL);''')
     tup.connection.commit()
 
 
 def addHospital(hospitalCollection, tup):
     for hospital in hospitalCollection:
-        tup.cursor.execute('''INSERT INTO HOSPITAL (ID, NAME, ADDRESS, CITY, STATE, ZIP, PHONE) VALUES(?, ?, ?, ?, ?, ?, ?);''',
-                  (int(hospital.ID), hospital.Name, hospital.Address, hospital.City, hospital.State, int(hospital.Zip), int(hospital.Phone)))
+        tup.cursor.execute('''INSERT INTO HOSPITAL (NAME, ADDRESS, CITY, STATE, ZIP, PHONE, FAX, LINK) VALUES(?, ?, ?, ?, ?, ?, ?, ?);''',
+                  (hospital.Name, hospital.Address, hospital.City, hospital.State, hospital.Zip, hospital.Phone, hospital.Fax, hospital.Link))
 
     tup.connection.commit()
     
