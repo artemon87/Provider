@@ -4,7 +4,8 @@ from collections import namedtuple
 import log
 
 def findAllHospitals():
-    HL = namedtuple('HL',  'Name Address City State Zip Phone Fax Link')
+    umbrellas = ['PROVIDENCE', 'FRANCISCAN', 'MULTICARE', 'UW MEDICINE', 'ST.', 'PEACEHEALTH', 'CONFLUENCE']
+    HL = namedtuple('HL',  'Name Address City State Zip Phone Fax Link Umbrella')
     url_list = []
     business_info = []
     list_of_all = []
@@ -27,7 +28,30 @@ def findAllHospitals():
             new_url = base_url+i
             url = requests.get(new_url)
             url_bs = BeautifulSoup(url.text, 'html.parser')
-            hosp_name = url_bs.find_all('h1', {'class':'entry-title'})[0].text
+            hosp_name = url_bs.find_all('h1', {'class':'entry-title'})[0].text.upper()
+            umbrella = ''
+            if 'PROVIDENCE' in hosp_name:
+                umbrella = 'PROVIDENCE'
+                print(hosp_name)
+                hosp_name = hosp_name.replace('PROVIDENCE ', '')
+                print(hosp_name)
+            elif 'ST.' in hosp_name:
+                umbrella = 'FRANCISACAN'
+            elif 'MULTICARE' in hosp_name:
+                umbrella = 'MULTICARE'
+                hosp_name = hosp_name.replace('MULTICARE ', '')
+            elif 'SWEDISH' in hosp_name:
+                umbrella = 'SWEDISH'
+            elif 'UW MEDICINE' in hosp_name:
+                umbrella = 'UW'
+                hosp_name = hosp_name.replace('UW MEDICINE/', '')
+            elif 'PEACEHEALTH' in hosp_name:
+                umbrella = 'PEACEHEALTH'
+            elif 'CONFLUENCE' in hosp_name:
+                umbrella = 'CONFLUENCE'
+                hosp_name = hosp_name.replace('CONFLUENCE/', '')
+            else:
+                umbrella = 'NONE'
             hosp_inf = url_bs.find_all('div', {'class':'col-sm-5'})
             for tag in hosp_inf:
                 p_tag = tag.findAll('p')
@@ -47,7 +71,6 @@ def findAllHospitals():
                                 business_info.append(address[0])
                                 business_info.append('WA')
                                 business_info.append(address[1])
-                            #business_info.append(index[1].split())
                             loop += 1
                         except Exception as e:
                             log.loggingInfo(e)
@@ -93,7 +116,8 @@ def findAllHospitals():
                               business_info[3],
                               business_info[4].replace('Phone: ', '').replace('(', '').replace(') ', '').replace('-', ''),
                               business_info[5].replace('Fax: ', '').replace('(', '').replace(') ', '').replace('-', ''),
-                              business_info[6])
+                              business_info[6],
+                              umbrella)
                     list_of_all.append(inst)
                     business_info = []
                 except Exception as e:
