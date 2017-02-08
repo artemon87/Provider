@@ -3,7 +3,7 @@ import log
 from difflib import SequenceMatcher
 
 roles = [ '-', "'s",'Health', 'Clinic','Ph.d', 'Ph.D', 'WA', 'Facility', 'MD', 'DC', 'ND', 'LMP', 'Dr', 'Doctor']
-roles2 = [ '-', "'s",'Health', 'Medical', 'Center' , 'Hospital','Ph.d', 'Ph.D', 'WA', 'Facility', 'MD', 'DC', 'ND', 'LMP', 'Dr', 'Doctor']
+roles2 = [ '-', "'s",'Health', 'Medical', 'Center' , 'Hospital','Ph.d', 'Ph.D', 'WA', 'Facility', 'MD', 'DC', 'ND', 'LMP', 'Dr', 'Doctor', 'Imaging ']
 def search(s1, s2):
     possibleList = {}
     ss1 = s1.upper().replace('Chiro', 'CHIROPRACTIC').replace('PT', 'PHYSICAL THERAPY')
@@ -30,16 +30,16 @@ def search(s1, s2):
     else:
         return False
 
-def searchRatio(s1, s2):
+def searchRatio(s1, s2, ratio):
     ss1 = s1.upper().replace('CHIRO', 'CHIROPRACTIC').replace('PT', 'PHYSICAL THERAPY')
     ss2 = s2.upper().replace('CHIRO', 'CHIROPRACTIC').replace('PT', 'PHYSICAL THERAPY')
     for i in roles2:
         ss1 = ss1.upper().replace(i.upper(), '')
         ss2 = ss2.upper().replace(i.upper(), '')
     match = SequenceMatcher(None, ss1, ss2)
-    if match.ratio() > 0.85:
-        match = match.find_longest_match(0, len(ss1), 0, len(ss2))
-        print(string1[match.a:match.a+match.size])
+    if match.ratio() >= ratio:
+        #match = match.find_longest_match(0, len(ss1), 0, len(ss2))
+        #print(ss1[match.a:match.a+match.size])
         return True
     
     

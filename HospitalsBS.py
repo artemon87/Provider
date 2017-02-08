@@ -32,9 +32,7 @@ def findAllHospitals():
             umbrella = ''
             if 'PROVIDENCE' in hosp_name:
                 umbrella = 'PROVIDENCE'
-                print(hosp_name)
                 hosp_name = hosp_name.replace('PROVIDENCE ', '')
-                print(hosp_name)
             elif 'ST.' in hosp_name:
                 umbrella = 'FRANCISACAN'
             elif 'MULTICARE' in hosp_name:
