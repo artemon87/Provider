@@ -22,7 +22,7 @@ def findAllHospitals():
                 providerName = tag.findAll('td')[0].text
                 url_list.append(providerURL)
             except Exception as e:
-                log.loggingInfo(e)
+                pass #log.loggingInfo(e)
         base_url = 'http://www.wsha.org'
         for i in url_list:
             new_url = base_url+i
@@ -71,7 +71,7 @@ def findAllHospitals():
                                 business_info.append(address[1])
                             loop += 1
                         except Exception as e:
-                            log.loggingInfo(e)
+                            pass #log.loggingInfo(e)
                     elif loop == 1:
                         try:
                             if index[0].startswith('Phone'):
@@ -103,7 +103,7 @@ def findAllHospitals():
                             business_info.append(website)
                             loop += 1
                         except Exception as e:
-                            log.loggingInfo(e)
+                            pass #log.loggingInfo(e)
                     elif loop == 2:
                         loop = 0
                 try:
@@ -119,7 +119,7 @@ def findAllHospitals():
                     list_of_all.append(inst)
                     business_info = []
                 except Exception as e:
-                    log.loggingInfo(e)
+                    pass #log.loggingInfo(e)
                 
     return list_of_all
     

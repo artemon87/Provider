@@ -16,7 +16,8 @@ from matplotlib.figure import Figure
 import numpy as np
 from os import path
 from tkinter import filedialog as fd
-import pytz
+import pytz
+
 from datetime import datetime
 
 
@@ -74,7 +75,8 @@ class ProviderGUI:
     def labels(self):
         self.aLabel.grid(column=0, row=0)
         self.time.grid(column=0, row=0)
-        self.timeZoneLabel.grid(column=0,row=1)
+        self.timeZoneLabel.grid(column=0,
+row=1)
         self.infoZone.grid(column = 0, row = 3 , sticky = 'WE', padx = 10, pady = 5)
         self.monty1.grid(column=0, row=0, padx=8, pady=4)
         self.monty2.grid(column=0, row=0, padx=8, pady=4)
@@ -146,13 +148,13 @@ class ProviderGUI:
                 fileToRead ='net1h.xls'
             else:
                 fileToRead = self.fName
-            providerDict, newDict, ed = processFacility(fileToRead, None, self.name.get(), 7)
+            ed = readED(fileToRead, None, self.name.get(), 7)
             if len(ed) == 0:
                 try:
                     self.scr.delete(1.0,tk.END)
                 except Exception as e:
                     pass
-                confirmProvider(fileToRead, self.name.get(),0, self.scr)
+                confirmProvider(fileToRead, self.name.get(), self.scr)
                 possibleOptions = findProvider(fileToRead, self.name.get(),0, self.scr)
     
             else:
@@ -160,7 +162,7 @@ class ProviderGUI:
                     self.scr.delete(1.0,tk.END)
                 except Exception as e:
                     pass
-                confirmProvider(fileToRead, self.name.get(),0, self.scr)
+                confirmProvider(fileToRead, self.name.get(), self.scr)
                 pos=nx.spring_layout(ed)
                 nx.draw_networkx(ed, pos, arrows = True, with_labels = True, ax = self.aPlot, font_size = 10)
             #nx.draw_networkx(ed)

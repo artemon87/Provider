@@ -42,10 +42,10 @@ def processAll(location):
                 providerDict[inst] += 1
             else:
                 providerDict[inst] = 1
-    return createNX(providerDict, providerFile, toRemove, 3)
+    return providerDict, providerFile, toRemove
 
 
-def processFacility(location, hospitals = None, singleProvider = None, netSize = None):
+def processFacility(location, hospitals = None, singleProvider = None):
     toRemove = ['UNKNOWN-MEDICAL PROVIDER', 'Secure Health Information', 'Rubinstein Law Offices',
                 'BISHOP LAW OFFICES, P.S.','ER Hospital visit', 'LAW OFFICES OF MARK A. HAMMER & ASSOCIATES, INC.',
                 'Rx', 'Rx Bartell Drugs', 'Rx Fred Meyer', 'Rx Rite Aid', 'Rx Walgreens',
@@ -88,7 +88,8 @@ def processFacility(location, hospitals = None, singleProvider = None, netSize =
                 else:
                     break
     
-    return createNX(providerDict, providerFile, toRemove, netSize)
+    return providerDict, providerFile, toRemove
+    
     
 
 def createNX(providerDict, providerFile, toRemove, netSize):
@@ -183,7 +184,30 @@ def providerDictToList(providerDict):
     return lst
     
     
+
+def createDicForDB(location):
+    Provider = namedtuple('Provider', 'Name Address Phone ID Weight')
+    providerDict, providerFile, toRemove = processAll(location)
+    needlesDict = defaultdict(list)
+    providerDict, *rest = processAll(location)
+    for key, value in providerDict.items():
+        inst = Provider(key.Name, key.Address, key.Phone, key.ID, value)
+        for elem in providerFile.index:
+            providerID = providerFile['names_id'][elem]
+            race = providerFile['race'][elem]
+            if providerID == inst.ID:
+                needlesDict[inst].append(race)
+            else:
+                needlesDict[inst] = []
+    for key, value in needlesDict.items():
+        needlesDict[key] = Counter(value)
+        print(Counter(value))
+    return needlesDict
+    
+            
+            
         
+    
         
     
 

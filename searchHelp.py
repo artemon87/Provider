@@ -8,7 +8,7 @@ def connectToDB():
     return setupDB()
 
 
-def confirmProvider(fileToRead, name, n, text):
+def confirmProvider(fileToRead, name, text):
     DB = connectToDB()
     umbr = {'SWEDISH': False, 'MULTICARE': False, 'PROVIDENCE': False, 'FRANCISACAN': False,
             'UW MEDICINE': False, 'PEACEHEALTH': False, 'CONFLUENCE': False}
@@ -18,7 +18,7 @@ def confirmProvider(fileToRead, name, n, text):
         text.delete(1.0,tk.END)
     except Exception as e:
         pass
-    providerDict, *rest = processAll(fileToRead)
+    providerDict, *args = processAll(fileToRead)
     newList = providerDictToList(providerDict)
     for k,v in umbr.items():
         result = searchFirst(k, name.upper())
@@ -42,7 +42,10 @@ def confirmProvider(fileToRead, name, n, text):
         text.insert(tk.INSERT,"\n")
         text.insert(tk.INSERT,"\n")
         
-
+def readED(fileToRead, hosp, name, n):
+    args = processFacility(fileToRead, hosp, name)
+    providerDict, newDict, ed = createNX(*args, n)
+    return ed
 
 def findProvider(fileToRead, name, n, text):
     providerDict, *rest = processAll(fileToRead)
