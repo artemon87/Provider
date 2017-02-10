@@ -3,11 +3,29 @@ import log
 from difflib import SequenceMatcher
 
 roles = [ '-', "'s",'Health', 'Clinic','Ph.d', 'Ph.D', 'WA', 'Facility', 'MD', 'DC', 'ND', 'LMP', 'Dr', 'Doctor']
-roles2 = [ '-', "'s",'Health', 'Medical', 'Center' , 'Hospital','Ph.d', 'Ph.D', 'WA', 'Facility', 'MD', 'DC', 'ND', 'LMP', 'Dr', 'Doctor', 'Imaging ']
+roles2 = [ '-', "'s",'Health', 'Medical', 'Center' , 'Hospital','Ph.d', 'Ph.D', 'WA', 'Facility', 'MD', 'DC', 'ND', 'LMP', 'Dr', 'Doctor', 'Imaging ', 'D.C.', 'D.C.,', 'Dr.']
+def searchFirstDict(word1, dic):
+    for key, val in dic.items():
+        for i, j in zip(key.Name.upper(), word1.upper()):
+            if i == j:
+                continue
+            else:
+                return []
+        return key
+
+def searchFirst(word1, word2):
+    for i, j in zip(word1.upper(), word2.upper()):
+        if i == j:
+            continue
+        else:
+            return False
+    return True
+    
+
 def search(s1, s2):
     possibleList = {}
-    ss1 = s1.upper().replace('Chiro', 'CHIROPRACTIC').replace('PT', 'PHYSICAL THERAPY')
-    ss2 = s2.upper().replace('Chiro', 'CHIROPRACTIC').replace('PT', 'PHYSICAL THERAPY')
+    ss1 = s1.upper().replace('CHIRO', 'CHIROPRACTIC').replace('PT', 'PHYSICAL THERAPY')
+    ss2 = s2.upper().replace('CHIRO', 'CHIROPRACTIC').replace('PT', 'PHYSICAL THERAPY')
     for i in roles:
         ss1 = ss1.upper().replace(i.upper(), '')
         ss2 = ss2.upper().replace(i.upper(), '')
@@ -46,7 +64,6 @@ def searchRatio(s1, s2, ratio):
 
 def deepSearch(word, givenList, maxReturn, accuracy):
     try:
-        return difflib.get_close_matches(word.upper(), (elem.Name for elem in givenList), maxReturn, accuracy)
+        return difflib.get_close_matches(word.upper(), (elem.Name.upper() for elem in givenList), maxReturn, accuracy)
     except Exception as e:
         log.loggingInfo(e)
-	
