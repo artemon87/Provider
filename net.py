@@ -16,7 +16,7 @@ def processAll(location):
     toRemove = ['UNKNOWN-MEDICAL PROVIDER', 'Secure Health Information', 'Rubinstein Law Offices',
                 'BISHOP LAW OFFICES, P.S.','ER Hospital visit', 'LAW OFFICES OF MARK A. HAMMER & ASSOCIATES, INC.',
                 'Rx', 'Rx Bartell Drugs', 'Rx Fred Meyer', 'Rx Rite Aid', 'Rx Walgreens',
-                'TOW EXPRESS', 'UNKNOWN-INSURANCE', 'WAGE LOSS', 'bishoplegal']
+                'TOW EXPRESS', 'UNKNOWN-INSURANCE', 'WAGE LOSS', 'bishoplegal', 'Healthport (Smart Document Solutions)']
     file = read(location)
     providerFile = file.File
     providerDict = file.Dictionary
@@ -45,11 +45,11 @@ def processAll(location):
     return providerDict, providerFile, toRemove
 
 
-def processFacility(location, hospitals = None, singleProvider = None):
+def processFacility(location, hospitals = None, singleProvider = None, ratio = 0.85):
     toRemove = ['UNKNOWN-MEDICAL PROVIDER', 'Secure Health Information', 'Rubinstein Law Offices',
                 'BISHOP LAW OFFICES, P.S.','ER Hospital visit', 'LAW OFFICES OF MARK A. HAMMER & ASSOCIATES, INC.',
                 'Rx', 'Rx Bartell Drugs', 'Rx Fred Meyer', 'Rx Rite Aid', 'Rx Walgreens',
-                'TOW EXPRESS', 'UNKNOWN-INSURANCE', 'WAGE LOSS', 'bishoplegal']
+                'TOW EXPRESS', 'UNKNOWN-INSURANCE', 'WAGE LOSS', 'bishoplegal', 'Healthport (Smart Document Solutions)']
     file = read(location)
     totalPossibleOptions = 0
     providerFile = file.File
@@ -73,7 +73,7 @@ def processFacility(location, hospitals = None, singleProvider = None):
                             providerFile['names_id'][elem])
             if hospitals != None:
                 for i in hospitals:
-                    res = searchRatio(inst.Name.upper(), i.Name.upper(), 0.85)
+                    res = searchRatio(inst.Name.upper(), i.Name.upper(), ratio)
                     if res:
                         if inst not in providerDict:
                             providerDict[inst] = 1
@@ -81,7 +81,7 @@ def processFacility(location, hospitals = None, singleProvider = None):
                             providerDict[inst] += 1
             elif singleProvider != None:
                 if totalPossibleOptions < 3:
-                    res = searchRatio(inst.Name.upper(), singleProvider.upper(), 0.85)
+                    res = searchRatio(inst.Name.upper(), singleProvider.upper(), ratio)
                     if res:
                         providerDict[inst] = 1
                         totalPossibleOptions += 1
@@ -94,6 +94,7 @@ def processFacility(location, hospitals = None, singleProvider = None):
 
 def createNX(providerDict, providerFile, toRemove, netSize):
     singleElement = None
+    race = int
     lessThan4 = ''
     if len(providerDict) == 1:
         for k,v in providerDict.items():
@@ -107,9 +108,11 @@ def createNX(providerDict, providerFile, toRemove, netSize):
     newDict = defaultdict(list)
     ProviderWeighted = namedtuple('ProviderWeighted', 'Name Address Phone ID Weight')
     Provider = namedtuple('Provider', 'Name Address Phone ID')
+    needlesProvider = defaultdict(list)
     lst = []
     list_of_lists = []
     list_of_single_elem = []
+    list_of_races = []
     ed = nx.Graph()
     current = prev = 0
     for elem in providerFile.index:
@@ -119,17 +122,25 @@ def createNX(providerDict, providerFile, toRemove, netSize):
             if providerFile['compute_0005'][elem] not in toRemove:
                 phone = str(providerFile['compute_0008'][elem])
                 addr = str(providerFile['compute_0007'][elem])
+                try:
+                    race = int(providerFile['race'][elem])
+                except Exception as e:
+                    pass
                 if phone:
                     phone = phone.replace('(', '').replace(') ', '').replace(' - ', '')
                 else:
                     phone = 'NONE'
                 if not addr:
                     addr = 'NONE'
-                inst = Provider(providerFile['compute_0005'][elem],
+                instP = Provider(providerFile['compute_0005'][elem],
                                 addr,
                                 phone,
                                 providerFile['names_id'][elem])
-                lst.append(inst)
+                if race:
+                    needlesProvider[instP].append(race)
+                else:
+                    needlesProvider[instP] = []
+                lst.append(instP)
                 
         else:
             #only one provider with that name was found
@@ -173,8 +184,9 @@ def createNX(providerDict, providerFile, toRemove, netSize):
                         if i != key:
                             ed.add_edge(key.Name, i.Name)
                             newDict[inst].append(i)
-
-    return providerDict, newDict, ed
+    for key, value in needlesProvider.items():
+        needlesProvider[key] = Counter(value)
+    return providerDict, newDict, needlesProvider, ed
 
 
 def providerDictToList(providerDict):
@@ -185,8 +197,23 @@ def providerDictToList(providerDict):
     
     
 
-def createDicForDB(location):
-    Provider = namedtuple('Provider', 'Name Address Phone ID Weight')
+def createDicForDB(providerDict, needlesProvider):
+    lst = []
+    needlesDict = defaultdict(list)
+    FinalProvider = namedtuple('FinalProvider', 'Name Address Phone ID Weight Ru Es En')
+    for key, value in needlesProvider.items():
+        #needlesProvider[key] = Counter(value)
+        for k,v in providerDict.items():
+            if key.ID == k.ID:
+                try:
+                    inst = FinalProvider(key.Name, key.Address, key.Phone, key.ID, k.Weight, value[1], value[2], value[3])
+                    lst.append(inst)
+                    pass
+                except Exception as e:
+                    print(e)
+                
+    return lst
+    '''Provider = namedtuple('Provider', 'Name Address Phone ID Weight')
     providerDict, providerFile, toRemove = processAll(location)
     needlesDict = defaultdict(list)
     providerDict, *rest = processAll(location)
@@ -202,7 +229,7 @@ def createDicForDB(location):
     for key, value in needlesDict.items():
         needlesDict[key] = Counter(value)
         print(Counter(value))
-    return needlesDict
+    return needlesDict'''
     
             
             

@@ -17,6 +17,7 @@ import numpy as np
 from os import path
 from tkinter import filedialog as fd
 import pytz
+from tkinter import messagebox as mBox
 
 from datetime import datetime
 
@@ -56,14 +57,24 @@ class ProviderGUI:
         self.timeZoneLabel = ttk.Label(self.infoZone, textvariable=self.timeZone)
         self.aLabel = ttk.Label(self.monty1, text="Search Box") #label
         self.action = ttk.Button(self.monty1, text="Run", command=self.clickMe) #button
+        self.updateDB = ttk.Button(self.infoZone, text='Update Database', comman=self.updateDatabase)
         self.name = tk.StringVar() #search name
         self.nameEntered = ttk.Entry(self.monty1, width=40, textvariable=self.name) #name entered
         self.aLabel2 = ttk.Label(self.monty1, text="Choose an action:").grid(column=1, row=0) #drop down box
         self.act = tk.StringVar()
         self.numberChosen = ttk.Combobox(self.monty1, width=12, textvariable=self.act)
-        self.chVarUn = tk.IntVar() #checkbox 1
-        self.chVarEn = tk.IntVar() #checkbox 2
-        self.chVarEn2 = tk.IntVar() #checkbox 3
+        self.labelCheckbox = ttk.Label(self.monty, text="Information to Display", font=("Helvetica", 13)).grid(column=1, row=0, padx = 10, pady = 10)
+        self.labelCombo = ttk.Label(self.monty, text="Search Ratio", font=("Helvetica", 13)).grid(column=1, row=6, padx = 10, pady = 10)
+        #self.labelAddlInfo= ttk.Label(self.monty, text="Search Ratio", font=("Helvetica", 13)).grid(column=1, row=8, padx = 10, pady = 10)
+        self.chVar1 = tk.IntVar() #checkbox 1
+        self.chVar2 = tk.IntVar() #checkbox 2
+        self.chVar3 = tk.IntVar() #checkbox 3
+        self.chVar4 = tk.IntVar() #checkbox 4
+        self.chVar5 = tk.IntVar() #checkbox 5
+        self.chVar6 = tk.IntVar() #checkbox 6
+        self.chAddl1 = tk.IntVar() #checkbox7
+        self.chAddl2 = tk.IntVar() #checkbox8
+        self.chAddl3 = tk.IntVar() #checkbox9
         self.radVar = tk.IntVar() #radio button
         self.scr = scrolledtext.ScrolledText(self.monty, width=80, height=14, wrap=tk.WORD)
         self.figure = Figure(figsize=(7,5), dpi=90)
@@ -75,8 +86,7 @@ class ProviderGUI:
     def labels(self):
         self.aLabel.grid(column=0, row=0)
         self.time.grid(column=0, row=0)
-        self.timeZoneLabel.grid(column=0,
-row=1)
+        self.timeZoneLabel.grid(column=0,row=1)
         self.infoZone.grid(column = 0, row = 3 , sticky = 'WE', padx = 10, pady = 5)
         self.monty1.grid(column=0, row=0, padx=8, pady=4)
         self.monty2.grid(column=0, row=0, padx=8, pady=4)
@@ -86,6 +96,7 @@ row=1)
 
     def bottons(self):
         self.action.grid(column=2, row=1)
+        self.updateDB.grid(column=3, row=1)
 
     def searchBar(self):
         self.nameEntered.grid(column=0, row=1, rowspan=3)
@@ -97,29 +108,41 @@ row=1)
         self.numberChosen.current(0)
 
     def checkBox(self):
-        self.check2 = tk.Checkbutton(self.monty, text="UnChecked", variable=self.chVarUn)
-        self.check2.grid(column=0, row=4, sticky=tk.W)
-        self.check2.deselect()
-        self.check3 = tk.Checkbutton(self.monty, text="Enabled", variable=self.chVarEn)
-        self.check3.grid(column=1, row=4, sticky=tk.W)
-        self.check3.select()
-        self.check1 = tk.Checkbutton(self.monty, text="Enabled", variable=self.chVarEn2)
+        self.check1 = tk.Checkbutton(self.monty, text="Display Name", variable=self.chVar1, state='disabled')
+        self.check1.grid(column=0, row=4, sticky=tk.W)
         self.check1.select()
-        self.check1.grid(column=2, row=4, sticky=tk.W)
+        self.check2 = tk.Checkbutton(self.monty, text="Display Address", variable=self.chVar2)
+        self.check2.grid(column=1, row=4, sticky=tk.W)
+        self.check2.select()
+        self.check3 = tk.Checkbutton(self.monty, text="Display Phone", variable=self.chVar3)
+        self.check3.select()
+        self.check3.grid(column=2, row=4, sticky=tk.W)
+        self.check4 = tk.Checkbutton(self.monty, text="Display Fax", variable=self.chVar4)
+        self.check4.grid(column=0, row=5, sticky=tk.W)
+        self.check4.deselect()
+        self.check5 = tk.Checkbutton(self.monty, text="Display Specialty", variable=self.chVar5)
+        self.check5.grid(column=1, row=5, sticky=tk.W)
+        self.check5.deselect()
+        self.check6 = tk.Checkbutton(self.monty, text="Display Add'l info", variable=self.chVar6)
+        self.check6.deselect()
+        self.check6.grid(column=2, row=5, sticky=tk.W)
+        self.check7 = tk.Checkbutton(self.infoZone, text="Update Needles", variable=self.chAddl1)
+        self.check7.deselect()
+        self.check7.grid(column=4, row=1, sticky=tk.W)
+        self.check8 = tk.Checkbutton(self.infoZone, text="Update Yelp", variable=self.chAddl2)
+        self.check8.deselect()
+        self.check8.grid(column=5, row=1, sticky=tk.W)
+        self.check9 = tk.Checkbutton(self.infoZone, text="Update Hospitals", variable=self.chAddl3)
+        self.check9.deselect()
+        self.check9.grid(column=6, row=1, sticky=tk.W)
 
     def radioButton(self):
-        self.rad1 = tk.Radiobutton(self.monty, text='One', variable=self.radVar, value=1, command=self.radCall)
-        self.rad1.grid(column=0, row=5, sticky=tk.W)
-        self.rad2 = tk.Radiobutton(self.monty, text='Two', variable=self.radVar, value=2, command=self.radCall)
-        self.rad2.grid(column=1, row=5, sticky=tk.W)
-        self.rad3 = tk.Radiobutton(self.monty, text='Three', variable=self.radVar, value=3, command=self.radCall)
-        self.rad3.grid(column=2, row=5, sticky=tk.W)
-        self.rad4 = tk.Radiobutton(self.monty, text='Four', variable=self.radVar, value=4, command=self.radCall)
-        self.rad4.grid(column=0, row=6, sticky=tk.W)
-        self.rad5 = tk.Radiobutton(self.monty, text='Five', variable=self.radVar, value=5, command=self.radCall)
-        self.rad5.grid(column=1, row=6, sticky=tk.W)
-        self.rad6 = tk.Radiobutton(self.monty, text='Six', variable=self.radVar, value=6, command=self.radCall)
-        self.rad6.grid(column=2, row=6, sticky=tk.W)
+        self.rad1 = tk.Radiobutton(self.monty, text='Somehow Accurate', variable=self.radVar, value=1, command=self.radCall)
+        self.rad1.grid(column=0, row=7, sticky=tk.W)
+        self.rad4 = tk.Radiobutton(self.monty, text='Very Accurate', variable=self.radVar, value=2, command=self.radCall)
+        self.rad4.grid(column=1, row=7, sticky=tk.W)
+        self.rad5 = tk.Radiobutton(self.monty, text='Most Acurate', variable=self.radVar, value=3, command=self.radCall)
+        self.rad5.grid(column=2, row=7, sticky=tk.W)
 
     def scrollableText(self):
         self.scr.grid(column=0, columnspan=3)
@@ -139,46 +162,68 @@ row=1)
         except Exception as e:
             pass
 
-    def clickMe(self):
+    def updateDatabase(self):
+        upNeedles = self.chAddl1.get()
+        upYelp = self.chAddl2.get()
+        upHospital = self.chAddl3.get()
+        self.updateDB.configure(text='Updating...')
+        result = fillinDB(upNeedles,upYelp, upHospital)
+        if result == 0:
+            mBox.showinfo('Database Information', 'Database successfully finished updating.\n')
+            self.updateDB.configure(text='Update Database')
+        else:
+            mBox.showinfo('Database Information', 'Please launch Yelp.com on your webbrowser.\nAnd confirm that you are not a robot')
         
+    def clickMe(self):
+        ratio = self.searchAccuracy()
+        displayArgs = self.getCheckbox()
         if self.act.get() == 'Build a network':
             self.clearCanvas()
             fileToRead = ''
             if self.fName == None:
-                fileToRead ='net1h.xls'
+                fileToRead ='netRace.xlsx'
             else:
                 fileToRead = self.fName
-            ed = readED(fileToRead, None, self.name.get(), 7)
+            ed = readED(fileToRead, None, self.name.get(), 7, ratio)
             if len(ed) == 0:
                 try:
                     self.scr.delete(1.0,tk.END)
                 except Exception as e:
                     pass
-                confirmProvider(fileToRead, self.name.get(), self.scr)
-                possibleOptions = findProvider(fileToRead, self.name.get(),0, self.scr)
-    
+                confirmProvider(fileToRead, self.name.get(), self.scr, displayArgs, ratio)
+                possibleOptions = findProvider(fileToRead, self.name.get(), ratio, self.scr)
             else:
                 try:
                     self.scr.delete(1.0,tk.END)
                 except Exception as e:
                     pass
-                confirmProvider(fileToRead, self.name.get(), self.scr)
+                confirmProvider(fileToRead, self.name.get(), self.scr, displayArgs, ratio)
                 pos=nx.spring_layout(ed)
                 nx.draw_networkx(ed, pos, arrows = True, with_labels = True, ax = self.aPlot, font_size = 10)
-            #nx.draw_networkx(ed)
-            #plt.show()
-
                 self.canvas = FigureCanvasTkAgg(self.figure, master=self.monty2)
                 self.canvas.show()
                 self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-
                 self.toolbar = NavigationToolbar2TkAgg(self.canvas, self.monty2)
                 self.toolbar.update()
                 self.canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
             
         elif self.act.get() == 'Find Provider':
-            pass
+            confirmSearchProvider(self.name.get(), self.scr, displayArgs)
 
+    def getCheckbox(self):
+        return self.chVar1.get(), self.chVar2.get(), self.chVar3.get(), self.chVar4.get(), self.chVar5.get(), self.chVar6.get()
+    
+    def searchAccuracy(self):
+        accuracy = self.radVar.get()
+        ratio = float
+        if accuracy == 1:
+            ratio = 0.30
+        elif accuracy == 2:
+            ratio = 0.70
+        elif accuracy == 3:
+            ratio = 0.85
+        return ratio
+            
 	
     def radCall(self):
         r = self.radVar.get()

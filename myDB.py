@@ -29,9 +29,12 @@ def createNeedlesDB(tup):
                                        PHONE varchar DEFAULT NULL,
                                        FAX varchar DEFAULT NULL,
                                        SPECIALTY varchar DEFAULT NULL,
-                                       ID integer PRIMARY KEY NOT NULL,
+                                       ID varchar NOT NULL,
                                        WEIGHT integer DEFAULT 0,
-                                       PRIMARY KEY(NAME, PHONE));''')
+                                       RU integer DEFAULT 0,
+                                       ES integer DEFAULT 0,
+                                       EN integer DEFAULT 0,
+                                       PRIMARY KEY(ID));''')
     tup.connection.commit()
 
 
@@ -65,26 +68,74 @@ def addProvider(providerCollection, tup):
                       (provider.Name, provider.Address, provider.City, provider.State, provider.Zip, provider.Phone, provider.Specialty))
 
     tup.connection.commit()
+
+def addNeedlesProvider(providerCollection, tup):
+    for provider in providerCollection:
+        tup.cursor.execute('''SELECT * FROM NEEDLES WHERE ID = ?''', (str(provider.ID),))
+        result = tup.cursor.fetchall()
+        if len(result) == 0:
+            tup.cursor.execute('''INSERT INTO NEEDLES (NAME, ADDRESS, PHONE, ID, WEIGHT, RU, ES, EN) VALUES(?, ?, ?, ?, ?, ?, ?, ?);''',
+                      (provider.Name, provider.Address, provider.Phone, str(provider.ID), provider.Weight, provider.Ru, provider.Es, provider.En))
+
+    tup.connection.commit()
     
 
 def readFromHospital(tup):
+    returnList = []
     sqlRetrive = '''SELECT * FROM HOSPITAL ORDER BY NAME ASC;'''
     for row in tup.cursor.execute(sqlRetrive):
-        print(row)
+        returnList.append(row)
+    return returnList
+        
 def readFromHospitalName(tup, name):
+    P = namedtuple('P', 'NAME ADDRESS CITY STATE ZIP PHONE FAX RECORDS BILLING LINK UMBRELLA')
     name = name.upper()
     returnList = []
-    sqlRetrive = '''SELECT NAME, ADDRESS, CITY, PHONE, LINK FROM HOSPITAL WHERE NAME like ? or NAME like ? or NAME like ? ORDER BY NAME ASC;'''
+    sqlRetrive = '''SELECT * FROM HOSPITAL WHERE NAME like ? or NAME like ? or NAME like ? ORDER BY NAME ASC;'''
     for row in tup.cursor.execute(sqlRetrive, [('%'+name+'%'), (name+'%'), ('%'+name)]):
-        returnList.append(row)
+        for elem in row:
+            inst = P(elem[0], elem[1], elem[2], elem[3], elem[4], elem[5], elem[6], elem[7], elem[8], elem[9], elem[10])
+            returnList.append(inst)
     return returnList
 
 def readFromHospitalUmbrella(tup, name):
+    P = namedtuple('P', 'NAME ADDRESS CITY STATE ZIP PHONE FAX RECORDS BILLING LINK UMBRELLA')
     name = name.upper()
     returnList = []
-    sqlRetrive = '''SELECT NAME, ADDRESS, CITY, PHONE, LINK FROM HOSPITAL WHERE UMBRELLA like ? or UMBRELLA like ? or UMBRELLA like ? ORDER BY NAME ASC;'''
+    sqlRetrive = '''SELECT * FROM HOSPITAL WHERE UMBRELLA like ? or UMBRELLA like ? or UMBRELLA like ? ORDER BY NAME ASC;'''
     for row in tup.cursor.execute(sqlRetrive, [('%'+name+'%'), (name+'%'), ('%'+name)]):
-        returnList.append(row)
+        try:
+            inst = P(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10])
+            returnList.append(inst)
+        except IndexError as e:
+            pass        
+    return returnList
+
+def readFromNeedlesName(tup, name):
+    P = namedtuple('P', 'NAME ADDRESS PHONE FAX SPECIALTY ID WEIGHT RU ES EN')
+    name = name.upper()
+    returnList = []
+    sqlRetrive = '''SELECT * FROM NEEDLES WHERE NAME like ? or NAME like ? or NAME like ? ORDER BY NAME ASC;'''
+    for row in tup.cursor.execute(sqlRetrive, [('%'+name+'%'), (name+'%'), ('%'+name)]):
+        try:
+            inst = P(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
+            returnList.append(inst)
+        except IndexError as e:
+            pass        
+    return returnList
+
+
+def readFromProviderName(tup, name):
+    P = namedtuple('P', 'NAME ADDRESS CITY STATE ZIP PHONE FAX LINK SPECIALTY')
+    name = name.upper()
+    returnList = []
+    sqlRetrive = '''SELECT * FROM PROVIDER WHERE NAME like ? or NAME like ? or NAME like ? ORDER BY NAME ASC;'''
+    for row in tup.cursor.execute(sqlRetrive, [('%'+name+'%'), (name+'%'), ('%'+name)]):
+        try:
+            inst = P(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8])
+            returnList.append(inst)
+        except IndexError as e:
+            pass        
     return returnList
 
 def readFromProvider(tup):
