@@ -5,17 +5,21 @@ import tkinter as tk
 from ChartSwapSearching import *
 from HospitalsBS import *
 from yelp import *
+import time
+import random
 
-SETUP = False 
+
+def clearScreen(text):
+    try:
+        text.delete(1.0,tk.END)
+    except Exception as e:
+        pass
 
 def createTablesInDB():
-    global SETUP
-    if not SETUP:
-        DB = connectToDB()
-        createHospitalDB(DB)
-        createNeedlesDB(DB)
-        createProviderDB(DB)
-    SETUP = True
+    DB = connectToDB()
+    createHospitalDB(DB)
+    createNeedlesDB(DB)
+    createProviderDB(DB)
 
 def connectToDB():
     return setupDB()
@@ -27,20 +31,40 @@ def createNeedlesList():
     needlesList = createDicForDB(dictWeighted, needlesProvider)
     return needlesList
 
-def fillinDB(upNeedles,upYelp, upHospital):
+def fillinDB(upNeedles,upYelp, upHospital, text):
+    try:
+        text.delete(1.0,tk.END)
+    except Exception as e:
+        pass
+    clearScreen(text)
+    totalSleep = 0
     createTablesInDB()
     DB = connectToDB()
     lst = []
-    city = ['Federal Way,WA', 'Tacoma, WA', 'Seattle, WA', 'Bellevue, WA',
+    city = ['Seattle, WA', 'Federal Way,WA', 'Tacoma, WA', 'Bellevue, WA',
             'Everett, WA', 'Renton, WA', 'Lake City, WA', 'Sammamish, WA']
-    spec = ['Chiropractic', 'Urgent Care', 'Orthopedic', 'Physical Therapy',
-            'Pediatrics', 'Physicians', 'Massage Therapy', 'Diagnostic Imaging',
-            'Medical Clinic', 'Family Practice']
+    spec = ['Chiropractors', 'Urgent Care', 'Orthopedic Doctor', 'Physical Therapy',
+            'Pediatrics', 'Physicians Near Me', 'Massage Therapy', 'Diagnostic Imaging',
+            'Medical Clinic', 'Family Practice Near Me']
+    
     if upYelp:
+        random.shuffle(city)
+        random.shuffle(spec)
         for c in city:
             for s in spec:
                 result = lookup(s, c)
+                text.insert(tk.INSERT, 'Found ')
+                text.insert(tk.INSERT, len(result))
+                text.insert(tk.INSERT, ' ')
+                text.insert(tk.INSERT, s+' in ')
+                text.insert(tk.INSERT, c)
                 print('Found',len(result), s, 'in',c)
+                #if len(result) == 0:
+                    #text.insert(tk.INSERT, 'Please go to Yelp.com and verify that you are not a robot')
+                    #print('Went sleeping ...')
+                    #time.sleep(10)
+                    #result = lookup(s, c)
+                    #totalSleep += 1
                 lst.append(result)
         for elem in lst:
             addProvider(elem, DB)

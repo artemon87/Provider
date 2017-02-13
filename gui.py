@@ -49,7 +49,7 @@ class ProviderGUI:
         self.fDir = None #dir of a file
         self.file = tk.StringVar()
         self.entryLen = 60
-        self.fileEntry = ttk.Entry(self.mngFilesFrame, width=self.entryLen,textvariable=self.file)
+        self.fileEntry = ttk.Entry(self.mngFilesFrame, width=94,textvariable=self.file)
         self.fileEntry.grid(column=1, row=0, sticky=tk.W)
         self.monty2 = ttk.LabelFrame(self.tab2, text=' Provider Network')
         self.time = ttk.Label(self.infoZone, text='Date and Time of Launch')
@@ -143,6 +143,7 @@ class ProviderGUI:
         self.rad4.grid(column=1, row=7, sticky=tk.W)
         self.rad5 = tk.Radiobutton(self.monty, text='Most Acurate', variable=self.radVar, value=3, command=self.radCall)
         self.rad5.grid(column=2, row=7, sticky=tk.W)
+        self.rad5.select()
 
     def scrollableText(self):
         self.scr.grid(column=0, columnspan=3)
@@ -163,11 +164,12 @@ class ProviderGUI:
             pass
 
     def updateDatabase(self):
+        mBox.showinfo('Database Information', 'Stay in touch.\nUpdating takes some time (5-15 minutes)')
         upNeedles = self.chAddl1.get()
         upYelp = self.chAddl2.get()
         upHospital = self.chAddl3.get()
         self.updateDB.configure(text='Updating...')
-        result = fillinDB(upNeedles,upYelp, upHospital)
+        result = fillinDB(upNeedles,upYelp, upHospital, self.scr)
         if result == 0:
             mBox.showinfo('Database Information', 'Database successfully finished updating.\n')
             self.updateDB.configure(text='Update Database')

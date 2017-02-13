@@ -8,7 +8,7 @@ def setupDB():
     return DB(conn, c)
 
 def createHospitalDB(tup):
-    tup.cursor.execute('''CREATE TABLE HOSPITAL(NAME varchar NOT NULL,
+    tup.cursor.execute('''CREATE TABLE IF NOT EXISTS HOSPITAL(NAME varchar NOT NULL,
                                        ADDRESS varchar,
                                        CITY varchar,
                                        STATE varchar,
@@ -24,7 +24,7 @@ def createHospitalDB(tup):
 
 
 def createNeedlesDB(tup):
-    tup.cursor.execute('''CREATE TABLE NEEDLES(NAME varchar NOT NULL,
+    tup.cursor.execute('''CREATE TABLE IF NOT EXISTS NEEDLES(NAME varchar NOT NULL,
                                        ADDRESS varchar,
                                        PHONE varchar DEFAULT NULL,
                                        FAX varchar DEFAULT NULL,
@@ -39,7 +39,7 @@ def createNeedlesDB(tup):
 
 
 def createProviderDB(tup):
-    tup.cursor.execute('''CREATE TABLE PROVIDER(NAME varchar NOT NULL,
+    tup.cursor.execute('''CREATE TABLE IF NOT EXISTS PROVIDER(NAME varchar NOT NULL,
                                        ADDRESS varchar,
                                        CITY varchar,
                                        STATE varchar,
