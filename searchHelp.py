@@ -57,7 +57,7 @@ def fillinDB(upNeedles,upYelp, upHospital, text):
                 text.insert(tk.INSERT, len(result))
                 text.insert(tk.INSERT, ' ')
                 text.insert(tk.INSERT, s+' in ')
-                text.insert(tk.INSERT, c)
+                text.insert(tk.INSERT, c+'\n')
                 print('Found',len(result), s, 'in',c)
                 #if len(result) == 0:
                     #text.insert(tk.INSERT, 'Please go to Yelp.com and verify that you are not a robot')
