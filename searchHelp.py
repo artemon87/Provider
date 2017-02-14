@@ -142,7 +142,8 @@ def confirmSearchProvider(name, text, displayArgs):
             except Exception as e:
                 print(e)
     else:
-        pass
+        text.insert(tk.INSERT,"Nothing was found. Search again or update Yelp Database...")
+        text.insert(tk.INSERT,"\n")
     
 
 def confirmProvider(fileToRead, name, text, displayArgs, ratio):
@@ -169,11 +170,10 @@ def confirmProvider(fileToRead, name, text, displayArgs, ratio):
         lst = readFromHospitalName(DB, name.upper())
     pand = readChartSwap('Washington')
     if not lst:
-        print('Going to Provider DB')
-        lst = readFromProviderName(DB, name.upper())
-    if not lst:
         print('Going to Needles DB')
         lst = readFromNeedlesName(DB, name.upper())
+        print('Going to Provider DB')
+        lst = readFromProviderName(DB, name.upper())
     if lst:
         for elem in lst:
             text.insert(tk.INSERT, elem.NAME+ "\n")
@@ -254,18 +254,78 @@ def confirmProvider(fileToRead, name, text, displayArgs, ratio):
             text.insert(tk.INSERT,"\n")
             text.insert(tk.INSERT,"\n")
     else:
+        findProvider(fileToRead, name, ratio, text)
         text.insert(tk.INSERT,"Nothing was found. Search again...")
         text.insert(tk.INSERT,"\n")
         
 def readED(fileToRead, hosp, name, n, ratio):
     args = processFacility(fileToRead, hosp, name, ratio)
     providerDict, newDict, needlesProvider, ed = createNX(*args, n)
-    return ed
+    return ed, providerDict
 
-def findProvider(fileToRead, name, n, text):
+def printOutProvider(providerDict, text, displayArgs):
+    print('printOUTProvider launched!')
+    dispName, dispAddr, dispPhone, dispFax, dispSpec, dispInfo = displayArgs
+    DB = connectToDB()
+    try:
+        text.delete(1.0,tk.END)
+    except Exception as e:
+        pass
+    lst = []
+    name = None
+    clearScreen(text)
+    for k,v in providerDict.items():
+        print('LOOKING FOR: ', k.Name)
+        lst = readFromNeedlesNameExact(DB,k.Name)
+    if not lst:
+        print('Nothing was wound with EXACT name;')
+    for elem in lst:
+        text.insert(tk.INSERT, elem.NAME+ "\n")
+        if dispAddr:
+            if elem.ADDRESS is not None:
+                text.insert(tk.INSERT, elem.ADDRESS+ "\n")
+            else:
+                text.insert(tk.INSERT, "Address: None")
+        if dispPhone:
+            if elem.PHONE is not None:
+                text.insert(tk.INSERT, "General Phone: ")
+                text.insert(tk.INSERT, elem.PHONE)
+                text.insert(tk.INSERT, "\n")
+            else:
+                text.insert(tk.INSERT, "Feneral Phone: None\n")
+        if dispFax:
+             if elem.FAX is not None:
+                 text.insert(tk.INSERT, "General Fax: ")
+                 text.insert(tk.INSERT, elem.FAX)
+                 text.insert(tk.INSERT, "\n")
+             else:
+                 text.insert(tk.INSERT, "General Fax: None\n")
+        if dispInfo:
+            try:
+                if elem.LINK is not None:
+                    text.insert(tk.INSERT, "Link: ")
+                    text.insert(tk.INSERT, elem.LINK)
+                    text.insert(tk.INSERT, "\n")
+                else:
+                    text.insert(tk.INSERT, "Link: None\n ")
+            except Exception as e:
+                print(e)
+            try:
+                if elem.WEIGHT is not None:
+                    text.insert(tk.INSERT, "Popularity: ")
+                    text.insert(tk.INSERT, elem.LINK)
+                    text.insert(tk.INSERT, " clients served for the last 2 years\n")
+
+            except Exception as e:
+                print(e)
+        text.insert(tk.INSERT, "\n")
+    #text.insert(tk.INSERT,"Nothing was found with your search term\n")
+
+
+def findProvider(fileToRead, name, ratio, text):
     providerDict, *rest = processAll(fileToRead)
     newList = providerDictToList(providerDict)
-    possibleOptions = deepSearch(name, newList, 10, 0.5)
+    possibleOptions = deepSearch(name, newList, 10, ratio)
     if len(possibleOptions) < 10:
         possibleOptions = deepSearch(name, newList, 10, 0.2)
     if len(possibleOptions) < 1:
@@ -274,6 +334,7 @@ def findProvider(fileToRead, name, n, text):
         clearScreen(text)
         text.insert(tk.INSERT,"Nothing was found with your search term\n")
         text.insert(tk.INSERT, 'Please try again...\n')
+        return
     else:
         clearScreen(text)
         try:

@@ -1,6 +1,26 @@
 import sqlite3
 from collections import namedtuple
 
+def setupCookiesDB():
+    DB = namedtuple('DB', 'connection cursor')
+    conn = sqlite3.connect('cookieDB.db')
+    c = conn.cursor()
+    return DB(conn, c)
+def createCookieTable(tup):
+    tup.cursor.execute('''CREATE TABLE IF NOT EXISTS COOKIE(ID ineger NOT NULL PRIMARY KEY,
+                                       IN varchar,
+                                       OUT varchar DEFAULT NULL;''')
+def addCookie(name, possibleChoice, tup):
+    name = name.upper()
+    tup.cursor.execute('''SELECT * FROM COOKIE WHERE IN = ?;''', (name))
+    result = tup.cursor.fetchall()
+    if len(result) == 0:
+        tup.cursor.execute('''INSERT INTO COOKIE (IN, OUT) VALUES(?);''', (name, possibleChoice))
+    tup.connection.commit() 
+                       
+    
+
+    
 def setupDB():
     DB = namedtuple('DB', 'connection cursor')
     conn = sqlite3.connect('test.db')
@@ -75,7 +95,7 @@ def addNeedlesProvider(providerCollection, tup):
         result = tup.cursor.fetchall()
         if len(result) == 0:
             tup.cursor.execute('''INSERT INTO NEEDLES (NAME, ADDRESS, PHONE, ID, WEIGHT, RU, ES, EN) VALUES(?, ?, ?, ?, ?, ?, ?, ?);''',
-                      (provider.Name, provider.Address, provider.Phone, str(provider.ID), provider.Weight, provider.Ru, provider.Es, provider.En))
+                      (provider.Name.upper(), provider.Address, provider.Phone, str(provider.ID), provider.Weight, provider.Ru, provider.Es, provider.En))
 
     tup.connection.commit()
     
@@ -118,6 +138,19 @@ def readFromNeedlesName(tup, name):
     name = name.upper()
     returnList = []
     sqlRetrive = '''SELECT * FROM NEEDLES WHERE NAME like ? or NAME like ? or NAME like ? ORDER BY NAME ASC;'''
+    for row in tup.cursor.execute(sqlRetrive, [('%'+name+'%'), (name+'%'), ('%'+name)]):
+        try:
+            inst = P(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
+            returnList.append(inst)
+        except IndexError as e:
+            pass        
+    return returnList
+
+def readFromNeedlesNameExact(tup, name):
+    P = namedtuple('P', 'NAME ADDRESS PHONE FAX SPECIALTY ID WEIGHT RU ES EN')
+    name = name.upper()
+    returnList = []
+    sqlRetrive = '''SELECT * FROM NEEDLES WHERE NAME like ? or NAME like ? or NAME like ?;'''
     for row in tup.cursor.execute(sqlRetrive, [('%'+name+'%'), (name+'%'), ('%'+name)]):
         try:
             inst = P(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])

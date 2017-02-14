@@ -188,20 +188,21 @@ class ProviderGUI:
                 fileToRead ='netRace.xlsx'
             else:
                 fileToRead = self.fName
-            ed = readED(fileToRead, None, self.name.get(), 7, ratio)
+            ed, providerDict = readED(fileToRead, None, self.name.get(), 7, ratio)
             if len(ed) == 0:
                 try:
                     self.scr.delete(1.0,tk.END)
                 except Exception as e:
                     pass
                 confirmProvider(fileToRead, self.name.get(), self.scr, displayArgs, ratio)
-                possibleOptions = findProvider(fileToRead, self.name.get(), ratio, self.scr)
+                #possibleOptions = findProvider(fileToRead, self.name.get(), ratio, self.scr)
             else:
                 try:
                     self.scr.delete(1.0,tk.END)
                 except Exception as e:
                     pass
-                confirmProvider(fileToRead, self.name.get(), self.scr, displayArgs, ratio)
+                #confirmProvider(fileToRead, self.name.get(), self.scr, displayArgs, ratio)
+                printOutProvider(providerDict, self.scr, displayArgs)
                 pos=nx.spring_layout(ed)
                 nx.draw_networkx(ed, pos, arrows = True, with_labels = True, ax = self.aPlot, font_size = 10)
                 self.canvas = FigureCanvasTkAgg(self.figure, master=self.monty2)
