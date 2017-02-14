@@ -45,9 +45,10 @@ def fillinDB(upNeedles,upYelp, upHospital, text):
             'Everett, WA', 'Renton, WA', 'Lake City, WA', 'Sammamish, WA']
     spec = ['Chiropractors', 'Urgent Care', 'Orthopedic Doctor', 'Physical Therapy',
             'Pediatrics', 'Physicians Near Me', 'Massage Therapy', 'Diagnostic Imaging',
-            'Medical Clinic', 'Family Practice Near Me']
+            'Medical Clinic', 'Family Practice']
     
     if upYelp:
+        print('Started updating Yelp')
         random.shuffle(city)
         random.shuffle(spec)
         for c in city:
@@ -68,12 +69,14 @@ def fillinDB(upNeedles,upYelp, upHospital, text):
                 lst.append(result)
         for elem in lst:
             addProvider(elem, DB)
-    if len(lst) == 0:
-        return -1
+        if len(lst) == 0:
+            return -1
     if upHospital:
+        print('Started updating hospitals')
         hosp = findAllHospitals()
         addHospital(hosp, DB)
     if upNeedles:
+        print('Started updating Needles')
         needlesList = createNeedlesList()
         addNeedlesProvider(needlesList, DB)
     return 0
@@ -91,49 +94,52 @@ def confirmSearchProvider(name, text, displayArgs):
     pand = readChartSwap('Washington')
     if lst:
         for elem in lst:
-            text.insert(tk.INSERT, elem.NAME+ "\n")
-            if dispAddr:
-                if elem.ADDRESS is not None:
-                    text.insert(tk.INSERT, elem.ADDRESS)
-                    text.insert(tk.INSERT, "\n")
-                    text.insert(tk.INSERT, elem.CITY)
-                    text.insert(tk.INSERT, "\n")
-                else:
-                    text.insert(tk.INSERT, "Address: None\n")
-            if dispPhone:
-                if elem.PHONE is not None:
-                    text.insert(tk.INSERT, "General Phone: ")
-                    text.insert(tk.INSERT, elem.PHONE)
-                    text.insert(tk.INSERT, "\n")
-                else:
-                    text.insert(tk.INSERT, "General Phone: None\n")
-            if dispFax:
-                if elem.FAX is not None:
-                    text.insert(tk.INSERT, "General Fax: ")
-                    text.insert(tk.INSERT, elem.FAX)
-                    text.insert(tk.INSERT, "\n")
-                else:
-                    text.insert(tk.INSERT, "Fax: None\n")
-            if dispInfo:
-                if elem.LINK is not None:
-                    text.insert(tk.INSERT, "Link: ")
-                    text.insert(tk.INSERT, elem.LINK)
-                    text.insert(tk.INSERT, "\n")
-                else:
-                    text.insert(tk.INSERT, "Link: None\n")
-            if dispSpec:
-                if elem.SPECIALTY is not None:
-                    text.insert(tk.INSERT, "Specialty: ")
-                    text.insert(tk.INSERT, elem.SPECIALTY)
-                    text.insert(tk.INSERT, "\n")
-                else:
-                    text.insert(tk.INSERT, "Specialty: None\n")
-            looking = findOnChartSwap(elem.NAME, pand, 0.85)
-            if len(looking) > 0:
-                text.insert(tk.INSERT, 'ChartSwap: ')
-                text.insert(tk.INSERT, ''.join(str(looking)))
-            text.insert(tk.INSERT,"\n")
-            text.insert(tk.INSERT,"\n")
+            try:
+                text.insert(tk.INSERT, elem.NAME+ "\n")
+                if dispAddr:
+                    if elem.ADDRESS is not None:
+                        text.insert(tk.INSERT, elem.ADDRESS)
+                        text.insert(tk.INSERT, "\n")
+                        text.insert(tk.INSERT, elem.CITY)
+                        text.insert(tk.INSERT, "\n")
+                    else:
+                        text.insert(tk.INSERT, "Address: None\n")
+                if dispPhone:
+                    if elem.PHONE is not None:
+                        text.insert(tk.INSERT, "General Phone: ")
+                        text.insert(tk.INSERT, elem.PHONE)
+                        text.insert(tk.INSERT, "\n")
+                    else:
+                        text.insert(tk.INSERT, "General Phone: None\n")
+                if dispFax:
+                    if elem.FAX is not None:
+                        text.insert(tk.INSERT, "General Fax: ")
+                        text.insert(tk.INSERT, elem.FAX)
+                        text.insert(tk.INSERT, "\n")
+                    else:
+                        text.insert(tk.INSERT, "Fax: None\n")
+                if dispInfo:
+                    if elem.LINK is not None:
+                        text.insert(tk.INSERT, "Link: ")
+                        text.insert(tk.INSERT, elem.LINK)
+                        text.insert(tk.INSERT, "\n")
+                    else:
+                        text.insert(tk.INSERT, "Link: None\n")
+                if dispSpec:
+                    if elem.SPECIALTY is not None:
+                        text.insert(tk.INSERT, "Specialty: ")
+                        text.insert(tk.INSERT, elem.SPECIALTY)
+                        text.insert(tk.INSERT, "\n")
+                    else:
+                        text.insert(tk.INSERT, "Specialty: None\n")
+                looking = findOnChartSwap(elem.NAME, pand, 0.85)
+                if len(looking) > 0:
+                    text.insert(tk.INSERT, 'ChartSwap: ')
+                    text.insert(tk.INSERT, ''.join(str(looking)))
+                text.insert(tk.INSERT,"\n")
+                text.insert(tk.INSERT,"\n")
+            except Exception as e:
+                print(e)
     else:
         pass
     
@@ -158,30 +164,96 @@ def confirmProvider(fileToRead, name, text, displayArgs, ratio):
             facility = k
             lst = readFromHospitalUmbrella(DB, facility)
     if len(lst) == 0:
-        lst = readFromHospitalName(DB, name.upper())
-    if len(lst) == 0:
+        print('Going to Hospital DB')
         lst = readFromHospitalName(DB, name.upper())
     pand = readChartSwap('Washington')
-    for elem in lst:
-        text.insert(tk.INSERT, elem.NAME+ "\n")
-        if dispAddr:
-            text.insert(tk.INSERT, elem.ADDRESS+ "\n")
-            text.insert(tk.INSERT, elem.CITY+ "\n")
-        if dispPhone:
-            text.insert(tk.INSERT, "General Phone: "+elem.PHONE+ "\n")
-        if dispFax:
-            text.insert(tk.INSERT, "General Fax: "+elem.FAX+ "\n")
-            text.insert(tk.INSERT, "Medical Records Fax: "+elem.RECORDS+ "\n")
-            text.insert(tk.INSERT, "Billing Records Fax: "+elem.BILLING+ "\n")
-        if dispInfo:
-            text.insert(tk.INSERT, "Link: "+elem.LINK+"\n", ('link', elem.LINK))
-        if dispSpec:
-            text.insert(tk.INSERT, "Umbrella/Specialty: "+elem.UMBRELLA+"\n")
-        looking = findOnChartSwap(elem.NAME, pand, ratio)
-        if len(looking) > 0:
-            text.insert(tk.INSERT, 'ChartSwap: ')
-            text.insert(tk.INSERT, ''.join(str(looking)))
-        text.insert(tk.INSERT,"\n")
+    if not lst:
+        print('Going to Provider DB')
+        lst = readFromProviderName(DB, name.upper())
+    if not lst:
+        print('Going to Needles DB')
+        lst = readFromNeedlesName(DB, name.upper())
+    if lst:
+        for elem in lst:
+            text.insert(tk.INSERT, elem.NAME+ "\n")
+            if dispAddr:
+                if elem.ADDRESS is not None:
+                    text.insert(tk.INSERT, elem.ADDRESS+ "\n")
+                else:
+                    text.insert(tk.INSERT, "Address: None")
+                try:
+                    text.insert(tk.INSERT, elem.CITY+ "\n")
+                except Exception as e:
+                    print(e)
+            if dispPhone:
+                if elem.PHONE is not None:
+                    text.insert(tk.INSERT, "General Phone: ")
+                    text.insert(tk.INSERT, elem.PHONE)
+                    text.insert(tk.INSERT, "\n")
+                else:
+                    text.insert(tk.INSERT, "Feneral Phone: None\n")
+            if dispFax:
+                if elem.FAX is not None:
+                    text.insert(tk.INSERT, "General Fax: ")
+                    text.insert(tk.INSERT, elem.FAX)
+                    text.insert(tk.INSERT, "\n")
+                else:
+                    text.insert(tk.INSERT, "General Fax: None\n")
+                try:
+                    if elem.RECORDS is not None:
+                        text.insert(tk.INSERT, "Records Fax: ")
+                        text.insert(tk.INSERT, elem.RECORDS)
+                        text.insert(tk.INSERT, "\n")
+                    else:
+                        text.insert(tk.INSERT, "Records Fax: None\n")
+                    if elem.BILLING is not None:
+                        text.insert(tk.INSERT, "Billing Fax: ")
+                        text.insert(tk.INSERT, elem.BILLING)
+                        text.insert(tk.INSERT, "\n")
+                    else:
+                        text.insert(tk.INSERT, "Billing Fax: None\n")
+                except Exception as e:
+                    print(e)
+            if dispInfo:
+                try:
+                    if elem.LINK is not None:
+                        text.insert(tk.INSERT, "Link: ")
+                        text.insert(tk.INSERT, elem.LINK)
+                        text.insert(tk.INSERT, "\n")
+                    else:
+                        text.insert(tk.INSERT, "Link: None\n ")
+                except Exception as e:
+                    print(e)
+            if dispSpec:
+                try:
+                    if elem.UMBRELLA is not None:
+                        text.insert(tk.INSERT, "Umbrella/Specialty: ")
+                        text.insert(tk.INSERT, elem.UMBRELLA)
+                        text.insert(tk.INSERT, "\n")
+                    else:
+                        text.insert(tk.INSERT, "Umbrella/Specialty: None\n ")
+                except Exception as e:
+                    print(e)
+                try:
+                    if elem.SPECIALTY is not None:
+                        text.insert(tk.INSERT, "Umbrella/Specialty: ")
+                        text.insert(tk.INSERT, elem.SPECIALTY)
+                        text.insert(tk.INSERT, "\n")
+                    else:
+                        text.insert(tk.INSERT, "Umbrella/Specialty: None\n ")
+                except Exception as e:
+                    print(e)
+            looking = findOnChartSwap(elem.NAME, pand, ratio)
+            if len(looking) > 0:
+                try:
+                    text.insert(tk.INSERT, 'ChartSwap: ')
+                    text.insert(tk.INSERT, ''.join(str(looking)))
+                except Exception as e:
+                    print(e)
+            text.insert(tk.INSERT,"\n")
+            text.insert(tk.INSERT,"\n")
+    else:
+        text.insert(tk.INSERT,"Nothing was found. Search again...")
         text.insert(tk.INSERT,"\n")
         
 def readED(fileToRead, hosp, name, n, ratio):
@@ -195,10 +267,22 @@ def findProvider(fileToRead, name, n, text):
     possibleOptions = deepSearch(name, newList, 10, 0.5)
     if len(possibleOptions) < 10:
         possibleOptions = deepSearch(name, newList, 10, 0.2)
-    try:
-        text.delete(1.0,tk.END)
-    except Exception as e:
-        pass
+    if len(possibleOptions) < 1:
+        possibleOptions = searchFirstDict(name, providerDict)
+    if len(possibleOptions) == 0:
+        clearScreen(text)
+        text.insert(tk.INSERT,"Nothing was found with your search term\n")
+        text.insert(tk.INSERT, 'Please try again...\n')
+    else:
+        clearScreen(text)
+        try:
+            possibleOptions = deepSearch(possibleOptions[0].Name, newList, 10, 0.2)
+        except Exception as e:
+            pass
+    #try:
+        #text.delete(1.0,tk.END)
+    #except Exception as e:
+        #pass
     text.insert(tk.INSERT, 'Is that what you are looking for...?\n\n')
     for i in possibleOptions:
         text.insert(tk.INSERT, i+ "\n")

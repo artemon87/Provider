@@ -49,7 +49,7 @@ class ProviderGUI:
         self.fDir = None #dir of a file
         self.file = tk.StringVar()
         self.entryLen = 60
-        self.fileEntry = ttk.Entry(self.mngFilesFrame, width=94,textvariable=self.file)
+        self.fileEntry = ttk.Entry(self.mngFilesFrame, width=60,textvariable=self.file)
         self.fileEntry.grid(column=1, row=0, sticky=tk.W)
         self.monty2 = ttk.LabelFrame(self.tab2, text=' Provider Network')
         self.time = ttk.Label(self.infoZone, text='Date and Time of Launch')
@@ -101,6 +101,7 @@ class ProviderGUI:
     def searchBar(self):
         self.nameEntered.grid(column=0, row=1, rowspan=3)
         self.nameEntered.focus()
+        self.nameEntered.bind('<Return>', self.clickMe)
 
     def dropDown(self):
         self.numberChosen['values'] = ('Find Provider', 'Build a network')
@@ -168,6 +169,7 @@ class ProviderGUI:
         upNeedles = self.chAddl1.get()
         upYelp = self.chAddl2.get()
         upHospital = self.chAddl3.get()
+        print('Needles: ',upNeedles, 'Yelp:', upYelp,'Hospital:', upHospital)
         self.updateDB.configure(text='Updating...')
         result = fillinDB(upNeedles,upYelp, upHospital, self.scr)
         if result == 0:
@@ -176,7 +178,7 @@ class ProviderGUI:
         else:
             mBox.showinfo('Database Information', 'Please launch Yelp.com on your webbrowser.\nAnd confirm that you are not a robot')
         
-    def clickMe(self):
+    def clickMe(self, event=None):
         ratio = self.searchAccuracy()
         displayArgs = self.getCheckbox()
         if self.act.get() == 'Build a network':
@@ -261,4 +263,7 @@ gui.checkBox()
 gui.radioButton()
 gui.scrollableText()
 gui.getDateTime()
-w.mainloop()
+try:
+    w.mainloop()
+except Exception as e:
+    print(e)

@@ -93,9 +93,11 @@ def readFromHospitalName(tup, name):
     returnList = []
     sqlRetrive = '''SELECT * FROM HOSPITAL WHERE NAME like ? or NAME like ? or NAME like ? ORDER BY NAME ASC;'''
     for row in tup.cursor.execute(sqlRetrive, [('%'+name+'%'), (name+'%'), ('%'+name)]):
-        for elem in row:
-            inst = P(elem[0], elem[1], elem[2], elem[3], elem[4], elem[5], elem[6], elem[7], elem[8], elem[9], elem[10])
+        try:
+            inst = P(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10])
             returnList.append(inst)
+        except Exception as e:
+            pass
     return returnList
 
 def readFromHospitalUmbrella(tup, name):
@@ -138,9 +140,28 @@ def readFromProviderName(tup, name):
             pass        
     return returnList
 
+
 def readFromProvider(tup):
     sqlRetrive = '''SELECT * FROM PROVIDER ORDER BY NAME ASC;'''
     for row in tup.cursor.execute(sqlRetrive):
         print(row)
 
+def readFromNeedles(tup):
+    sqlRetrive = '''SELECT * FROM NEEDLES ORDER BY NAME ASC;'''
+    for row in tup.cursor.execute(sqlRetrive):
+        print(row)
 
+def dropHospital(tu):
+    sqlRetrive = '''DROP TABLE IF EXISTS HOSPITAL;'''
+    tup.cursor.execute(sqlRetrive)
+    tup.connection.commit()
+
+def dropNeedles(tup):
+    sqlRetrive = '''DROP TABLE IF EXISTS NEEDLES;'''
+    tup.cursor.execute(sqlRetrive)
+    tup.connection.commit()
+
+def dropProvider(tup):
+    sqlRetrive = '''DROP TABLE IF EXISTS PROVIDER;'''
+    tup.cursor.execute(sqlRetrive)
+    tup.connection.commit()

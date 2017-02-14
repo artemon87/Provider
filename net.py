@@ -31,7 +31,9 @@ def processAll(location):
                 phone = phone.replace('(', '').replace(') ', '').replace(' - ', '')
             else:
                 phone = 'NONE'
-            if not addr:
+            if addr:
+                addr = addr.replace('\n\n', '\n')
+            else:
                 addr = 'NONE'
                 
             inst = Provider(providerFile['compute_0005'][elem],
@@ -61,12 +63,14 @@ def processFacility(location, hospitals = None, singleProvider = None, ratio = 0
             currentCase = providerFile['casenum'][elem]
             phone = str(providerFile['compute_0008'][elem])
             addr = str(providerFile['compute_0007'][elem])
+            if addr:
+                addr = addr.replace('\n\n', '\n')
+            else:
+                addr = 'NONE'
             if phone:
                 phone = phone.replace('(', '').replace(') ', '').replace(' - ', '')
             else:
                 phone = 'NONE'
-            if not addr:
-                addr = 'NONE'
             inst = Provider(providerFile['compute_0005'][elem],
                             addr,
                             phone,
@@ -130,7 +134,9 @@ def createNX(providerDict, providerFile, toRemove, netSize):
                     phone = phone.replace('(', '').replace(') ', '').replace(' - ', '')
                 else:
                     phone = 'NONE'
-                if not addr:
+                if addr:
+                    addr = addr.replace('\n\n', '\n')
+                else:
                     addr = 'NONE'
                 instP = Provider(providerFile['compute_0005'][elem],
                                 addr,
