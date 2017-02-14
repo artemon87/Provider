@@ -41,10 +41,11 @@ def fillinDB(upNeedles,upYelp, upHospital, text):
     createTablesInDB()
     DB = connectToDB()
     lst = []
-    city = ['Seattle, WA', 'Federal Way,WA', 'Tacoma, WA', 'Bellevue, WA',
-            'Everett, WA', 'Renton, WA', 'Lake City, WA', 'Sammamish, WA']
-    spec = ['Chiropractors', 'Urgent Care', 'Orthopedic Doctor', 'Physical Therapy',
-            'Pediatrics', 'Physicians Near Me', 'Massage Therapy', 'Diagnostic Imaging',
+    city = ['Seattle,WA', 'Federal Way,WA', 'Tacoma,WA', 'Bellevue,WA',
+            'Everett,WA', 'Renton,WA', 'Lake City,WA', 'Sammamish,WA',
+            'Lynnwood,WA']
+    spec = ['Chiropractors', 'Chiropractic','Urgent Care', 'Orthopedic Doctor', 'Physical Therapy',
+            'Pediatrics', 'Physicians', 'Massage Therapy', 'Diagnostic Imaging',
             'Medical Clinic', 'Family Practice']
     
     if upYelp:

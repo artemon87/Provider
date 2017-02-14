@@ -221,11 +221,11 @@ class ProviderGUI:
         accuracy = self.radVar.get()
         ratio = float
         if accuracy == 1:
-            ratio = 0.30
+            ratio = 0.50
         elif accuracy == 2:
-            ratio = 0.70
+            ratio = 0.75
         elif accuracy == 3:
-            ratio = 0.85
+            ratio = 0.90
         return ratio
             
 	
