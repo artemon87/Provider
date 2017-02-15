@@ -133,6 +133,20 @@ def readFromHospitalUmbrella(tup, name):
             pass        
     return returnList
 
+def readFromNeedlesAll(tup):
+    P = namedtuple('P', 'NAME ADDRESS PHONE FAX SPECIALTY ID WEIGHT RU ES EN')
+    name = name.upper()
+    returnList = []
+    sqlRetrive = '''SELECT * FROM NEEDLES ORDER BY NAME ASC;'''
+    for row in tup.cursor.execute(sqlRetrive, [('%'+name+'%'), (name+'%'), ('%'+name)]):
+        try:
+            inst = P(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
+            returnList.append(inst)
+        except IndexError as e:
+            pass        
+    return returnList
+    
+
 def readFromNeedlesName(tup, name):
     P = namedtuple('P', 'NAME ADDRESS PHONE FAX SPECIALTY ID WEIGHT RU ES EN')
     name = name.upper()

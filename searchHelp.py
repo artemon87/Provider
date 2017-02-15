@@ -157,8 +157,6 @@ def confirmProvider(fileToRead, name, text, displayArgs, ratio):
         text.delete(1.0,tk.END)
     except Exception as e:
         pass
-    #providerDict, *args = processAll(fileToRead)
-    #newList = providerDictToList(providerDict)
     for k,v in umbr.items():
         result = searchFirst(k, name.upper())
         if result:
@@ -352,4 +350,9 @@ def findProvider(fileToRead, name, ratio, text):
     text.insert(tk.INSERT, 'Please search again...\n')
     return possibleOptions
 
-def treatmentPlan(language, text, 
+def treatmentPlan(language, text, location):
+    languageDict = {'Russian': 1, 'Spanish': 2, 'English' : 3}
+    clearScreen(text)
+    DB = connectToDB()
+    lst = readFromNeedlesAll(DB)
+    

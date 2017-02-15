@@ -18,7 +18,7 @@ from os import path
 from tkinter import filedialog as fd
 import pytz
 from tkinter import messagebox as mBox
-
+from threading import Thread
 from datetime import datetime
 
 
@@ -63,7 +63,7 @@ class ProviderGUI:
         self.timeZoneLabel = ttk.Label(self.infoZone, textvariable=self.timeZone)
         self.aLabel = ttk.Label(self.monty1, text="Search Box") #label
         self.action = ttk.Button(self.monty1, text="Run", command=self.clickMe) #button
-        self.updateDB = ttk.Button(self.infoZone, text='Update Database', comman=self.updateDatabase)
+        self.updateDB = ttk.Button(self.infoZone, text='Update Database', comman=self.runUpdateDatabase)
         self.name = tk.StringVar() #search name
         self.name2 = tk.StringVar() #search location
         self.nameEntered = ttk.Entry(self.monty1, width=40, textvariable=self.name) #name entered
@@ -76,9 +76,8 @@ class ProviderGUI:
         self.clientLanguageChooser = ttk.Combobox(self.client, width=12, textvariable=self.act2)
         self.searchButton = ttk.Button(self.client, text="Search", command=self.searchMe) #button
         self.numberChosen = ttk.Combobox(self.monty1, width=12, textvariable=self.act)
-        self.labelCheckbox = ttk.Label(self.monty, text="Information to Display", font=("Helvetica", 13)).grid(column=1, row=0, padx = 10, pady = 10)
-        self.labelCombo = ttk.Label(self.monty, text="Search Ratio", font=("Helvetica", 13)).grid(column=1, row=6, padx = 10, pady = 10)
-        #self.labelAddlInfo= ttk.Label(self.monty, text="Search Ratio", font=("Helvetica", 13)).grid(column=1, row=8, padx = 10, pady = 10)
+        self.labelCheckbox = ttk.Label(self.monty, text="Information to Display", font=("Helvetica", 12)).grid(column=1, row=0, padx = 10, pady = 10)
+        self.labelCombo = ttk.Label(self.monty, text="Search Ratio", font=("Helvetica", 12)).grid(column=1, row=6, padx = 10, pady = 10)
         self.chVar1 = tk.IntVar() #checkbox 1
         self.chVar2 = tk.IntVar() #checkbox 2
         self.chVar3 = tk.IntVar() #checkbox 3
@@ -89,9 +88,9 @@ class ProviderGUI:
         self.chAddl2 = tk.IntVar() #checkbox8
         self.chAddl3 = tk.IntVar() #checkbox9
         self.radVar = tk.IntVar() #radio button
-        self.scr = scrolledtext.ScrolledText(self.monty, width=80, height=14, wrap=tk.WORD)
-        self.scrClient = scrolledtext.ScrolledText(self.client2, width=90, height=30, wrap=tk.WORD)
-        self.figure = Figure(figsize=(8,6), dpi=90)
+        self.scr = scrolledtext.ScrolledText(self.monty, width=70, height=14, wrap=tk.WORD)
+        self.scrClient = scrolledtext.ScrolledText(self.client2, width=70, height=30, wrap=tk.WORD)
+        self.figure = Figure(figsize=(7,6), dpi=85)
         self.aPlot = self.figure.add_subplot(111)
         self.canvas = None
         self.toolbar = None
@@ -188,6 +187,9 @@ class ProviderGUI:
         except Exception as e:
             pass
 
+    def runUpdateDatabase(self):
+        self.createThreadUpdateDatabase()
+
     def updateDatabase(self):
         mBox.showinfo('Database Information', 'Stay in touch.\nUpdating takes some time (5-15 minutes)')
         upNeedles = self.chAddl1.get()
@@ -203,11 +205,11 @@ class ProviderGUI:
             mBox.showinfo('Database Information', 'Please launch Yelp.com on your webbrowser.\nAnd confirm that you are not a robot')
 
     def searchMe(self, evcent = None):
-        treatmentPlan(self.act2.get(), self.scrClient
+        treatmentPlan(self.act2.get(), self.scrClient,self.name2.get())
         print(language)
-        
+        pass
 
-    def clickMe(self, event = None):
+    def runSearchTab1(self):
         ratio = self.searchAccuracy()
         displayArgs = self.getCheckbox()
         if self.act.get() == 'Build a network':
@@ -219,21 +221,15 @@ class ProviderGUI:
                 fileToRead = self.fName
             ed, providerDict = readED(fileToRead, None, self.name.get(), 7, ratio)
             if len(ed) == 0:
-                try:
-                    self.scr.delete(1.0,tk.END)
-                except Exception as e:
-                    pass
+                clearScreen(self.scr)
                 confirmProvider(fileToRead, self.name.get(), self.scr, displayArgs, ratio)
                 #possibleOptions = findProvider(fileToRead, self.name.get(), ratio, self.scr)
             else:
-                try:
-                    self.scr.delete(1.0,tk.END)
-                except Exception as e:
-                    pass
+                clearScreen(self.scr)
                 #confirmProvider(fileToRead, self.name.get(), self.scr, displayArgs, ratio)
                 printOutProvider(providerDict, self.scr, displayArgs)
                 pos=nx.spring_layout(ed)
-                nx.draw_networkx(ed, pos, arrows = True, with_labels = True, ax = self.aPlot, font_size = 10)
+                nx.draw_networkx(ed, pos, arrows = True, with_labels = True, ax = self.aPlot, font_size = 9)
                 self.canvas = FigureCanvasTkAgg(self.figure, master=self.monty2)
                 self.canvas.show()
                 self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
@@ -243,6 +239,11 @@ class ProviderGUI:
             
         elif self.act.get() == 'Find Provider':
             confirmSearchProvider(self.name.get(), self.scr, displayArgs)
+        
+
+    def clickMe(self, event = None):
+        self.createThreadRun()
+
 
     def getCheckbox(self):
         return self.chVar1.get(), self.chVar2.get(), self.chVar3.get(), self.chVar4.get(), self.chVar5.get(), self.chVar6.get()
@@ -278,6 +279,18 @@ class ProviderGUI:
         self.fName = fd.askopenfilename(parent=self.win, initialdir=self.fDir)
         self.fileEntry.delete(0, tk.END)
         self.fileEntry.insert(0, self.fName)
+
+    def createThreadRun(self):
+        runT = Thread(target=self.runSearchTab1)
+        runT.setDaemon(True)
+        runT.start()
+        print(runT)
+
+    def createThreadUpdateDatabase(self):
+        runUpdate = Thread(target=self.updateDatabase)
+        runUpdate.setDaemon(True)
+        runUpdate.start()
+        print(runUpdate)
 
 
 
