@@ -351,3 +351,5 @@ def findProvider(fileToRead, name, ratio, text):
     text.insert(tk.INSERT,"\n")
     text.insert(tk.INSERT, 'Please search again...\n')
     return possibleOptions
+
+def treatmentPlan(language, text, 

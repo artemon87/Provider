@@ -65,11 +65,12 @@ class ProviderGUI:
         self.action = ttk.Button(self.monty1, text="Run", command=self.clickMe) #button
         self.updateDB = ttk.Button(self.infoZone, text='Update Database', comman=self.updateDatabase)
         self.name = tk.StringVar() #search name
+        self.name2 = tk.StringVar() #search location
         self.nameEntered = ttk.Entry(self.monty1, width=40, textvariable=self.name) #name entered
         self.aLabel2 = ttk.Label(self.monty1, text="Choose an action:").grid(column=1, row=0) #drop down box
         self.clientLable1 = ttk.Label(self.client, text="Enter client's location:").grid(column=0, row=0) #drop down box
         self.clientLable2 = ttk.Label(self.client, text="Language:").grid(column=1, row=0) #drop down box
-        self.clientLocation = ttk.Entry(self.client, width=40, textvariable=self.name) #name entered
+        self.clientLocation = ttk.Entry(self.client, width=40, textvariable=self.name2) #name entered
         self.act = tk.StringVar()
         self.act2 = tk.StringVar()
         self.clientLanguageChooser = ttk.Combobox(self.client, width=12, textvariable=self.act2)
@@ -202,7 +203,8 @@ class ProviderGUI:
             mBox.showinfo('Database Information', 'Please launch Yelp.com on your webbrowser.\nAnd confirm that you are not a robot')
 
     def searchMe(self, evcent = None):
-        pass
+        treatmentPlan(self.act2.get(), self.scrClient
+        print(language)
         
 
     def clickMe(self, event = None):
