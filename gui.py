@@ -32,8 +32,12 @@ class ProviderGUI:
         self.tabControl = ttk.Notebook(self.win)
         self.tab1 = ttk.Frame(self.tabControl)
         self.tab2 = ttk.Frame(self.tabControl)
+        self.tab3 = ttk.Frame(self.tabControl)
+        self.tab4 = ttk.Frame(self.tabControl)
         self.tabControl.add(self.tab1, text='Main')
         self.tabControl.add(self.tab2, text='Network Graph')
+        self.tabControl.add(self.tab3, text='Client Referrals')
+        self.tabControl.add(self.tab4, text='Text Message')
         self.tabControl.pack(expand=1, fill="both")
         self.menuBar = Menu(self.win)
         self.win.config(menu=self.menuBar)
@@ -52,6 +56,8 @@ class ProviderGUI:
         self.fileEntry = ttk.Entry(self.mngFilesFrame, width=60,textvariable=self.file)
         self.fileEntry.grid(column=1, row=0, sticky=tk.W)
         self.monty2 = ttk.LabelFrame(self.tab2, text=' Provider Network')
+        self.client = ttk.LabelFrame(self.tab3, text=' Seach Box ')
+        self.client2 = ttk.LabelFrame(self.tab3, text=' Plan ')
         self.time = ttk.Label(self.infoZone, text='Date and Time of Launch')
         self.timeZone = tk.StringVar()
         self.timeZoneLabel = ttk.Label(self.infoZone, textvariable=self.timeZone)
@@ -61,7 +67,13 @@ class ProviderGUI:
         self.name = tk.StringVar() #search name
         self.nameEntered = ttk.Entry(self.monty1, width=40, textvariable=self.name) #name entered
         self.aLabel2 = ttk.Label(self.monty1, text="Choose an action:").grid(column=1, row=0) #drop down box
+        self.clientLable1 = ttk.Label(self.client, text="Enter client's location:").grid(column=0, row=0) #drop down box
+        self.clientLable2 = ttk.Label(self.client, text="Language:").grid(column=1, row=0) #drop down box
+        self.clientLocation = ttk.Entry(self.client, width=40, textvariable=self.name) #name entered
         self.act = tk.StringVar()
+        self.act2 = tk.StringVar()
+        self.clientLanguageChooser = ttk.Combobox(self.client, width=12, textvariable=self.act2)
+        self.searchButton = ttk.Button(self.client, text="Search", command=self.searchMe) #button
         self.numberChosen = ttk.Combobox(self.monty1, width=12, textvariable=self.act)
         self.labelCheckbox = ttk.Label(self.monty, text="Information to Display", font=("Helvetica", 13)).grid(column=1, row=0, padx = 10, pady = 10)
         self.labelCombo = ttk.Label(self.monty, text="Search Ratio", font=("Helvetica", 13)).grid(column=1, row=6, padx = 10, pady = 10)
@@ -77,7 +89,8 @@ class ProviderGUI:
         self.chAddl3 = tk.IntVar() #checkbox9
         self.radVar = tk.IntVar() #radio button
         self.scr = scrolledtext.ScrolledText(self.monty, width=80, height=14, wrap=tk.WORD)
-        self.figure = Figure(figsize=(7,5), dpi=90)
+        self.scrClient = scrolledtext.ScrolledText(self.client2, width=90, height=30, wrap=tk.WORD)
+        self.figure = Figure(figsize=(8,6), dpi=90)
         self.aPlot = self.figure.add_subplot(111)
         self.canvas = None
         self.toolbar = None
@@ -93,20 +106,29 @@ class ProviderGUI:
         self.browseButton.grid(column=0, row=0, sticky=tk.W)
         self.monty.grid(column=0, row=1, padx=8, pady=4)
         self.mngFilesFrame.grid(column=0, row=2, sticky='WE', padx=10, pady=5)
+        self.client.grid(column=0, row=0, padx=20, pady=4)
+        self.client2.grid(column=0, row=1, padx=8, pady=4)
 
     def bottons(self):
         self.action.grid(column=2, row=1)
         self.updateDB.grid(column=3, row=1)
+        self.searchButton.grid(column=2, row=1)
 
     def searchBar(self):
         self.nameEntered.grid(column=0, row=1, rowspan=3)
         self.nameEntered.focus()
         self.nameEntered.bind('<Return>', self.clickMe)
+        self.clientLocation.grid(column=0, row=1, rowspan=3)
+        self.clientLocation.focus()
+        self.clientLocation.bind('<Return>', self.searchMe)
 
     def dropDown(self):
         self.numberChosen['values'] = ('Find Provider', 'Build a network')
         self.numberChosen.grid(column=1, row=1, rowspan=2)
         self.numberChosen.current(0)
+        self.clientLanguageChooser['values'] = ('Russian', 'Spanish', 'English')
+        self.clientLanguageChooser.grid(column=1, row=1, rowspan=2)
+        self.clientLanguageChooser.current(0)
 
     def checkBox(self):
         self.check1 = tk.Checkbutton(self.monty, text="Display Name", variable=self.chVar1, state='disabled')
@@ -148,6 +170,7 @@ class ProviderGUI:
 
     def scrollableText(self):
         self.scr.grid(column=0, columnspan=3)
+        self.scrClient.grid(column=0, columnspan=3)
 
     def _quit(self):
         self.win.quit()
@@ -177,8 +200,12 @@ class ProviderGUI:
             self.updateDB.configure(text='Update Database')
         else:
             mBox.showinfo('Database Information', 'Please launch Yelp.com on your webbrowser.\nAnd confirm that you are not a robot')
+
+    def searchMe(self, evcent = None):
+        pass
         
-    def clickMe(self, event=None):
+
+    def clickMe(self, event = None):
         ratio = self.searchAccuracy()
         displayArgs = self.getCheckbox()
         if self.act.get() == 'Build a network':
