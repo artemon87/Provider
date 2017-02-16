@@ -376,7 +376,8 @@ def treatmentPlan(language, text, location, radius):
     for elem in lst:
         try:
             if elem.ADDRESS is not None:
-                loc2 = geocoder.google(elem.ADDRESS)
+                #loc2 = geocoder.google(elem.ADDRESS)
+                loc2 = elem.GEO
         except Exception as e:
             print(e)
         distance = vincenty(loc1.latlng, loc2.latlng).miles
