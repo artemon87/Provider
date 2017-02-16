@@ -7,6 +7,10 @@ from HospitalsBS import *
 from yelp import *
 import time
 import random
+import geocoder
+from geopy.distance import great_circle
+from geopy.distance import vincenty
+import googlemaps
 
 
 def clearScreen(text):
@@ -350,9 +354,71 @@ def findProvider(fileToRead, name, ratio, text):
     text.insert(tk.INSERT, 'Please search again...\n')
     return possibleOptions
 
-def treatmentPlan(language, text, location):
+def treatmentPlan(language, text, location, radius):
+    #gmaps = googlemaps.Client(key='AIzaSyCsATCl3uaPZGRcamcl11Nd1NnaLD8SIew')
+    #   AIzaSyCsATCl3uaPZGRcamcl11Nd1NnaLD8SIew
+    print(radius)
+    places = ['Phys', 'Physician', 'Physicians', 'Rad', 'Radiology', 'ER', 'Emergency', 'Imaging', 'Ambulance', 'Fire']
     languageDict = {'Russian': 1, 'Spanish': 2, 'English' : 3}
-    clearScreen(text)
+    txPlanDict = {}
+    if ', WA' not in location.upper() or ',WA' not in location.upper() or ' WA' not in location.upper():
+        location = location + ' WA'
+        print(location)
     DB = connectToDB()
     lst = readFromNeedlesAll(DB)
+    loc1 = geocoder.google(location)
+    if loc1 is None:
+        text.insert(tk.INSERT,"Cant find this location. Please try again...\n")
+        text.insert(tk.INSERT,"Either enter full address or in this format: [city, state]...\n")
+        return
+    loc2 = None
+    distance = float
+    for elem in lst:
+        try:
+            if elem.ADDRESS is not None:
+                loc2 = geocoder.google(elem.ADDRESS)
+        except Exception as e:
+            print(e)
+        distance = vincenty(loc1.latlng, loc2.latlng).miles
+        if distance < radius:
+            txPlanDict[elem] = distance
+        else:
+            pass
+    clearScreen(text)
+    for key, value in txPlanDict.items():
+        check = checkForSpecialties(key.NAME, places)
+        if check:
+            if languageDict[language] == 1:
+                if key.RU > 3:
+                    printProviderTX(text, key, value, language)
+                    print(key.NAME, 'is only', value,'miles away.', key.ADDRESS)
+            elif languageDict[language] == 2:
+                if key.ES > 3:
+                    printProviderTX(text, key, value, language)
+                    print(key.NAME, 'is only', value,'miles away.', key.ADDRESS)
+            elif languageDict[language] == 3:
+                if key.EN > 3:
+                    printProviderTX(text, key, value, language)
+                    print(key.NAME, 'is only', value,'miles away.', key.ADDRESS)
+    return True
+
+def printProviderTX(text, provider, value, language):
+    text.insert(tk.INSERT,provider.NAME)
+    text.insert(tk.INSERT," is only ")
+    text.insert(tk.INSERT,round(value, 2))
+    text.insert(tk.INSERT," miles away from you\n")
+    text.insert(tk.INSERT,"There were ")
+    text.insert(tk.INSERT,provider.WEIGHT)
+    text.insert(tk.INSERT," ")
+    text.insert(tk.INSERT, language)
+    text.insert(tk.INSERT," speeking clients in the past\nFull address: ")
+    text.insert(tk.INSERT,provider.ADDRESS)
+    text.insert(tk.INSERT,"\n\n")
+
+    
+        
+        
+        
+    
+    
     

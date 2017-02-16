@@ -4,6 +4,15 @@ from difflib import SequenceMatcher
 
 roles = [ '-', "'s",'Health', 'Clinic','Ph.d', 'Ph.D', 'WA', 'Facility', 'MD', 'DC', 'ND', 'LMP', 'Dr', 'Doctor']
 roles2 = [ '-', "'s",'Health', 'Medical', 'Center' , 'Hospital','Ph.d', 'Ph.D', 'WA', 'Facility', 'MD', 'DC', 'ND', 'LMP', 'Dr', 'Doctor', 'Imaging ', 'D.C.', 'D.C.,', 'Dr.']
+
+
+def checkForSpecialties(word, lst):
+    for i in lst:
+        if i.upper() in word.upper():
+            return False
+    return True
+
+    
 def searchFirstDict(word1, dic):
     for key, val in dic.items():
         for i, j in zip(key.Name.upper(), word1.upper()):

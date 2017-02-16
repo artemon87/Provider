@@ -20,6 +20,7 @@ import pytz
 from tkinter import messagebox as mBox
 from threading import Thread
 from datetime import datetime
+import time
 
 
 
@@ -204,10 +205,25 @@ class ProviderGUI:
         else:
             mBox.showinfo('Database Information', 'Please launch Yelp.com on your webbrowser.\nAnd confirm that you are not a robot')
 
+
+    def loadMe(self):
+        for i in range(20):
+            time.sleep(3)
+            self.scrClient.insert(tk.INSERT,".")
+
+    
     def searchMe(self, evcent = None):
-        treatmentPlan(self.act2.get(), self.scrClient,self.name2.get())
-        print(language)
-        pass
+        clearScreen(self.scrClient)
+        self.scrClient.insert(tk.INSERT,"Searching...")
+        #self.createLoadingBullet()
+        self.createThreadSearchTreatment()
+            
+        
+        
+
+    def searchTXPlan(self):
+        treatmentPlan(self.act2.get(), self.scrClient, self.name2.get(), 10)
+
 
     def runSearchTab1(self):
         ratio = self.searchAccuracy()
@@ -291,6 +307,18 @@ class ProviderGUI:
         runUpdate.setDaemon(True)
         runUpdate.start()
         print(runUpdate)
+
+    def createThreadSearchTreatment(self):
+        searchTX = Thread(target=self.searchTXPlan)
+        searchTX.setDaemon(True)
+        searchTX.start()
+        print(searchTX)
+
+    def createLoadingBullet(self):
+        loading = Thread(target=self.loadMe)
+        loading.setDaemon(True)
+        loading.start()
+        print(loading)
 
 
 
