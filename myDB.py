@@ -138,6 +138,33 @@ def readFromHospitalUmbrella(tup, name):
             pass        
     return returnList
 
+def updateBillingHospitalUmbrella(tup, name, fax):
+    name = name.upper()
+    sqlRetrive = '''UPDATE HOSPITAL SET RECORDS = ? WHERE UMBRELLA like ? or UMBRELLA like ? or UMBRELLA like ?;'''
+    for row in tup.cursor.execute(sqlRetrive,[fax, ('%'+name+'%'), (name+'%'), ('%'+name)])
+    tup.connection.commit()
+
+
+def updateBillingHospitalName(tup, name, fax):
+    name = name.upper()
+    sqlRetrive = '''UPDATE HOSPITAL SET RECORDS = ? WHERE NAME like ? or NAME like ? or NAME like ?;'''
+    for row in tup.cursor.execute(sqlRetrive,[fax, ('%'+name+'%'), (name+'%'), ('%'+name)])
+    tup.connection.commit()
+
+def updateRecordsHospitalUmbrella(tup, name, fax):
+    name = name.upper()
+    sqlRetrive = '''UPDATE HOSPITAL SET RECORDS = ? WHERE UMBRELLA like ? or UMBRELLA like ? or UMBRELLA like ?;'''
+    for row in tup.cursor.execute(sqlRetrive,[fax, ('%'+name+'%'), (name+'%'), ('%'+name)])
+    tup.connection.commit()
+
+
+def updateRecordsHospitalName(tup, name, fax):
+    name = name.upper()
+    sqlRetrive = '''UPDATE HOSPITAL SET RECORDS = ? WHERE NAME like ? or NAME like ? or NAME like ?;'''
+    for row in tup.cursor.execute(sqlRetrive,[fax, ('%'+name+'%'), (name+'%'), ('%'+name)])
+    tup.connection.commit()
+
+
 def readFromNeedlesAll(tup):
     P = namedtuple('P', 'NAME ADDRESS PHONE FAX SPECIALTY ID GEO WEIGHT RU ES EN')
     returnList = []
@@ -176,6 +203,7 @@ def readFromNeedlesNameExact(tup, name):
         except IndexError as e:
             pass        
     return returnList
+
 
 
 def readFromProviderName(tup, name):
