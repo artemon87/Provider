@@ -260,6 +260,23 @@ def createDicForDB(providerDict, needlesProvider):
         needlesDict[key] = Counter(value)
         print(Counter(value))
     return needlesDict'''
+
+def getFaxNeedles(location):
+    file = read(location)
+    providerFile = file.File
+    dic = {}
+    F = namedtuple('F', 'ID Fax')
+    for elem in providerFile.index:
+        ID = providerFile['names_id'][elem]
+        fax = providerFile['fax_number'][elem]
+        try:
+            fax = int(fax)
+        except ValueError as v:
+            pass
+        if ID not in dic:
+            dic[ID] = fax
+    return dic
+        
     
             
             

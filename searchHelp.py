@@ -355,6 +355,7 @@ def findProvider(fileToRead, name, ratio, text):
     return possibleOptions
 
 def treatmentPlan(language, text, location, radius):
+    radius = float(radius)
     #gmaps = googlemaps.Client(key='AIzaSyCsATCl3uaPZGRcamcl11Nd1NnaLD8SIew')
     #   AIzaSyCsATCl3uaPZGRcamcl11Nd1NnaLD8SIew
     print(radius)
@@ -412,9 +413,14 @@ def printProviderTX(text, provider, value, language):
     text.insert(tk.INSERT,provider.WEIGHT)
     text.insert(tk.INSERT," ")
     text.insert(tk.INSERT, language)
-    text.insert(tk.INSERT," speeking clients in the past\nFull address: ")
+    text.insert(tk.INSERT," speeking clients in the past 2 years\nFull address: ")
     text.insert(tk.INSERT,provider.ADDRESS)
     text.insert(tk.INSERT,"\n\n")
+
+def updateFaxInNeedles():
+    DB = connectToDB()
+    dic = getFaxNeedles('netFax.xlsx')
+    updateNeedlesFax(DB, dic)
 
     
         

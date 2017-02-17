@@ -55,7 +55,7 @@ class ProviderGUI:
         self.file = tk.StringVar()
         self.entryLen = 60
         self.fileEntry = ttk.Entry(self.mngFilesFrame, width=60,textvariable=self.file)
-        self.fileEntry.grid(column=1, row=0, sticky=tk.W)
+        self.fileEntry.grid(column=1, row=0, padx = 40, pady = 5)
         self.monty2 = ttk.LabelFrame(self.tab2, text=' Provider Network')
         self.client = ttk.LabelFrame(self.tab3, text=' Seach Box ')
         self.client2 = ttk.LabelFrame(self.tab3, text=' Plan ')
@@ -81,8 +81,8 @@ class ProviderGUI:
         self.clientDistanceChooser = ttk.Combobox(self.client, width=8, textvariable=self.act3)
         self.searchButton = ttk.Button(self.client, text="Search", command=self.searchMe) #button
         self.numberChosen = ttk.Combobox(self.monty1, width=12, textvariable=self.act)
-        self.labelCheckbox = ttk.Label(self.monty, text="Information to Display", font=("Helvetica", 12)).grid(column=1, row=0, padx = 10, pady = 10)
-        self.labelCombo = ttk.Label(self.monty, text="Search Ratio", font=("Helvetica", 12)).grid(column=1, row=6, padx = 10, pady = 10)
+        self.labelCheckbox = ttk.Label(self.monty, text="Information to Display", font=("System", 12)).grid(column=1, row=0, padx = 10, pady = 10)
+        self.labelCombo = ttk.Label(self.monty, text="Search Ratio", font=("System", 12)).grid(column=1, row=6, padx = 10, pady = 10)
         self.chVar1 = tk.IntVar() #checkbox 1
         self.chVar2 = tk.IntVar() #checkbox 2
         self.chVar3 = tk.IntVar() #checkbox 3
@@ -94,6 +94,7 @@ class ProviderGUI:
         self.chAddl3 = tk.IntVar() #checkbox9
         self.radVar = tk.IntVar() #radio button
         self.chClient = tk.IntVar() #checkbox10
+        self.chClient2 = tk.IntVar() #checkbox11
         self.scr = scrolledtext.ScrolledText(self.monty, width=70, height=14, wrap=tk.WORD)
         self.scrClient = scrolledtext.ScrolledText(self.client2, width=70, height=30, wrap=tk.WORD)
         self.figure = Figure(figsize=(7,6), dpi=85)
@@ -105,13 +106,13 @@ class ProviderGUI:
     def labels(self):
         self.aLabel.grid(column=0, row=0)
         self.time.grid(column=0, row=0)
-        self.timeZoneLabel.grid(column=0,row=1)
-        self.infoZone.grid(column = 0, row = 3 , sticky = 'WE', padx = 10, pady = 5)
-        self.monty1.grid(column=0, row=0, padx=8, pady=4)
-        self.monty2.grid(column=0, row=0, padx=8, pady=4)
-        self.browseButton.grid(column=0, row=0, sticky=tk.W)
-        self.monty.grid(column=0, row=1, padx=8, pady=4)
-        self.mngFilesFrame.grid(column=0, row=2, sticky='WE', padx=10, pady=5)
+        self.timeZoneLabel.grid(column=0,row=1, padx=20, pady=4)
+        self.infoZone.grid(column = 0, row = 3 , sticky = 'WE', padx=20, pady=4)
+        self.monty1.grid(column=0, row=0, padx=20, pady=4)
+        self.monty2.grid(column=0, row=0, padx=20, pady=4)
+        self.browseButton.grid(column=0, row=0)
+        self.monty.grid(column=0, row=1, padx=20, pady=4)
+        self.mngFilesFrame.grid(column=0, row=2, sticky='WE', padx=20, pady=4)
         self.client.grid(column=0, row=0, padx=20, pady=4)
         self.client2.grid(column=0, row=1, padx=8, pady=4)
 
@@ -121,7 +122,7 @@ class ProviderGUI:
         self.searchButton.grid(column=3, row=1)
 
     def searchBar(self):
-        self.nameEntered.grid(column=0, row=1, rowspan=3)
+        self.nameEntered.grid(column=0, row=1, rowspan=2)
         self.nameEntered.focus()
         self.nameEntered.bind('<Return>', self.clickMe)
         self.clientLocation.grid(column=0, row=1, rowspan=2)
@@ -167,9 +168,12 @@ class ProviderGUI:
         self.check9 = tk.Checkbutton(self.infoZone, text="Update Hospitals", variable=self.chAddl3)
         self.check9.deselect()
         self.check9.grid(column=6, row=1, sticky=tk.W)
-        self.checkClient = tk.Checkbutton(self.client, text="Check this box if you are looking for a Needles providers only", variable=self.chClient)
+        self.checkClient = tk.Checkbutton(self.client, text="Needles providers only", variable=self.chClient)
         self.checkClient.grid(column=0, row=3)
         self.checkClient.select()
+        self.checkClient2 = tk.Checkbutton(self.client, text="Avoid Rad/Phys", variable=self.chClient2)
+        self.checkClient2.grid(column=1, row=3)
+        self.checkClient2.select()
 
     def radioButton(self):
         self.rad1 = tk.Radiobutton(self.monty, text='Somehow Accurate', variable=self.radVar, value=1, command=self.radCall)
@@ -203,12 +207,13 @@ class ProviderGUI:
         self.createThreadUpdateDatabase()
 
     def updateDatabase(self):
-        mBox.showinfo('Database Information', 'Stay in touch.\nUpdating takes some time (5-15 minutes)')
+        mBox.showinfo('Database Information', 'Stay in touch.\nUpdating takes some time (1-10 minutes)')
         upNeedles = self.chAddl1.get()
         upYelp = self.chAddl2.get()
         upHospital = self.chAddl3.get()
         print('Needles: ',upNeedles, 'Yelp:', upYelp,'Hospital:', upHospital)
         self.updateDB.configure(text='Updating...')
+        self.createLoadingBullet()
         result = fillinDB(upNeedles,upYelp, upHospital, self.scr)
         if result == 0:
             mBox.showinfo('Database Information', 'Database successfully finished updating.\n')
@@ -225,8 +230,8 @@ class ProviderGUI:
     
     def searchMe(self, evcent = None):
         clearScreen(self.scrClient)
-        self.scrClient.insert(tk.INSERT,"Searching...")
-        #self.createLoadingBullet()
+        self.scrClient.insert(tk.INSERT,"Searching")
+        self.createLoadingBullet()
         self.createThreadSearchTreatment()
             
         
@@ -241,6 +246,8 @@ class ProviderGUI:
         displayArgs = self.getCheckbox()
         if self.act.get() == 'Build a network':
             self.clearCanvas()
+            self.scrClient.insert(tk.INSERT,"Creating Network")
+            self.createLoadingBullet()
             fileToRead = ''
             if self.fName == None:
                 fileToRead ='netRace.xlsx'
