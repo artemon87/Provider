@@ -422,6 +422,17 @@ def updateFaxInNeedles():
     dic = getFaxNeedles('netFax.xlsx')
     updateNeedlesFax(DB, dic)
 
+def updateHospitalGeoLocation():
+    gmaps = googlemaps.Client(key = 'AIzaSyBePe2zZ69dI2-YMifPVmNirkarl86Hic4')
+    DB = connectToDB()
+    lst = readFromHospital(DB)
+    for i in lst:
+        fullAddress = i.ADDRESS + i.CITY
+        geocode_result = gmaps.geocode(fullAddress)
+        if geocode_result:
+            pass
+    
+
     
         
         

@@ -77,6 +77,12 @@ def alterProviderTable(tup):
     tup.connection.commit()
 
 
+def alterHospitalTable(tup):
+    tup.cursor.execute('''ALTER TABLE HOSPITAL ADD COLUMN GEO varchar DEFAULT NULL;''')
+    tup.connection.commit()
+
+
+
 def addHospital(hospitalCollection, tup):
     for hospital in hospitalCollection:
         tup.cursor.execute('''INSERT INTO HOSPITAL (NAME, ADDRESS, CITY, STATE, ZIP, PHONE, FAX, LINK, UMBRELLA) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);''',
@@ -111,6 +117,7 @@ def readFromHospital(tup):
     for row in tup.cursor.execute(sqlRetrive):
         returnList.append(row)
     return returnList
+
         
 def readFromHospitalName(tup, name):
     P = namedtuple('P', 'NAME ADDRESS CITY STATE ZIP PHONE FAX RECORDS BILLING LINK UMBRELLA')
@@ -169,6 +176,10 @@ def updateNeedlesFax(tup, provider):
         sqlRetrive = '''UPDATE NEEDLES SET FAX = ? WHERE ID = ?;'''
         tup.cursor.execute(sqlRetrive, [str(value), str(key)])
     tup.connection.commit()
+
+
+def updateHospitalGEO(tup, provider):
+    pass
 
 
 def readFromNeedlesAll(tup):
