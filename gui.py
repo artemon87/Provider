@@ -70,11 +70,15 @@ class ProviderGUI:
         self.nameEntered = ttk.Entry(self.monty1, width=40, textvariable=self.name) #name entered
         self.aLabel2 = ttk.Label(self.monty1, text="Choose an action:").grid(column=1, row=0) #drop down box
         self.clientLable1 = ttk.Label(self.client, text="Enter client's location:").grid(column=0, row=0) #drop down box
-        self.clientLable2 = ttk.Label(self.client, text="Language:").grid(column=1, row=0) #drop down box
-        self.clientLocation = ttk.Entry(self.client, width=40, textvariable=self.name2) #name entered
+        self.clientLable2 = ttk.Label(self.client, text="Language").grid(column=1, row=0) #drop down box
+        self.clientLable3 = ttk.Label(self.client, text="Travel Distance").grid(column=2, row=0) #drop down box
+        #self.clientLable4 = ttk.Label(self.client, text="Check this box if you looking for Needles providers only").grid(column=0, row=2) #drop down box
+        self.clientLocation = ttk.Entry(self.client, width=35, textvariable=self.name2) #name entered
         self.act = tk.StringVar()
         self.act2 = tk.StringVar()
-        self.clientLanguageChooser = ttk.Combobox(self.client, width=12, textvariable=self.act2)
+        self.act3 = tk.StringVar()
+        self.clientLanguageChooser = ttk.Combobox(self.client, width=8, textvariable=self.act2)
+        self.clientDistanceChooser = ttk.Combobox(self.client, width=8, textvariable=self.act3)
         self.searchButton = ttk.Button(self.client, text="Search", command=self.searchMe) #button
         self.numberChosen = ttk.Combobox(self.monty1, width=12, textvariable=self.act)
         self.labelCheckbox = ttk.Label(self.monty, text="Information to Display", font=("Helvetica", 12)).grid(column=1, row=0, padx = 10, pady = 10)
@@ -89,6 +93,7 @@ class ProviderGUI:
         self.chAddl2 = tk.IntVar() #checkbox8
         self.chAddl3 = tk.IntVar() #checkbox9
         self.radVar = tk.IntVar() #radio button
+        self.chClient = tk.IntVar() #checkbox10
         self.scr = scrolledtext.ScrolledText(self.monty, width=70, height=14, wrap=tk.WORD)
         self.scrClient = scrolledtext.ScrolledText(self.client2, width=70, height=30, wrap=tk.WORD)
         self.figure = Figure(figsize=(7,6), dpi=85)
@@ -113,13 +118,13 @@ class ProviderGUI:
     def bottons(self):
         self.action.grid(column=2, row=1)
         self.updateDB.grid(column=3, row=1)
-        self.searchButton.grid(column=2, row=1)
+        self.searchButton.grid(column=3, row=1)
 
     def searchBar(self):
         self.nameEntered.grid(column=0, row=1, rowspan=3)
         self.nameEntered.focus()
         self.nameEntered.bind('<Return>', self.clickMe)
-        self.clientLocation.grid(column=0, row=1, rowspan=3)
+        self.clientLocation.grid(column=0, row=1, rowspan=2)
         self.clientLocation.focus()
         self.clientLocation.bind('<Return>', self.searchMe)
 
@@ -128,8 +133,11 @@ class ProviderGUI:
         self.numberChosen.grid(column=1, row=1, rowspan=2)
         self.numberChosen.current(0)
         self.clientLanguageChooser['values'] = ('Russian', 'Spanish', 'English')
-        self.clientLanguageChooser.grid(column=1, row=1, rowspan=2)
+        self.clientLanguageChooser.grid(column=1, row=1, rowspan=1)
         self.clientLanguageChooser.current(0)
+        self.clientDistanceChooser['values'] = (1, 3, 5, 10, 15, 25)
+        self.clientDistanceChooser.grid(column=2, row=1, rowspan=1)
+        self.clientDistanceChooser.current(3)
 
     def checkBox(self):
         self.check1 = tk.Checkbutton(self.monty, text="Display Name", variable=self.chVar1, state='disabled')
@@ -159,6 +167,9 @@ class ProviderGUI:
         self.check9 = tk.Checkbutton(self.infoZone, text="Update Hospitals", variable=self.chAddl3)
         self.check9.deselect()
         self.check9.grid(column=6, row=1, sticky=tk.W)
+        self.checkClient = tk.Checkbutton(self.client, text="Check this box if you are looking for a Needles providers only", variable=self.chClient)
+        self.checkClient.grid(column=0, row=3)
+        self.checkClient.select()
 
     def radioButton(self):
         self.rad1 = tk.Radiobutton(self.monty, text='Somehow Accurate', variable=self.radVar, value=1, command=self.radCall)
@@ -222,7 +233,7 @@ class ProviderGUI:
         
 
     def searchTXPlan(self):
-        treatmentPlan(self.act2.get(), self.scrClient, self.name2.get(), 10)
+        treatmentPlan(self.act2.get(), self.scrClient, self.name2.get(), self.act3.get())
 
 
     def runSearchTab1(self):

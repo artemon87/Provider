@@ -72,6 +72,10 @@ def createProviderDB(tup):
                                        PRIMARY KEY(NAME, PHONE));''')
     tup.connection.commit()
 
+def alterProviderTable(tup):
+    tup.cursor.execute('''ALTER TABLE PROVIDER ADD COLUMN GEO varchar DEFAULT NULL;''')
+    tup.connection.commit()
+
 
 def addHospital(hospitalCollection, tup):
     for hospital in hospitalCollection:
@@ -96,7 +100,7 @@ def addNeedlesProvider(providerCollection, tup):
         result = tup.cursor.fetchall()
         if len(result) == 0:
             tup.cursor.execute('''INSERT INTO NEEDLES (NAME, ADDRESS, PHONE, ID, GEO, WEIGHT, RU, ES, EN) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);''',
-                      (provider.Name.upper(), provider.Address, provider.Phone, str(provider.ID), provider.GEO, provider.Weight, provider.Ru, provider.Es, provider.En))
+                      (provider.Name.upper(), provider.Address, provider.Phone, str(provider.ID), str(provider.Geo), provider.Weight, provider.Ru, provider.Es, provider.En))
 
     tup.connection.commit()
     
@@ -148,7 +152,7 @@ def readFromNeedlesAll(tup):
     
 
 def readFromNeedlesName(tup, name):
-    P = namedtuple('P', 'NAME ADDRESS PHONE FAX SPECIALTY ID  GEO WEIGHT RU ES EN')
+    P = namedtuple('P', 'NAME ADDRESS PHONE FAX SPECIALTY ID GEO WEIGHT RU ES EN')
     name = name.upper()
     returnList = []
     sqlRetrive = '''SELECT * FROM NEEDLES WHERE NAME like ? or NAME like ? or NAME like ? ORDER BY NAME ASC;'''
@@ -175,13 +179,13 @@ def readFromNeedlesNameExact(tup, name):
 
 
 def readFromProviderName(tup, name):
-    P = namedtuple('P', 'NAME ADDRESS CITY STATE ZIP PHONE FAX LINK SPECIALTY')
+    P = namedtuple('P', 'NAME ADDRESS CITY STATE ZIP PHONE FAX LINK SPECIALTY GEO')
     name = name.upper()
     returnList = []
     sqlRetrive = '''SELECT * FROM PROVIDER WHERE NAME like ? or NAME like ? or NAME like ? ORDER BY NAME ASC;'''
     for row in tup.cursor.execute(sqlRetrive, [('%'+name+'%'), (name+'%'), ('%'+name)]):
         try:
-            inst = P(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8])
+            inst = P(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
             returnList.append(inst)
         except IndexError as e:
             pass        

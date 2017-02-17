@@ -15,8 +15,6 @@ def read(location):
     return Profile(provFile, dic)
 
 def processAll(location):
-    #gmaps = googlemaps.Client(key='AIzaSyCsATCl3uaPZGRcamcl11Nd1NnaLD8SIew')
-    geo = None
     toRemove = ['UNKNOWN-MEDICAL PROVIDER', 'Secure Health Information', 'Rubinstein Law Offices',
                 'BISHOP LAW OFFICES, P.S.','ER Hospital visit', 'LAW OFFICES OF MARK A. HAMMER & ASSOCIATES, INC.',
                 'Rx', 'Rx Bartell Drugs', 'Rx Fred Meyer', 'Rx Rite Aid', 'Rx Walgreens',
@@ -37,22 +35,6 @@ def processAll(location):
                 phone = 'NONE'
             if addr:
                 addr = addr.replace('\n\n', ' ')
-                #geocode_result = gmaps.geocode(addr)
-                #geocode_result = geocoder.google(addr)
-                check = checkForSpecialties(key.Name, places)
-                if check and key.Address != 'NONE':
-                geoLoc = geocoder.google(key.Address)
-                geo = geoLoc.latlng
-                #if geocode_result:
-                    #try:
-                        #location = geocode_result[0]['geometry']['location']
-                       # geo = location['lat'], location['lng']        
-                    #except Exception as e:
-                        #pass
-                        #print(e, 'GEO location')
-                #else:
-                    #geo = None
-                    
             else:
                 addr = 'NONE'
                 
@@ -83,15 +65,14 @@ def processFacility(location, hospitals = None, singleProvider = None, ratio = 0
             currentCase = providerFile['casenum'][elem]
             phone = str(providerFile['compute_0008'][elem])
             addr = str(providerFile['compute_0007'][elem])
-            if addr:
-                addr = addr.replace('\n\n', '\n')
-                
-            else:
-                addr = 'NONE'
             if phone:
                 phone = phone.replace('(', '').replace(') ', '').replace(' - ', '')
             else:
                 phone = 'NONE'
+            if addr:
+                addr = addr.replace('\n\n', ' ')
+            else:
+                addr = 'NONE'
             inst = Provider(providerFile['compute_0005'][elem],
                             addr,
                             phone,
@@ -118,8 +99,6 @@ def processFacility(location, hospitals = None, singleProvider = None, ratio = 0
     
 
 def createNX(providerDict, providerFile, toRemove, netSize):
-    #places = ['Phys', 'Physician', 'Physicians', 'Rad', 'Radiology', 'ER', 'Emergency', 'Imaging', 'Ambulance', 'Fire']
-    #geo = None
     singleElement = None
     race = int
     lessThan4 = ''
@@ -158,7 +137,7 @@ def createNX(providerDict, providerFile, toRemove, netSize):
                 else:
                     phone = 'NONE'
                 if addr:
-                    addr = addr.replace('\n\n', '\n')
+                    addr = addr.replace('\n\n', ' ')
                 else:
                     addr = 'NONE'
                 instP = Provider(providerFile['compute_0005'][elem],
@@ -188,12 +167,6 @@ def createNX(providerDict, providerFile, toRemove, netSize):
             list_of_lists.append(lst)
             lst = []
     for key, value in providerDict.items():
-        #check = checkForSpecialties(key.Name, places)
-        #if check and key.Address != 'NONE':
-            #geoLoc = geocoder.google(key.Address)
-            #geo = geoLoc.latlng
-        #else:
-            #geo = 'NONE'
         inst = ProviderWeighted(key.Name, key.Address, key.Phone, key.ID, value)
         ed.add_node(key.Name)
         if singleElement:
@@ -203,7 +176,7 @@ def createNX(providerDict, providerFile, toRemove, netSize):
                 for i in count:
                     ed.add_edge(singleElement.Name, i[0].Name)
             except Exception as e:
-                    print(e)
+                print(e)
         elif lessThan4:
             count = Counter(list_of_single_elem)
             try:
@@ -233,20 +206,42 @@ def providerDictToList(providerDict):
     
 
 def createDicForDB(providerDict, needlesProvider):
+    gmaps = googlemaps.Client(key = 'AIzaSyBePe2zZ69dI2-YMifPVmNirkarl86Hic4')
+    #gmaps = googlemaps.Client(key = 'AIzaSyD2WQ2msw84ZYXOMSciz6YQtZ8W-PI6xIw') #1
+    #gmaps = googlemaps.Client(key = 'AIzaSyCsATCl3uaPZGRcamcl11Nd1NnaLD8SIew') #3
+    
+    places = ['Phys', 'Physician', 'Physicians', 'Rad', 'Radiology', 'ER', 'Emergency', 'Imaging', 'Ambulance', 'Fire']
     lst = []
+    n = 0
+    geo = None
     needlesDict = defaultdict(list)
-    FinalProvider = namedtuple('FinalProvider', 'Name Address Phone ID Weight Ru Es En')
+    FinalProvider = namedtuple('FinalProvider', 'Name Address Phone ID Weight Ru Es En Geo')
     for key, value in needlesProvider.items():
-        #needlesProvider[key] = Counter(value)
         for k,v in providerDict.items():
+            #geocode_result = gmaps.geocode(addr)
+                #geocode_result = geocoder.google(addr)
             if key.ID == k.ID:
+                n += 1
+                #check = checkForSpecialties(key.Name, places)
+                if key.Address != 'NONE':
+                    try:
+                    #geoLoc = geocoder.google(key.Address)
+                        geocode_result = gmaps.geocode(key.Address)
+                        location = geocode_result[0]['geometry']['location']
+                        geo = location['lat'], location['lng']
+                        #geo = geoLoc.latlng
+                        print(geo)
+                    except Exception as e:
+                        print(e)
+                else:
+                    geo = 'NONE'
                 try:
-                    inst = FinalProvider(key.Name, key.Address, key.Phone, key.ID, k.Weight, value[1], value[2], value[3])
+                    inst = FinalProvider(key.Name, key.Address, key.Phone, key.ID, k.Weight, value[1], value[2], value[3], geo)
                     lst.append(inst)
                     pass
                 except Exception as e:
                     print(e)
-                
+    print('Total providers:', n)
     return lst
     '''Provider = namedtuple('Provider', 'Name Address Phone ID Weight')
     providerDict, providerFile, toRemove = processAll(location)

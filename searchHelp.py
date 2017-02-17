@@ -375,32 +375,32 @@ def treatmentPlan(language, text, location, radius):
     distance = float
     for elem in lst:
         try:
-            if elem.ADDRESS is not None:
+            if elem.GEO is not None or elem.GEO is not 'NONE':
                 #loc2 = geocoder.google(elem.ADDRESS)
                 loc2 = elem.GEO
         except Exception as e:
             print(e)
-        distance = vincenty(loc1.latlng, loc2.latlng).miles
+        distance = great_circle(loc1.latlng, loc2).miles
         if distance < radius:
             txPlanDict[elem] = distance
         else:
             pass
     clearScreen(text)
     for key, value in txPlanDict.items():
-        check = checkForSpecialties(key.NAME, places)
-        if check:
-            if languageDict[language] == 1:
-                if key.RU > 3:
-                    printProviderTX(text, key, value, language)
-                    print(key.NAME, 'is only', value,'miles away.', key.ADDRESS)
-            elif languageDict[language] == 2:
-                if key.ES > 3:
-                    printProviderTX(text, key, value, language)
-                    print(key.NAME, 'is only', value,'miles away.', key.ADDRESS)
-            elif languageDict[language] == 3:
-                if key.EN > 3:
-                    printProviderTX(text, key, value, language)
-                    print(key.NAME, 'is only', value,'miles away.', key.ADDRESS)
+        #check = checkForSpecialties(key.NAME, places)
+        #if check:
+        if languageDict[language] == 1:
+            if key.RU > 3:
+                printProviderTX(text, key, value, language)
+                print(key.NAME, 'is only', value,'miles away.', key.ADDRESS)
+        elif languageDict[language] == 2:
+            if key.ES > 3:
+                printProviderTX(text, key, value, language)
+                print(key.NAME, 'is only', value,'miles away.', key.ADDRESS)
+        elif languageDict[language] == 3:
+            if key.EN > 3:
+                printProviderTX(text, key, value, language)
+                print(key.NAME, 'is only', value,'miles away.', key.ADDRESS)
     return True
 
 def printProviderTX(text, provider, value, language):
