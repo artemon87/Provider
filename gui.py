@@ -133,7 +133,7 @@ class ProviderGUI:
         self.numberChosen['values'] = ('Find Provider', 'Build a network')
         self.numberChosen.grid(column=1, row=1, rowspan=2)
         self.numberChosen.current(0)
-        self.clientLanguageChooser['values'] = ('Russian', 'Spanish', 'English')
+        self.clientLanguageChooser['values'] = ('Russian', 'Spanish', 'English', 'Unspecified')
         self.clientLanguageChooser.grid(column=1, row=1, rowspan=1)
         self.clientLanguageChooser.current(0)
         self.clientDistanceChooser['values'] = (1, 3, 5, 10, 15, 25)
@@ -238,7 +238,7 @@ class ProviderGUI:
         
 
     def searchTXPlan(self):
-        treatmentPlan(self.act2.get(), self.scrClient, self.name2.get(), self.act3.get())
+        treatmentPlan(self.act2.get(), self.scrClient, self.name2.get(), self.act3.get(), self.chClient.get(), self.chClient2.get())
 
 
     def runSearchTab1(self):

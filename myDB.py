@@ -112,34 +112,39 @@ def addNeedlesProvider(providerCollection, tup):
     
 
 def readFromHospital(tup):
+    P = namedtuple('P', 'NAME ADDRESS CITY STATE ZIP PHONE FAX RECORDS BILLING LINK UMBRELLA GEO')
     returnList = []
     sqlRetrive = '''SELECT * FROM HOSPITAL ORDER BY NAME ASC;'''
     for row in tup.cursor.execute(sqlRetrive):
-        returnList.append(row)
+        try:
+            inst = P(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11])
+            returnList.append(inst)
+        except Exception as e:
+            pass
     return returnList
 
         
 def readFromHospitalName(tup, name):
-    P = namedtuple('P', 'NAME ADDRESS CITY STATE ZIP PHONE FAX RECORDS BILLING LINK UMBRELLA')
+    P = namedtuple('P', 'NAME ADDRESS CITY STATE ZIP PHONE FAX RECORDS BILLING LINK UMBRELLA GEO')
     name = name.upper()
     returnList = []
     sqlRetrive = '''SELECT * FROM HOSPITAL WHERE NAME like ? or NAME like ? or NAME like ? ORDER BY NAME ASC;'''
     for row in tup.cursor.execute(sqlRetrive, [('%'+name+'%'), (name+'%'), ('%'+name)]):
         try:
-            inst = P(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10])
+            inst = P(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11])
             returnList.append(inst)
         except Exception as e:
             pass
     return returnList
 
 def readFromHospitalUmbrella(tup, name):
-    P = namedtuple('P', 'NAME ADDRESS CITY STATE ZIP PHONE FAX RECORDS BILLING LINK UMBRELLA')
+    P = namedtuple('P', 'NAME ADDRESS CITY STATE ZIP PHONE FAX RECORDS BILLING LINK UMBRELLA GEO')
     name = name.upper()
     returnList = []
     sqlRetrive = '''SELECT * FROM HOSPITAL WHERE UMBRELLA like ? or UMBRELLA like ? or UMBRELLA like ? ORDER BY NAME ASC;'''
     for row in tup.cursor.execute(sqlRetrive, [('%'+name+'%'), (name+'%'), ('%'+name)]):
         try:
-            inst = P(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10])
+            inst = P(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11])
             returnList.append(inst)
         except IndexError as e:
             pass        
@@ -179,7 +184,16 @@ def updateNeedlesFax(tup, provider):
 
 
 def updateHospitalGEO(tup, provider):
-    pass
+    for elem in provider:
+        sqlRetrive = '''UPDATE HOSPITAL SET GEO = ? WHERE NAME = ?;'''
+        tup.cursor.execute(sqlRetrive, [str(elem.Geo), elem.Name])
+    tup.connection.commit()
+
+def updateProviderGEO(tup, provider):
+    for elem in provider:
+        sqlRetrive = '''UPDATE PROVIDER SET GEO = ? WHERE NAME = ? AND PHONE = ?;'''
+        tup.cursor.execute(sqlRetrive, [str(elem.Geo), elem.Name, elem.Phone])
+    tup.connection.commit()
 
 
 def readFromNeedlesAll(tup):
@@ -238,9 +252,16 @@ def readFromProviderName(tup, name):
 
 
 def readFromProvider(tup):
+    P = namedtuple('P', 'NAME ADDRESS CITY STATE ZIP PHONE FAX LINK SPECIALTY GEO')
+    returnList = []
     sqlRetrive = '''SELECT * FROM PROVIDER ORDER BY NAME ASC;'''
     for row in tup.cursor.execute(sqlRetrive):
-        print(row)
+        try:
+            inst = P(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
+            returnList.append(inst)
+        except IndexError as e:
+            pass 
+    return returnList
 
 def readFromNeedles(tup):
     sqlRetrive = '''SELECT * FROM NEEDLES ORDER BY NAME ASC;'''
