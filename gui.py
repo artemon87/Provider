@@ -58,7 +58,8 @@ class ProviderGUI:
         self.fileEntry.grid(column=1, row=0, padx = 40, pady = 5)
         self.monty2 = ttk.LabelFrame(self.tab2, text=' Provider Network')
         self.client = ttk.LabelFrame(self.tab3, text=' Seach Box ')
-        self.client2 = ttk.LabelFrame(self.tab3, text=' Plan ')
+        self.client2 = ttk.LabelFrame(self.tab3, text=' Filter')
+        self.client3 = ttk.LabelFrame(self.tab3, text=' Plan ')
         self.time = ttk.Label(self.infoZone, text='Date and Time of Launch')
         self.timeZone = tk.StringVar()
         self.timeZoneLabel = ttk.Label(self.infoZone, textvariable=self.timeZone)
@@ -95,8 +96,9 @@ class ProviderGUI:
         self.radVar = tk.IntVar() #radio button
         self.chClient = tk.IntVar() #checkbox10
         self.chClient2 = tk.IntVar() #checkbox11
+        self.chClient3 = tk.IntVar() #checkbox12
         self.scr = scrolledtext.ScrolledText(self.monty, width=70, height=14, wrap=tk.WORD)
-        self.scrClient = scrolledtext.ScrolledText(self.client2, width=70, height=30, wrap=tk.WORD)
+        self.scrClient = scrolledtext.ScrolledText(self.client3, width=70, height=30, wrap=tk.WORD)
         self.figure = Figure(figsize=(7,6), dpi=85)
         self.aPlot = self.figure.add_subplot(111)
         self.canvas = None
@@ -114,7 +116,8 @@ class ProviderGUI:
         self.monty.grid(column=0, row=1, padx=20, pady=4)
         self.mngFilesFrame.grid(column=0, row=2, sticky='WE', padx=20, pady=4)
         self.client.grid(column=0, row=0, padx=20, pady=4)
-        self.client2.grid(column=0, row=1, padx=8, pady=4)
+        self.client2.grid(column=0, row=2, padx=20, pady=4)
+        self.client3.grid(column=0, row=4, padx=20, pady=4)
 
     def bottons(self):
         self.action.grid(column=2, row=1)
@@ -168,12 +171,15 @@ class ProviderGUI:
         self.check9 = tk.Checkbutton(self.infoZone, text="Update Hospitals", variable=self.chAddl3)
         self.check9.deselect()
         self.check9.grid(column=6, row=1, sticky=tk.W)
-        self.checkClient = tk.Checkbutton(self.client, text="Needles providers only", variable=self.chClient)
-        self.checkClient.grid(column=0, row=3)
+        self.checkClient = tk.Checkbutton(self.client2, text="Only Needles providers", variable=self.chClient)
+        self.checkClient.grid(column=0, row=0, sticky=tk.W)
         self.checkClient.select()
-        self.checkClient2 = tk.Checkbutton(self.client, text="Avoid Rad/Phys", variable=self.chClient2)
-        self.checkClient2.grid(column=1, row=3)
+        self.checkClient2 = tk.Checkbutton(self.client2, text=" Avoid Phys/Rad", variable=self.chClient2)
+        self.checkClient2.grid(column=2, row=0, sticky=tk.W)
         self.checkClient2.select()
+        '''self.checkClient2 = tk.Checkbutton(self.client2, text="Only Chiro/LMP", variable=self.chClient3)
+        self.checkClient2.grid(column=3, row=0, sticky=tk.W)
+        self.checkClient2.select()'''
 
     def radioButton(self):
         self.rad1 = tk.Radiobutton(self.monty, text='Somehow Accurate', variable=self.radVar, value=1, command=self.radCall)
@@ -231,14 +237,14 @@ class ProviderGUI:
     def searchMe(self, evcent = None):
         clearScreen(self.scrClient)
         self.scrClient.insert(tk.INSERT,"Searching")
-        self.createLoadingBullet()
+        #self.createLoadingBullet()
         self.createThreadSearchTreatment()
             
         
         
 
     def searchTXPlan(self):
-        treatmentPlan(self.act2.get(), self.scrClient, self.name2.get(), self.act3.get(), self.chClient.get(), self.chClient2.get())
+        treatmentPlan(self.act2.get(), self.scrClient, self.name2.get(), self.act3.get(), self.chClient.get(), self.chClient2.get(), self.chClient3.get())
 
 
     def runSearchTab1(self):
@@ -247,7 +253,7 @@ class ProviderGUI:
         if self.act.get() == 'Build a network':
             self.clearCanvas()
             self.scrClient.insert(tk.INSERT,"Creating Network")
-            self.createLoadingBullet()
+            #self.createLoadingBullet()
             fileToRead = ''
             if self.fName == None:
                 fileToRead ='netRace.xlsx'

@@ -65,12 +65,6 @@ def fillinDB(upNeedles,upYelp, upHospital, text):
                 text.insert(tk.INSERT, s+' in ')
                 text.insert(tk.INSERT, c+'\n')
                 print('Found',len(result), s, 'in',c)
-                #if len(result) == 0:
-                    #text.insert(tk.INSERT, 'Please go to Yelp.com and verify that you are not a robot')
-                    #print('Went sleeping ...')
-                    #time.sleep(10)
-                    #result = lookup(s, c)
-                    #totalSleep += 1
                 lst.append(result)
         for elem in lst:
             addProvider(elem, DB)
@@ -174,9 +168,11 @@ def confirmProvider(fileToRead, name, text, displayArgs, ratio):
     if not lst:
         print('Going to Needles DB')
         lst = readFromNeedlesName(DB, name.upper())
-        print('Going to Provider DB')
-        lst = readFromProviderName(DB, name.upper())
+        '''print('Going to Provider DB')
+        lst = readFromProviderName(DB, name.upper())'''
     if lst:
+        clearScreen(text)
+        text.insert(tk.INSERT, "Is that what you are looking for?\n\n")
         for elem in lst:
             text.insert(tk.INSERT, elem.NAME+ "\n")
             if dispAddr:
@@ -325,12 +321,15 @@ def printOutProvider(providerDict, text, displayArgs):
 
 
 def findProvider(fileToRead, name, ratio, text):
+    print('FIND PROVIDER LOUNCHED')
     providerDict, *rest = processAll(fileToRead)
     newList = providerDictToList(providerDict)
     possibleOptions = deepSearch(name, newList, 10, ratio)
     if len(possibleOptions) < 10:
+        print('Less than 10 providers found')
         possibleOptions = deepSearch(name, newList, 10, 0.2)
     if len(possibleOptions) < 1:
+        print('Less than 1 providers found')
         possibleOptions = searchFirstDict(name, providerDict)
     if len(possibleOptions) == 0:
         clearScreen(text)
@@ -354,14 +353,16 @@ def findProvider(fileToRead, name, ratio, text):
     text.insert(tk.INSERT, 'Please search again...\n')
     return possibleOptions
 
-def treatmentPlan(language, text, location, radius, needlesOnly, avoidPhys):
+def treatmentPlan(language, text, location, radius, needlesOnly, avoidPhys, onlyChiro):
     radius = float(radius)
     #gmaps = googlemaps.Client(key='AIzaSyCsATCl3uaPZGRcamcl11Nd1NnaLD8SIew')
     #   AIzaSyCsATCl3uaPZGRcamcl11Nd1NnaLD8SIew
     print(radius)
     lst = []
     lst2 = []
+    lst3 = []
     check = True
+    allProviders = True
     places = ['Phys', 'Physician', 'Physicians', 'Rad', 'Radiology', 'ER', 'Emergency', 'Imaging', 'Ambulance', 'Fire']
     languageDict = {'Russian': 1, 'Spanish': 2, 'English' : 3, 'Unspecified': 4}
     txPlanDict = {}
@@ -371,6 +372,7 @@ def treatmentPlan(language, text, location, radius, needlesOnly, avoidPhys):
     DB = connectToDB()
     if not needlesOnly:
         lst2 = readFromHospital(DB)
+        lst3 = readFromProvider(DB)
     lst = readFromNeedlesAll(DB)
     loc1 = geocoder.google(location)
     if loc1 is None:
@@ -382,7 +384,6 @@ def treatmentPlan(language, text, location, radius, needlesOnly, avoidPhys):
     for elem in lst:
         try:
             if elem.GEO is not 'NONE' or elem.GEO is not None:
-                #loc2 = geocoder.google(elem.ADDRESS)
                 loc2 = elem.GEO
                 distance = great_circle(loc1.latlng, loc2).miles
                 if distance < radius:
@@ -392,14 +393,25 @@ def treatmentPlan(language, text, location, radius, needlesOnly, avoidPhys):
         except Exception as e:
             print(e)
     if lst2:
-        for elem2 in lst2:
+        for elem in lst2:
             try:
-                if elem2.GEO is not 'NONE' or elem.GEO is not None:
-                #loc2 = geocoder.google(elem.ADDRESS)
-                    loc2 = elem2.GEO
+                if elem.GEO is not 'NONE' or elem.GEO is not None:
+                    loc2 = elem.GEO
                     distance = great_circle(loc1.latlng, loc2).miles
                     if distance < radius:
-                        txPlanDict[elem2] = distance
+                        txPlanDict[elem] = distance
+                else:
+                    pass
+            except Exception as e:
+                print(e)
+    if lst3:
+        for elem in lst3:
+            try:
+                if elem.GEO is not 'NONE' or elem.GEO is not None:
+                    loc2 = elem.GEO
+                    distance = great_circle(loc1.latlng, loc2).miles
+                    if distance < radius:
+                        txPlanDict[elem] = distance
                 else:
                     pass
             except Exception as e:
@@ -408,13 +420,21 @@ def treatmentPlan(language, text, location, radius, needlesOnly, avoidPhys):
     for key, value in txPlanDict.items():
         if avoidPhys:
             check = checkForSpecialties(key.NAME, places)
-        
+        '''if onlyChiro and not needlesOnly:
+            allProviders = False
+            try:
+                if 'Chiropractic'.upper() not in key.NAME.upper():
+                    continue
+                if key.SPECIALTY is not 'Chiropractors' or key.SPECIALTY is not 'Chiropractic':
+                    continue
+            except Exception as e:
+                print(e)'''
         if check:
             if languageDict[language] == 1:
                 try:
                     if key.RU > 3:
                         printProviderTX(text, key, value, language)
-                        print(key.NAME, 'is only', value,'miles away.', key.ADDRESS)
+                        #print(key.NAME, 'is only', value,'miles away.', key.ADDRESS)
                 except Exception as e:
                     print(e)
                     printProviderTX(text, key, value, language)
@@ -422,7 +442,7 @@ def treatmentPlan(language, text, location, radius, needlesOnly, avoidPhys):
                 try:
                     if key.ES > 3:
                         printProviderTX(text, key, value, language)
-                        print(key.NAME, 'is only', value,'miles away.', key.ADDRESS)
+                        #print(key.NAME, 'is only', value,'miles away.', key.ADDRESS)
                 except Exception as e:
                     print(e)
                     printProviderTX(text, key, value, language)
@@ -430,7 +450,7 @@ def treatmentPlan(language, text, location, radius, needlesOnly, avoidPhys):
                 try:
                     if key.EN > 3:
                         printProviderTX(text, key, value, language)
-                        print(key.NAME, 'is only', value,'miles away.', key.ADDRESS)
+                        #print(key.NAME, 'is only', value,'miles away.', key.ADDRESS)
                 except Exception as e:
                     print(e)
                     printProviderTX(text, key, value, language)
@@ -438,7 +458,7 @@ def treatmentPlan(language, text, location, radius, needlesOnly, avoidPhys):
                 try:
                     if key.RU >= 0 or key.ES >= 0 or key.EN >= 0:
                         printProviderTX(text, key, value, language)
-                        print(key.NAME, 'is only', value,'miles away.', key.ADDRESS)
+                        #print(key.NAME, 'is only', value,'miles away.', key.ADDRESS)
                 except Exception as e:
                     print(e)
                     printProviderTX(text, key, value, language)
@@ -466,6 +486,16 @@ def printProviderTX(text, provider, value, language):
         if provider.CITY:
             text.insert(tk.INSERT,", ")
             text.insert(tk.INSERT,provider.CITY)
+    except Exception as e:
+        print(e)
+    text.insert(tk.INSERT,"\n")
+    text.insert(tk.INSERT,"Phone: ")
+    text.insert(tk.INSERT,provider.PHONE)
+    try:
+        if provider.SPECIALTY:
+            text.insert(tk.INSERT,"\n")
+            text.insert(tk.INSERT,"Specialty: ")
+            text.insert(tk.INSERT,provider.SPECIALTY)
     except Exception as e:
         print(e)
     text.insert(tk.INSERT,"\n\n")
@@ -499,6 +529,9 @@ def updateHospitalGeoLocation():
 
 def updateProviderGeoLocation():
     gmaps = googlemaps.Client(key = 'AIzaSyBePe2zZ69dI2-YMifPVmNirkarl86Hic4')
+    #gmaps = googlemaps.Client(key = 'AIzaSyBePe2zZ69dI2-YMifPVmNirkarl86Hic4')
+    #gmaps = googlemaps.Client(key = 'AIzaSyD2WQ2msw84ZYXOMSciz6YQtZ8W-PI6xIw') #1
+    #gmaps = googlemaps.Client(key = 'AIzaSyCsATCl3uaPZGRcamcl11Nd1NnaLD8SIew') 
     DB = connectToDB()
     geo = None
     P = namedtuple('P', 'Name Phone Geo')
