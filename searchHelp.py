@@ -11,6 +11,8 @@ import geocoder
 from geopy.distance import great_circle
 from geopy.distance import vincenty
 import googlemaps
+from textMessage import *
+
 
 
 def clearScreen(text):
@@ -554,6 +556,15 @@ def updateProviderGeoLocation():
                 if n >= 2000:
                     break
     updateProviderGEO(DB, lstWithGeo)
+
+def sendMessageToClient(msg, number, filePath, attachment, popUp):
+    newMessage = textMessage()
+    newMessage.fillInList(number)
+    result = newMessage.sendText(msg, filePath, attachment)
+    if result:
+        popUp.showinfo('Confirmation', 'Message sent')
+    else:
+        popUp.showinfo('Confirmation', 'Message failed')
     
     
 

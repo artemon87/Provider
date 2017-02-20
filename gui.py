@@ -251,10 +251,14 @@ class ProviderGUI:
         else:
             mBox.showinfo('Database Information', 'Please launch Yelp.com on your webbrowser.\nAnd confirm that you are not a robot')
 
+    def sendMessageProcess(self):
+        '''sendMessageToClient'''
+        msg = self.messageEntry.get('1.0', tk.END)
+        sendMessageToClient(msg, self.phone.get(), self.fName2, self.fDir2, mBox)
+        print('Sending text')
 
     def sendText(self):
-        print('Sending text')
-        print(self.messageEntry.get('1.0', tk.END))
+        self.createThreadSendMessags()
 
     def loadMe(self):
         for i in range(20):
@@ -371,6 +375,12 @@ class ProviderGUI:
         searchTX.setDaemon(True)
         searchTX.start()
         print(searchTX)
+
+    def createThreadSendMessags(self):
+        sendMessage = Thread(target=self.sendMessageProcess)
+        sendMessage.setDaemon(True)
+        sendMessage.start()
+        print(sendMessage)
 
     def createLoadingBullet(self):
         loading = Thread(target=self.loadMe)

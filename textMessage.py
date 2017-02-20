@@ -14,6 +14,8 @@ class textMessage():
         self.to_List = []
 
     def fillInList(self, number):
+        if number.startswith('1'):
+            number = number[1:]
         ''', '@vzwpix', '@vtext.com',
                '@messaging.sprintpcs.com', '@pm.sprint.com',
                '@vmobl.com', '@mmst5.tracfone.com', '@mymetropcs.com',
@@ -27,7 +29,7 @@ class textMessage():
             self.to_List.append(fullNumber)
         
 
-    def sendText(self, message, filePath, attachment):
+    def sendText(self, message, filePath = None, attachment = None):
         try:
             msg = MIMEMultipart()
             msg['From'] = self.username
@@ -40,11 +42,8 @@ class textMessage():
                 base = MIMEBase('application', 'octet-stream')
                 base.set_payload((img).read())
                 encoders.encode_base64(base)
-                base.add_header('Content-Disposition', "filename")
+                #base.add_header('Content-Disposition', "filename")
                 msg.attach(base)
-                '''with open(filePath, 'rb') as fp:
-                    img = MIMEImage(fp.read())
-                    msg.attach(img)'''
             server = smtplib.SMTP(self.host, self.port)
             server.ehlo()
             server.starttls()
@@ -55,9 +54,11 @@ class textMessage():
             #server.sendmail(self.username, self.to_List, text)
             #text = msg.as_string()
             #server.sendmail(fromaddr, toaddr, text)
+            return True
             server.quit()
         except smtplib.SMTPException as e:
             print(e)
+            return False
         
         
         
