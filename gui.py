@@ -48,14 +48,24 @@ class ProviderGUI:
         self.monty1 = ttk.LabelFrame(self.tab1, text=' Monty Python ')
         self.monty = ttk.LabelFrame(self.tab1, text=' Monty1 Python ')
         self.mngFilesFrame = ttk.LabelFrame(self.tab1, text=' Manage Files: ')
+        self.phoneNumber = ttk.LabelFrame(self.tab4, text=' Enter phone number here: ')
+        self.messageTextEntry = ttk.LabelFrame(self.tab4, text=' Message')
+        self.fileAttachmentEntry = ttk.LabelFrame(self.tab4, text=' File')
         self.infoZone = ttk.LabelFrame(self.tab1, text = ' Info ')
+        #self.textMessagePhone = ttk.LabelFrame(self.tab4, text = ' Phone Number here ')
         self.browseButton = ttk.Button(self.mngFilesFrame, text="Browse ...",command=self.getFileName)
+        self.browseButton2 = ttk.Button(self.fileAttachmentEntry, text="Browse ...",command=self.getFileNameForAttachment)
         self.fName = None #name of a file to browse
         self.fDir = None #dir of a file
+        self.fName2 = None #name of a file to attach to txt message
+        self.fDir2 = None #dir of an attachment
         self.file = tk.StringVar()
+        self.file2 = tk.StringVar()
         self.entryLen = 60
         self.fileEntry = ttk.Entry(self.mngFilesFrame, width=60,textvariable=self.file)
         self.fileEntry.grid(column=1, row=0, padx = 40, pady = 5)
+        self.fileEntry2 = ttk.Entry(self.fileAttachmentEntry, width=40,textvariable=self.file2)
+        self.fileEntry2.grid(column=1, row=0, padx = 40, pady = 5)
         self.monty2 = ttk.LabelFrame(self.tab2, text=' Provider Network')
         self.client = ttk.LabelFrame(self.tab3, text=' Seach Box ')
         self.client2 = ttk.LabelFrame(self.tab3, text=' Filter')
@@ -68,6 +78,7 @@ class ProviderGUI:
         self.updateDB = ttk.Button(self.infoZone, text='Update Database', comman=self.runUpdateDatabase)
         self.name = tk.StringVar() #search name
         self.name2 = tk.StringVar() #search location
+        self.phone = tk.StringVar() #phonenumber
         self.nameEntered = ttk.Entry(self.monty1, width=40, textvariable=self.name) #name entered
         self.aLabel2 = ttk.Label(self.monty1, text="Choose an action:").grid(column=1, row=0) #drop down box
         self.clientLable1 = ttk.Label(self.client, text="Enter client's location:").grid(column=0, row=0) #drop down box
@@ -75,6 +86,8 @@ class ProviderGUI:
         self.clientLable3 = ttk.Label(self.client, text="Travel Distance").grid(column=2, row=0) #drop down box
         #self.clientLable4 = ttk.Label(self.client, text="Check this box if you looking for Needles providers only").grid(column=0, row=2) #drop down box
         self.clientLocation = ttk.Entry(self.client, width=35, textvariable=self.name2) #name entered
+        self.phoneEntered = ttk.Entry(self.phoneNumber, width=40, textvariable=self.phone) #name entered
+        self.sentMessageButton = ttk.Button(self.phoneNumber, text="Send", command=self.sendText) 
         self.act = tk.StringVar()
         self.act2 = tk.StringVar()
         self.act3 = tk.StringVar()
@@ -99,6 +112,7 @@ class ProviderGUI:
         self.chClient3 = tk.IntVar() #checkbox12
         self.scr = scrolledtext.ScrolledText(self.monty, width=70, height=14, wrap=tk.WORD)
         self.scrClient = scrolledtext.ScrolledText(self.client3, width=70, height=30, wrap=tk.WORD)
+        self.messageEntry = scrolledtext.ScrolledText(self.messageTextEntry, width=70, height=15, wrap=tk.WORD)
         self.figure = Figure(figsize=(7,6), dpi=85)
         self.aPlot = self.figure.add_subplot(111)
         self.canvas = None
@@ -113,16 +127,22 @@ class ProviderGUI:
         self.monty1.grid(column=0, row=0, padx=20, pady=4)
         self.monty2.grid(column=0, row=0, padx=20, pady=4)
         self.browseButton.grid(column=0, row=0)
+        self.browseButton2.grid(column=0, row=0)
         self.monty.grid(column=0, row=1, padx=20, pady=4)
         self.mngFilesFrame.grid(column=0, row=2, sticky='WE', padx=20, pady=4)
         self.client.grid(column=0, row=0, padx=20, pady=4)
         self.client2.grid(column=0, row=2, padx=20, pady=4)
         self.client3.grid(column=0, row=4, padx=20, pady=4)
+        self.phoneNumber.grid(column=0, row=0, padx=60, pady=4)
+        self.messageTextEntry.grid(column=0, row=2, padx=20, pady=4)
+        self.fileAttachmentEntry.grid(column=0, row=3, padx=20, pady=4)
+        #self.textMessagePhone.grid(column=0, row=0, padx=60, pady=4)
 
     def bottons(self):
         self.action.grid(column=2, row=1)
         self.updateDB.grid(column=3, row=1)
         self.searchButton.grid(column=3, row=1)
+        self.sentMessageButton.grid(column=3, row=1)
 
     def searchBar(self):
         self.nameEntered.grid(column=0, row=1, rowspan=2)
@@ -131,6 +151,9 @@ class ProviderGUI:
         self.clientLocation.grid(column=0, row=1, rowspan=2)
         self.clientLocation.focus()
         self.clientLocation.bind('<Return>', self.searchMe)
+        self.phoneEntered.grid(column=0, row=1, rowspan=2)
+        self.phoneEntered.focus()
+        self.phoneEntered.bind(self.sendText)
 
     def dropDown(self):
         self.numberChosen['values'] = ('Find Provider', 'Build a network')
@@ -193,6 +216,7 @@ class ProviderGUI:
     def scrollableText(self):
         self.scr.grid(column=0, columnspan=3)
         self.scrClient.grid(column=0, columnspan=3)
+        self.messageEntry.grid(column=0, columnspan=3)
 
     def _quit(self):
         self.win.quit()
@@ -228,6 +252,10 @@ class ProviderGUI:
             mBox.showinfo('Database Information', 'Please launch Yelp.com on your webbrowser.\nAnd confirm that you are not a robot')
 
 
+    def sendText(self):
+        print('Sending text')
+        print(self.messageEntry.get('1.0', tk.END))
+
     def loadMe(self):
         for i in range(20):
             time.sleep(3)
@@ -252,7 +280,7 @@ class ProviderGUI:
         displayArgs = self.getCheckbox()
         if self.act.get() == 'Build a network':
             self.clearCanvas()
-            self.scrClient.insert(tk.INSERT,"Creating Network")
+            self.scr.insert(tk.INSERT,"Creating Network")
             #self.createLoadingBullet()
             fileToRead = ''
             if self.fName == None:
@@ -319,6 +347,12 @@ class ProviderGUI:
         self.fName = fd.askopenfilename(parent=self.win, initialdir=self.fDir)
         self.fileEntry.delete(0, tk.END)
         self.fileEntry.insert(0, self.fName)
+
+    def getFileNameForAttachment(self):
+        self.fDir2 = path.dirname(__file__)
+        self.fName2 = fd.askopenfilename(parent=self.win, initialdir=self.fDir2)
+        self.fileEntry2.delete(0, tk.END)
+        self.fileEntry2.insert(0, self.fName2)
 
     def createThreadRun(self):
         runT = Thread(target=self.runSearchTab1)
