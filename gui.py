@@ -284,6 +284,7 @@ class ProviderGUI:
         displayArgs = self.getCheckbox()
         if self.act.get() == 'Build a network':
             self.clearCanvas()
+            clearScreen(self.scr)
             self.scr.insert(tk.INSERT,"Creating Network")
             #self.createLoadingBullet()
             fileToRead = ''
@@ -299,7 +300,7 @@ class ProviderGUI:
             else:
                 clearScreen(self.scr)
                 #confirmProvider(fileToRead, self.name.get(), self.scr, displayArgs, ratio)
-                printOutProvider(providerDict, self.scr, displayArgs)
+                printOutProvider(providerDict, self.scr, displayArgs,ratio)
                 pos=nx.spring_layout(ed)
                 nx.draw_networkx(ed, pos, arrows = True, with_labels = True, ax = self.aPlot, font_size = 9)
                 self.canvas = FigureCanvasTkAgg(self.figure, master=self.monty2)

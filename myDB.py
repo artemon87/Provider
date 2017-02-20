@@ -1,6 +1,8 @@
 import sqlite3
 from collections import namedtuple
 
+
+
 def setupCookiesDB():
     DB = namedtuple('DB', 'connection cursor')
     conn = sqlite3.connect('cookieDB.db')
@@ -26,6 +28,14 @@ def setupDB():
     conn = sqlite3.connect('test.db')
     c = conn.cursor()
     return DB(conn, c)
+
+def createMessageDB(tup):
+    tup.cursor.execute('''CREATE TABLE IF NOT EXISTS MESSAGE(ID integer NOT NULL PRIMARY KEY,
+                                       NUMBER varchar NOT NULL,
+                                       NOTE varchar DEFAULT NULL,
+                                       ATTACHMENT varchar DEFAULT NULL,
+                                       TIME_SENT varchar DEFAULT NULL);''')
+    tup.connection.commit()
 
 def createHospitalDB(tup):
     tup.cursor.execute('''CREATE TABLE IF NOT EXISTS HOSPITAL(NAME varchar NOT NULL,
@@ -81,6 +91,25 @@ def alterHospitalTable(tup):
     tup.cursor.execute('''ALTER TABLE HOSPITAL ADD COLUMN GEO varchar DEFAULT NULL;''')
     tup.connection.commit()
 
+
+def addMessage(tup, message):
+    tup.cursor.execute('''SELECT * FROM MESSAGE WHERE NUMBER = ? AND NOTE = ?;''', (message.Number, message.Note))
+    result = tup.cursor.fetchall()
+    if len(result) == 0:
+        tup.cursor.execute('''INSERT INTO MESSAGE (NUMBER, NOTE, TIME_SENT, ATTACHMENT) VALUES(?,?,?,?);''',(message.Number, message.Note, message.Date, message.Attachment))
+    tup.connection.commit()
+
+def readFromMessage(tup):
+    returnList = []
+    M = namedtuple('M', 'ID Number Note Attachment Date')
+    sqlRetrive = '''SELECT * FROM MESSAGE'''
+    for row in tup.cursor.execute(sqlRetrive):
+        try:
+            inst = M(row[0], row[1], row[2], row[3], row[4])
+            returnList.append(inst)
+        except Exception as e:
+            pass
+    return returnList
 
 
 def addHospital(hospitalCollection, tup):
@@ -280,5 +309,10 @@ def dropNeedles(tup):
 
 def dropProvider(tup):
     sqlRetrive = '''DROP TABLE IF EXISTS PROVIDER;'''
+    tup.cursor.execute(sqlRetrive)
+    tup.connection.commit()
+
+def dropMessage(tup):
+    sqlRetrive = '''DROP TABLE IF EXISTS MESSAGE;'''
     tup.cursor.execute(sqlRetrive)
     tup.connection.commit()

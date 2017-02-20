@@ -12,6 +12,7 @@ from geopy.distance import great_circle
 from geopy.distance import vincenty
 import googlemaps
 from textMessage import *
+from time import gmtime, strftime
 
 
 
@@ -263,7 +264,7 @@ def readED(fileToRead, hosp, name, n, ratio):
     providerDict, newDict, needlesProvider, ed = createNX(*args, n)
     return ed, providerDict
 
-def printOutProvider(providerDict, text, displayArgs):
+def printOutProvider(providerDict, text, displayArgs, ratio):
     print('printOUTProvider launched!')
     dispName, dispAddr, dispPhone, dispFax, dispSpec, dispInfo = displayArgs
     DB = connectToDB()
@@ -318,7 +319,17 @@ def printOutProvider(providerDict, text, displayArgs):
 
             except Exception as e:
                 print(e)
-        text.insert(tk.INSERT, "\n")
+        #text.insert(tk.INSERT, "\n")
+        pand = readChartSwap('Washington')
+        looking = findOnChartSwap(elem.NAME, pand, ratio)
+        if len(looking) > 0:
+            try:
+                text.insert(tk.INSERT, 'ChartSwap: ')
+                text.insert(tk.INSERT, ''.join(str(looking)))
+            except Exception as e:
+                print(e)
+        text.insert(tk.INSERT,"\n")
+        text.insert(tk.INSERT,"\n")
     #text.insert(tk.INSERT,"Nothing was found with your search term\n")
 
 
@@ -558,11 +569,18 @@ def updateProviderGeoLocation():
     updateProviderGEO(DB, lstWithGeo)
 
 def sendMessageToClient(msg, number, filePath, attachment, popUp):
+    MSG = namedtuple('MSG', 'Number Note Date Attachment')
+    time = strftime("%a, %d %b %Y %H:%M:%S", time.localtime())
+    inst = MSG(number, msg, time, filePath)
+    DB = connectToDB()
+    createMessageDB(DB)
+    addMessage(DB, inst)
     newMessage = textMessage()
     newMessage.fillInList(number)
     result = newMessage.sendText(msg, filePath, attachment)
     if result:
         popUp.showinfo('Confirmation', 'Message sent')
+        addMessage(DB, inst)
     else:
         popUp.showinfo('Confirmation', 'Message failed')
     
