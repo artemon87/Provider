@@ -165,12 +165,12 @@ def confirmProvider(fileToRead, name, text, displayArgs, ratio):
             facility = k
             lst = readFromHospitalUmbrella(DB, facility)
     if len(lst) == 0:
-        print('Going to Hospital DB')
-        lst = readFromHospitalName(DB, name.upper())
-    pand = readChartSwap('Washington')
-    if not lst:
         print('Going to Needles DB')
         lst = readFromNeedlesName(DB, name.upper())
+    pand = readChartSwap('Washington')
+    if not lst:
+        print('Going to Hospital DB')
+        lst = readFromHospitalName(DB, name.upper())
         '''print('Going to Provider DB')
         lst = readFromProviderName(DB, name.upper())'''
     if lst:
@@ -265,16 +265,14 @@ def readED(fileToRead, hosp, name, n, ratio):
     return ed, providerDict
 
 def printOutProvider(providerDict, text, displayArgs, ratio):
+    clearScreen(text)
+    text.insert(tk.INSERT, "Network was created. Please see Network Graph for details...\n\n")
     print('printOUTProvider launched!')
     dispName, dispAddr, dispPhone, dispFax, dispSpec, dispInfo = displayArgs
     DB = connectToDB()
-    try:
-        text.delete(1.0,tk.END)
-    except Exception as e:
-        pass
     lst = []
     name = None
-    clearScreen(text)
+    #clearScreen(text)
     for k,v in providerDict.items():
         print('LOOKING FOR: ', k.Name)
         lst = readFromNeedlesNameExact(DB,k.Name)
@@ -314,7 +312,7 @@ def printOutProvider(providerDict, text, displayArgs, ratio):
             try:
                 if elem.WEIGHT is not None:
                     text.insert(tk.INSERT, "Popularity: ")
-                    text.insert(tk.INSERT, elem.LINK)
+                    text.insert(tk.INSERT, elem.WEIGHT)
                     text.insert(tk.INSERT, " clients served for the last 2 years\n")
 
             except Exception as e:
@@ -334,6 +332,8 @@ def printOutProvider(providerDict, text, displayArgs, ratio):
 
 
 def findProvider(fileToRead, name, ratio, text):
+    clearScreen(text)
+    text.insert(tk.INSERT, 'Finding provider. Please wait...\n')
     print('FIND PROVIDER LOUNCHED')
     providerDict, *rest = processAll(fileToRead)
     newList = providerDictToList(providerDict)
