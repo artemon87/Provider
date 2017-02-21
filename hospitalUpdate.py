@@ -31,7 +31,6 @@ def updateMulticare():
             try:
                 tag = li.findAll('br')[0].text
                 tags.append(tag.strip('\n\r\t -').replace('-', '')[:10])
-                print(tags[0])
                 return tags[0]            
             except Exception as e:
                 log.loggingInfo(e)

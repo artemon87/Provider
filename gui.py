@@ -140,6 +140,7 @@ class ProviderGUI:
         self.messageSentEntry.grid(column=0, row=4, padx=20, pady=4)
         self.fileAttachmentEntry.grid(column=0, row=3, padx=20, pady=4)
         #self.textMessagePhone.grid(column=0, row=0, padx=60, pady=4)
+        self.tab4.bind("<Button-3>", self.tab4Call)
 
     def bottons(self):
         self.action.grid(column=2, row=1)
@@ -262,7 +263,7 @@ class ProviderGUI:
         self.createThreadSentMessages()
         print('Sending text')
 
-    def rundMessageSentDB(self):
+    def runMessageSentDB(self):
         self.createThreadSentMessages()
 
     def sendText(self):
@@ -273,6 +274,9 @@ class ProviderGUI:
             time.sleep(3)
             self.scrClient.insert(tk.INSERT,".")
 
+    def tab4Call(self, event=None):
+        self.runMessageSentDB()
+
     
     def searchMe(self, evcent = None):
         clearScreen(self.scrClient)
@@ -281,6 +285,7 @@ class ProviderGUI:
         self.createThreadSearchTreatment()
             
     def listOfSentMessages(self):
+        clearScreen(self.sentMessages)
         displaySentMessages(self.sentMessages)
         
 
@@ -418,7 +423,6 @@ gui.checkBox()
 gui.radioButton()
 gui.scrollableText()
 gui.getDateTime()
-gui.rundMessageSentDB()
 try:
     w.mainloop()
 except Exception as e:

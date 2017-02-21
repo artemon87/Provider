@@ -13,6 +13,7 @@ from geopy.distance import vincenty
 import googlemaps
 from textMessage import *
 from time import gmtime, strftime
+from hospitalUpdate import *
 
 
 
@@ -376,7 +377,8 @@ def treatmentPlan(language, text, location, radius, needlesOnly, avoidPhys, only
     lst3 = []
     check = True
     allProviders = True
-    places = ['Phys', 'Physician', 'Physicians', 'Rad', 'Radiology', 'ER', 'Emergency', 'Imaging', 'Ambulance', 'Fire']
+    places = ['Phys', 'Physician', 'Physicians', 'Rad', 'Radiology',
+              'ER', 'Emergency', 'Imaging', 'Ambulance', 'Fire', 'City of', 'Pathology']
     languageDict = {'Russian': 1, 'Spanish': 2, 'English' : 3, 'Unspecified': 4}
     txPlanDict = {}
     if ', WA' not in location.upper() or ',WA' not in location.upper() or ' WA' not in location.upper():
@@ -467,7 +469,7 @@ def treatmentPlan(language, text, location, radius, needlesOnly, avoidPhys, only
                 except Exception as e:
                     print(e)
                     printProviderTX(text, key, value, language)
-            elif languageDict[language] == 3:
+            elif languageDict[language] == 4:
                 try:
                     if key.RU >= 0 or key.ES >= 0 or key.EN >= 0:
                         printProviderTX(text, key, value, language)
@@ -603,6 +605,12 @@ def displaySentMessages(text):
             text.insert(tk.INSERT,elem.Attachment)
             text.insert(tk.INSERT,"\n")
         text.insert(tk.INSERT,"\n")
+
+def updateHospRecordsFax(name, fax):
+    swedishFax = updateSwedish()
+    multicareFax = updateMulticare()
+    uwmediceFax = updateUW()
+    
             
         
         
