@@ -50,6 +50,7 @@ class ProviderGUI:
         self.mngFilesFrame = ttk.LabelFrame(self.tab1, text=' Manage Files: ')
         self.phoneNumber = ttk.LabelFrame(self.tab4, text=' Enter phone number here: ')
         self.messageTextEntry = ttk.LabelFrame(self.tab4, text=' Message')
+        self.messageSentEntry = ttk.LabelFrame(self.tab4, text=' Sent Mesages')
         self.fileAttachmentEntry = ttk.LabelFrame(self.tab4, text=' File')
         self.infoZone = ttk.LabelFrame(self.tab1, text = ' Info ')
         #self.textMessagePhone = ttk.LabelFrame(self.tab4, text = ' Phone Number here ')
@@ -113,6 +114,7 @@ class ProviderGUI:
         self.scr = scrolledtext.ScrolledText(self.monty, width=70, height=14, wrap=tk.WORD)
         self.scrClient = scrolledtext.ScrolledText(self.client3, width=70, height=30, wrap=tk.WORD)
         self.messageEntry = scrolledtext.ScrolledText(self.messageTextEntry, width=70, height=15, wrap=tk.WORD)
+        self.sentMessages = scrolledtext.ScrolledText(self.messageSentEntry, width=70, height=5, wrap=tk.WORD)
         self.figure = Figure(figsize=(7,6), dpi=85)
         self.aPlot = self.figure.add_subplot(111)
         self.canvas = None
@@ -135,6 +137,7 @@ class ProviderGUI:
         self.client3.grid(column=0, row=4, padx=20, pady=4)
         self.phoneNumber.grid(column=0, row=0, padx=60, pady=4)
         self.messageTextEntry.grid(column=0, row=2, padx=20, pady=4)
+        self.messageSentEntry.grid(column=0, row=4, padx=20, pady=4)
         self.fileAttachmentEntry.grid(column=0, row=3, padx=20, pady=4)
         #self.textMessagePhone.grid(column=0, row=0, padx=60, pady=4)
 
@@ -217,6 +220,7 @@ class ProviderGUI:
         self.scr.grid(column=0, columnspan=3)
         self.scrClient.grid(column=0, columnspan=3)
         self.messageEntry.grid(column=0, columnspan=3)
+        self.sentMessages.grid(column=0, columnspan=3)
 
     def _quit(self):
         self.win.quit()
@@ -254,11 +258,15 @@ class ProviderGUI:
     def sendMessageProcess(self):
         '''sendMessageToClient'''
         msg = self.messageEntry.get('1.0', tk.END)
-        sendMessageToClient(msg, self.phone.get(), self.fName2, self.fDir2, mBox)
+        sendMessageToClient(msg, self.phone.get(), self.fName2, mBox, self.fDir2)
+        self.createThreadSentMessages()
         print('Sending text')
 
+    def rundMessageSentDB(self):
+        self.createThreadSentMessages()
+
     def sendText(self):
-        self.createThreadSendMessags()
+        self.createThreadSendMessage()
 
     def loadMe(self):
         for i in range(20):
@@ -272,7 +280,8 @@ class ProviderGUI:
         #self.createLoadingBullet()
         self.createThreadSearchTreatment()
             
-        
+    def listOfSentMessages(self):
+        displaySentMessages(self.sentMessages)
         
 
     def searchTXPlan(self):
@@ -377,7 +386,7 @@ class ProviderGUI:
         searchTX.start()
         print(searchTX)
 
-    def createThreadSendMessags(self):
+    def createThreadSendMessage(self):
         sendMessage = Thread(target=self.sendMessageProcess)
         sendMessage.setDaemon(True)
         sendMessage.start()
@@ -388,6 +397,12 @@ class ProviderGUI:
         loading.setDaemon(True)
         loading.start()
         print(loading)
+
+    def createThreadSentMessages(self):
+        messages = Thread(target=self.listOfSentMessages)
+        messages.setDaemon(True)
+        messages.start()
+        print(messages)
 
 
 
@@ -403,6 +418,7 @@ gui.checkBox()
 gui.radioButton()
 gui.scrollableText()
 gui.getDateTime()
+gui.rundMessageSentDB()
 try:
     w.mainloop()
 except Exception as e:

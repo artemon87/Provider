@@ -568,10 +568,10 @@ def updateProviderGeoLocation():
                     break
     updateProviderGEO(DB, lstWithGeo)
 
-def sendMessageToClient(msg, number, filePath, attachment, popUp):
+def sendMessageToClient(msg, number, filePath, popUp, attachment = None):
     MSG = namedtuple('MSG', 'Number Note Date Attachment')
-    time = strftime("%a, %d %b %Y %H:%M:%S", time.localtime())
-    inst = MSG(number, msg, time, filePath)
+    timeSent = strftime("%a, %d %b %Y %H:%M:%S", time.localtime())
+    inst = MSG(number, msg, timeSent, filePath)
     DB = connectToDB()
     createMessageDB(DB)
     addMessage(DB, inst)
@@ -583,6 +583,29 @@ def sendMessageToClient(msg, number, filePath, attachment, popUp):
         addMessage(DB, inst)
     else:
         popUp.showinfo('Confirmation', 'Message failed')
+
+def displaySentMessages(text):
+    DB = connectToDB()
+    lst = readFromMessage(DB)
+    for elem in lst:
+        text.insert(tk.INSERT,"ID: ")
+        text.insert(tk.INSERT,elem.ID)
+        text.insert(tk.INSERT,". Sent to: ")
+        text.insert(tk.INSERT, elem.Number)
+        text.insert(tk.INSERT,"\n")
+        text.insert(tk.INSERT, "Message: ")
+        text.insert(tk.INSERT, elem.Note)
+        text.insert(tk.INSERT, "Sent on: ")
+        text.insert(tk.INSERT, elem.Date)
+        text.insert(tk.INSERT, "\n")
+        if elem.Attachment:
+            text.insert(tk.INSERT,"Attachment: ")
+            text.insert(tk.INSERT,elem.Attachment)
+            text.insert(tk.INSERT,"\n")
+        text.insert(tk.INSERT,"\n")
+            
+        
+        
     
     
 
