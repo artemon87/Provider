@@ -260,9 +260,9 @@ def confirmProvider(fileToRead, name, text, displayArgs, ratio):
         text.insert(tk.INSERT,"Nothing was found. Search again...")
         text.insert(tk.INSERT,"\n")
         
-def readED(fileToRead, hosp, name, n, ratio):
+def readED(fileToRead, hosp, name, n, ratio, weighted = None):
     args = processFacility(fileToRead, hosp, name, ratio)
-    providerDict, newDict, needlesProvider, ed = createNX(*args, n)
+    providerDict, newDict, needlesProvider, ed = createNX(*args, n, weighted)
     return ed, providerDict
 
 def printOutProvider(providerDict, text, displayArgs, ratio):
@@ -606,10 +606,33 @@ def displaySentMessages(text):
             text.insert(tk.INSERT,"\n")
         text.insert(tk.INSERT,"\n")
 
-def updateHospRecordsFax(name, fax):
+def updateHospRecordsFax():
+    #2534266924
     swedishFax = updateSwedish()
     multicareFax = updateMulticare()
     uwmediceFax = updateUW()
+    DB = connectToDB()
+    franciscanDict = {'FRANCIS HOSPITAL': 2539447916,
+                      'JOSEPH MEDICAL CENTER': 2534266408,
+                      'CLARE HOSPITAL' : 2534266408,
+                      'ANTHONY HOSPITAL' : 2534266408,
+                      'HIGHLINE MEDICAL CENTER' : 2534266408,
+                      'ELIZABETH HOSPITAL' : 3608028519,
+                      'HARRISON MEDICAL CENTER' : 3607446607,
+                      }
+    overlakeDict = {'OVERLAKE MEDICAL CENTER' : 4254673343}
+                      
+    umbrellaDict = {'SWEDISH': swedishFax, 'MULTICARE': multicareFax,
+           'UW': uwmediceFax}
+    
+    for key, value in umbrellaDict.items():
+        updateRecordsHospitalUmbrella(DB, key, value)
+        updateBillingHospitalUmbrella(DB, key, value)
+    for key, value in franciscanDict.items():
+        updateRecordsHospitalName(DB, key, value)
+        updateBillingHospitalName(DB, key, value)
+    for key, value in overlakeDict.items():
+        updateRecordsHospitalName(DB, key, value)
     
             
         

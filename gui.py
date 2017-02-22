@@ -82,6 +82,7 @@ class ProviderGUI:
         self.phone = tk.StringVar() #phonenumber
         self.nameEntered = ttk.Entry(self.monty1, width=40, textvariable=self.name) #name entered
         self.aLabel2 = ttk.Label(self.monty1, text="Choose an action:").grid(column=1, row=0) #drop down box
+        self.netSizeLabel = ttk.Label(self.monty1, text="Network size:").grid(column=1, row=1) #drop down box
         self.clientLable1 = ttk.Label(self.client, text="Enter client's location:").grid(column=0, row=0) #drop down box
         self.clientLable2 = ttk.Label(self.client, text="Language").grid(column=1, row=0) #drop down box
         self.clientLable3 = ttk.Label(self.client, text="Travel Distance").grid(column=2, row=0) #drop down box
@@ -92,10 +93,12 @@ class ProviderGUI:
         self.act = tk.StringVar()
         self.act2 = tk.StringVar()
         self.act3 = tk.StringVar()
+        self.netSize = tk.StringVar()
         self.clientLanguageChooser = ttk.Combobox(self.client, width=8, textvariable=self.act2)
         self.clientDistanceChooser = ttk.Combobox(self.client, width=8, textvariable=self.act3)
         self.searchButton = ttk.Button(self.client, text="Search", command=self.searchMe) #button
         self.numberChosen = ttk.Combobox(self.monty1, width=12, textvariable=self.act)
+        self.networkSize = ttk.Combobox(self.monty1, width=12, textvariable=self.netSize)
         self.labelCheckbox = ttk.Label(self.monty, text="Information to Display", font=("System", 12)).grid(column=1, row=0, padx = 10, pady = 10)
         self.labelCombo = ttk.Label(self.monty, text="Search Ratio", font=("System", 12)).grid(column=1, row=6, padx = 10, pady = 10)
         self.chVar1 = tk.IntVar() #checkbox 1
@@ -111,6 +114,7 @@ class ProviderGUI:
         self.chClient = tk.IntVar() #checkbox10
         self.chClient2 = tk.IntVar() #checkbox11
         self.chClient3 = tk.IntVar() #checkbox12
+        self.weightGraph = tk.IntVar() #checkbox13
         self.scr = scrolledtext.ScrolledText(self.monty, width=70, height=14, wrap=tk.WORD)
         self.scrClient = scrolledtext.ScrolledText(self.client3, width=70, height=30, wrap=tk.WORD)
         self.messageEntry = scrolledtext.ScrolledText(self.messageTextEntry, width=70, height=15, wrap=tk.WORD)
@@ -163,6 +167,11 @@ class ProviderGUI:
         self.numberChosen['values'] = ('Find Provider', 'Build a network')
         self.numberChosen.grid(column=1, row=1, rowspan=2)
         self.numberChosen.current(0)
+        self.numberChosen.bind(self.addNetworkSizeChooser)
+        self.networkSize['values'] = ('3 links', '5 links', '8 links', '10 links')
+        self.networkSize.grid(column=1, row=3, rowspan=1)
+        #self.networkSize.bind(self.addNetworkSizeChooser)
+        self.networkSize.current(1)
         self.clientLanguageChooser['values'] = ('Russian', 'Spanish', 'English', 'Unspecified')
         self.clientLanguageChooser.grid(column=1, row=1, rowspan=1)
         self.clientLanguageChooser.current(0)
@@ -204,6 +213,9 @@ class ProviderGUI:
         self.checkClient2 = tk.Checkbutton(self.client2, text=" Avoid Phys/Rad", variable=self.chClient2)
         self.checkClient2.grid(column=2, row=0, sticky=tk.W)
         self.checkClient2.select()
+        self.weighted = tk.Checkbutton(self.monty1, text=" Weighted", variable=self.weightGraph)
+        self.weighted.grid(column=2, row=3, sticky=tk.W)
+        self.weighted.select()
         '''self.checkClient2 = tk.Checkbutton(self.client2, text="Only Chiro/LMP", variable=self.chClient3)
         self.checkClient2.grid(column=3, row=0, sticky=tk.W)
         self.checkClient2.select()'''
@@ -228,6 +240,16 @@ class ProviderGUI:
         self.win.destroy()
         exit()
 
+    def getNetworkSize(self):
+        if self.netSize.get() == '3 links':
+            return 3
+        elif self.netSize.get() == '5 links':
+            return 5
+        elif self.netSize.get() == '8 links':
+            return 8
+        elif self.netSize.get() == '10 links':
+            return 10
+
     def clearCanvas(self):
         try:
             self.canvas.get_tk_widget().destroy()
@@ -237,6 +259,14 @@ class ProviderGUI:
             self.aPlot.set_yticks([])
         except Exception as e:
             pass
+
+    def addNetworkSizeChooser(self):
+        if self.netSize.get() == 'Build a network':
+            print('display option for network size')
+            self.networkSize.grid(column=1, row=3, rowspan=1)
+            #self.networkSize.bind(self.addNetworkSizeChooser)
+            pass
+        pass
 
     def runUpdateDatabase(self):
         self.createThreadUpdateDatabase()
@@ -306,7 +336,7 @@ class ProviderGUI:
                 fileToRead ='netRace.xlsx'
             else:
                 fileToRead = self.fName
-            ed, providerDict = readED(fileToRead, None, self.name.get(), 7, ratio)
+            ed, providerDict = readED(fileToRead, None, self.name.get(), self.getNetworkSize(), ratio, self.weightGraph.get())
             if len(ed) == 0:
                 clearScreen(self.scr)
                 confirmProvider(fileToRead, self.name.get(), self.scr, displayArgs, ratio)

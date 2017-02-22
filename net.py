@@ -98,7 +98,7 @@ def processFacility(location, hospitals = None, singleProvider = None, ratio = 0
     
     
 
-def createNX(providerDict, providerFile, toRemove, netSize):
+def createNX(providerDict, providerFile, toRemove, netSize, weighted):
     singleElement = None
     race = int
     lessThan4 = ''
@@ -174,7 +174,10 @@ def createNX(providerDict, providerFile, toRemove, netSize):
             try:
                 count = count.most_common(netSize)
                 for i in count:
-                    ed.add_edge(singleElement.Name, i[0].Name)
+                    if weighted:
+                        ed.add_edge(singleElement.Name, i[0].Name, weight = i[1])
+                    else:
+                        ed.add_edge(singleElement.Name, i[0].Name)
             except Exception as e:
                 print(e)
         elif lessThan4:
@@ -182,7 +185,10 @@ def createNX(providerDict, providerFile, toRemove, netSize):
             try:
                 count = count.most_common(netSize)
                 for i in count:
-                    ed.add_edge(lessThan4, i[0].Name)
+                    if weighted:
+                        ed.add_edge(lessThan4, i[0].Name, weight = i[1])
+                    else:
+                        ed.add_edge(lessThan4, i[0].Name)
             except Exception as e:
                 print(e)
         else:
