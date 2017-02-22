@@ -324,7 +324,8 @@ class ProviderGUI:
 
 
     def runSearchTab1(self):
-        ratio = self.searchAccuracy()
+        _netSize = self.getNetworkSize() #####################
+        ratio = self.searchAccuracy() 
         displayArgs = self.getCheckbox()
         if self.act.get() == 'Build a network':
             self.clearCanvas()
