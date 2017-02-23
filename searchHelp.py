@@ -637,7 +637,6 @@ def updateHospRecordsFax():
 def createNodeSize(links, weighted = None):
     startSize = 300
     nodeSizes = []
-    nodeColors = []
     for i in range(links + 1):
         nodeSizes.append(startSize)
         if weighted:
