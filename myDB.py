@@ -181,28 +181,28 @@ def readFromHospitalUmbrella(tup, name):
 
 def updateBillingHospitalUmbrella(tup, name, fax):
     name = name.upper()
-    sqlRetrive = '''UPDATE HOSPITAL SET RECORDS = ? WHERE UMBRELLA like ? or UMBRELLA like ? or UMBRELLA like ?;'''
-    tup.cursor.execute(sqlRetrive,[fax, ('%'+name+'%'), (name+'%'), ('%'+name)])
+    sqlRetrive = '''UPDATE HOSPITAL SET BILLING = ? WHERE UMBRELLA like ? or UMBRELLA like ? or UMBRELLA like ?;'''
+    tup.cursor.execute(sqlRetrive,[str(fax), ('%'+name+'%'), (name+'%'), ('%'+name)])
     tup.connection.commit()
 
 
 def updateBillingHospitalName(tup, name, fax):
     name = name.upper()
-    sqlRetrive = '''UPDATE HOSPITAL SET RECORDS = ? WHERE NAME like ? or NAME like ? or NAME like ?;'''
-    tup.cursor.execute(sqlRetrive,[fax, ('%'+name+'%'), (name+'%'), ('%'+name)])
+    sqlRetrive = '''UPDATE HOSPITAL SET BILLING = ? WHERE NAME like ? or NAME like ? or NAME like ?;'''
+    tup.cursor.execute(sqlRetrive,[str(fax), ('%'+name+'%'), (name+'%'), ('%'+name)])
     tup.connection.commit()
 
 def updateRecordsHospitalUmbrella(tup, name, fax):
     name = name.upper()
     sqlRetrive = '''UPDATE HOSPITAL SET RECORDS = ? WHERE UMBRELLA like ? or UMBRELLA like ? or UMBRELLA like ?;'''
-    tup.cursor.execute(sqlRetrive,[fax, ('%'+name+'%'), (name+'%'), ('%'+name)])
+    tup.cursor.execute(sqlRetrive,[str(fax), ('%'+name+'%'), (name+'%'), ('%'+name)])
     tup.connection.commit()
 
 
 def updateRecordsHospitalName(tup, name, fax):
     name = name.upper()
     sqlRetrive = '''UPDATE HOSPITAL SET RECORDS = ? WHERE NAME like ? or NAME like ? or NAME like ?;'''
-    tup.cursor.execute(sqlRetrive,[fax, ('%'+name+'%'), (name+'%'), ('%'+name)])
+    tup.cursor.execute(sqlRetrive,[str(fax), ('%'+name+'%'), (name+'%'), ('%'+name)])
     tup.connection.commit()
 
 def updateNeedlesFax(tup, provider):

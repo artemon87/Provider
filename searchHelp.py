@@ -570,6 +570,37 @@ def updateProviderGeoLocation():
                     break
     updateProviderGEO(DB, lstWithGeo)
 
+def updateProviderMissingGeoLocation():
+    gmaps = googlemaps.Client(key = 'AIzaSyBePe2zZ69dI2-YMifPVmNirkarl86Hic4')
+    #gmaps = googlemaps.Client(key = 'AIzaSyBePe2zZ69dI2-YMifPVmNirkarl86Hic4')
+    #gmaps = googlemaps.Client(key = 'AIzaSyD2WQ2msw84ZYXOMSciz6YQtZ8W-PI6xIw') 
+    #gmaps = googlemaps.Client(key = 'AIzaSyCsATCl3uaPZGRcamcl11Nd1NnaLD8SIew') 
+    DB = connectToDB()
+    geo = None
+    P = namedtuple('P', 'Name Phone Geo')
+    lstWithGeo = []
+    lst = readFromProvider(DB)
+    n = 0
+    for i in lst[5497:]:
+        if not i.GEO or i.GEO == 'NONE':
+            if i.ADDRESS and i.CITY: 
+                fullAddress = i.ADDRESS + i.CITY
+                geocode_result = gmaps.geocode(fullAddress)
+                if geocode_result:
+                    try:
+                        location = geocode_result[0]['geometry']['location']
+                        geo = location['lat'], location['lng']
+                        n += 1
+                    except Exception as e:
+                        print(e)
+                    inst = P(i.NAME, i.PHONE, geo)
+                    lstWithGeo.append(inst)
+                    if n >= 2000:
+                        break
+        else:
+            continue
+    updateProviderGEO(DB, lstWithGeo)
+
 def sendMessageToClient(msg, number, filePath, popUp, attachment = None):
     MSG = namedtuple('MSG', 'Number Note Date Attachment')
     timeSent = strftime("%a, %d %b %Y %H:%M:%S", time.localtime())
@@ -607,32 +638,53 @@ def displaySentMessages(text):
         text.insert(tk.INSERT,"\n")
 
 def updateHospRecordsFax():
-    #2534266924
+    #2534266408, (206) 215-2757
     swedishFax = updateSwedish()
     multicareFax = updateMulticare()
     uwmediceFax = updateUW()
     DB = connectToDB()
     franciscanDict = {'FRANCIS HOSPITAL': 2539447916,
-                      'JOSEPH MEDICAL CENTER': 2534266408,
-                      'CLARE HOSPITAL' : 2534266408,
-                      'ANTHONY HOSPITAL' : 2534266408,
-                      'HIGHLINE MEDICAL CENTER' : 2534266408,
+                      'JOSEPH MEDICAL CENTER': 2534266924,
+                      'CLARE HOSPITAL' : 2534266924,
+                      'ANTHONY HOSPITAL' : 2534266924,
+                      'HIGHLINE MEDICAL CENTER' : 2534266924,
                       'ELIZABETH HOSPITAL' : 3608028519,
                       'HARRISON MEDICAL CENTER' : 3607446607,
                       }
-    overlakeDict = {'OVERLAKE MEDICAL CENTER' : 4254673343}
+    hospitalsRBDict = {'OVERLAKE MEDICAL CENTER' : [4254673343, 4256885658],
+                    'Regional Medical Center Everett' : [4253170701, 4253170701],
+                       'EvergreenHealth' : [4258991933, 4258991933],
+                       'CASCADE VALLEY HOSPITAL AND CLINICS' : [3604350525, 3604350525],
+                       'CASCADE MEDICAL CENTER' : [5095482524, 5095482524],
+                       'CENTRAL WASHINGTON HOSPITAL' : [5096626770, 5096626770],
+                       'WENATCHEE VALLEY HOSPITAL & CLINICS' : [5096655891, 5096655891],
+                       'EAST ADAMS RURAL HEALTHCARE' : [5096591113, 5096591113],
+                       'GRAYS HARBOR COMMUNITY HOSPITAL' : [3605370588, 3605376100],
+                       'GROUP HEALTH COOPERATIVE' : [2063262599, 2063262599],
+                       'KADLEC REGIONAL MEDICAL CENTER' : [5099422701, 5099422701],
+                       'KITTITAS VALLEY HEALTHCARE' : [5099627413, 5099627413],
+                       'LEGACY SALMON CREEK MEDICAL CENTER' : [3604873419, 3604873419],
+                       'NORTHWEST HOSPITAL' : [2063681920, 2063681920],
+                       'MASON GENERAL HOSPITAL' : [3604279592, 3604279592],
+                       'SACRED HEART MEDICAL CENTER & CHILDREN’S HOSPITAL' : [5094744815, 'None'],
+                       'SEATTLE CHILDREN’S' : [2069853252, 2069853252],
+                       'SHRINERS HOSPITALS FOR CHILDREN' : [5097441256, 5097441256],
+                       'SUNNYSIDE COMMUNITY HOSPITAL' : [5098371637, 5098371637],
+                       'VIRGINIA MASON MEDICAL CENTER' : [2062238885, 2065155803],
+                       'YAKIMA REGIONAL MEDICAL AND CARDIAC CENTER' : [5095755244, 5095755244]}
                       
-    umbrellaDict = {'SWEDISH': swedishFax, 'MULTICARE': multicareFax,
-           'UW': uwmediceFax}
+    umbrellaDict = {'SWEDISH': [swedishFax, 2062152757], 'MULTICARE': [multicareFax, multicareFax],
+                    'uw' : [uwmediceFax, 2065980842]}
     
     for key, value in umbrellaDict.items():
-        updateRecordsHospitalUmbrella(DB, key, value)
-        updateBillingHospitalUmbrella(DB, key, value)
+        updateRecordsHospitalUmbrella(DB, key, value[0])
+        updateBillingHospitalUmbrella(DB, key, value[1])
     for key, value in franciscanDict.items():
         updateRecordsHospitalName(DB, key, value)
         updateBillingHospitalName(DB, key, value)
-    for key, value in overlakeDict.items():
-        updateRecordsHospitalName(DB, key, value)
+    for key, value in hospitalsRBDict.items():
+        updateRecordsHospitalName(DB, key, value[0])
+        updateBillingHospitalName(DB, key, value[1])
 
 def createNodeSize(links, weighted = None):
     startSize = 300

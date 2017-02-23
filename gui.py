@@ -285,6 +285,7 @@ class ProviderGUI:
             self.updateDB.configure(text='Update Database')
         else:
             mBox.showinfo('Database Information', 'Please launch Yelp.com on your webbrowser.\nAnd confirm that you are not a robot')
+        updateProviderMissingGeoLocation()
 
     def sendMessageProcess(self):
         '''sendMessageToClient'''
