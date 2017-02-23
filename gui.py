@@ -324,7 +324,8 @@ class ProviderGUI:
 
 
     def runSearchTab1(self):
-        _netSize = self.getNetworkSize() #####################
+        node_sizes = createNodeSize(self.getNetworkSize(), self.weightGraph.get()) #####################
+        
         ratio = self.searchAccuracy() 
         displayArgs = self.getCheckbox()
         if self.act.get() == 'Build a network':
@@ -347,7 +348,7 @@ class ProviderGUI:
                 #confirmProvider(fileToRead, self.name.get(), self.scr, displayArgs, ratio)
                 printOutProvider(providerDict, self.scr, displayArgs,ratio)
                 pos=nx.spring_layout(ed)
-                nx.draw_networkx(ed, pos, arrows = True, with_labels = True, ax = self.aPlot, font_size = 9)
+                nx.draw_networkx(ed, pos, arrows = True, with_labels = True, ax = self.aPlot, font_size = 9, node_size = node_sizes)
                 self.canvas = FigureCanvasTkAgg(self.figure, master=self.monty2)
                 self.canvas.show()
                 self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)

@@ -634,11 +634,15 @@ def updateHospRecordsFax():
     for key, value in overlakeDict.items():
         updateRecordsHospitalName(DB, key, value)
 
-def createNodeSize(links):
-    startSize = int(300 * (links + 1))
-    net = []
-    for i in range(size):
-        pass
+def createNodeSize(links, weighted = None):
+    startSize = 300
+    nodeSizes = []
+    nodeColors = []
+    for i in range(links + 1):
+        nodeSizes.append(startSize)
+        if weighted:
+            startSize += 300
+    return nodeSizes
         
     
             
