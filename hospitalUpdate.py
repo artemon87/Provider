@@ -18,7 +18,7 @@ def updateSwedish():
             if 'FAX' in t:
                 return t.split(' ')[1].replace('-', '')
     except Exception as e:
-        log.loggingInfo(e)
+        log.loggingInfo(e, 'hospitalUpdate.py', 'updateSwedoish')
 
 def updateMulticare():
     multicare_url = 'https://www.multicare.org/medical-records/'
@@ -33,7 +33,7 @@ def updateMulticare():
                 tags.append(tag.strip('\n\r\t -').replace('-', '')[:10])
                 return tags[0]            
             except Exception as e:
-                log.loggingInfo(e)
+                log.loggingInfo(e, 'hospitalUpdate.py', 'updateMulticare')
 
 def updateUW():
     uw_url = 'http://www.uwmedicine.org/patient-resources/medical-records'
@@ -49,7 +49,7 @@ def updateUW():
                 try:
                     return tags[0].replace('Fax', ',').replace('Phone', ',').replace(':', '').replace('(', '').replace(')', '').replace('-', '').replace(' ', '').split(',')[2]
                 except Exception as e:
-                    log.loggingInfo(e)
+                    log.loggingInfo(e, 'hospitalUpdate.py', 'updateUW')
 
 def updateSeaMar():
     base_url = 'http://www.seamarchc.org/static_pages/contactus.php'

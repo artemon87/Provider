@@ -19,7 +19,7 @@ def process(location):
 				    int(providerFile['Fax'][elem]),
 				    int(providerFile['Phone'][elem]))
 	    except Exception as e:
-		    log.loggingInfo(e)
+		    log.loggingInfo(e, 'needlesStat.py', 'process function') 
 	    if inst not in providerDict:
 		    providerDict[inst] = 1
 	    else:
@@ -35,5 +35,5 @@ def toNamedtuple(dic):
             inst = Provider(key.Name, key.Fax, key.Phone, value)
             providerList.append(inst)
         except Exception as e:
-            log.loggingInfo(e)
+            log.loggingInfo(e, 'needlesStat.py', 'toNamedtuple function') 
     return providerList

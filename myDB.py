@@ -1,5 +1,6 @@
 import sqlite3
 from collections import namedtuple
+import log
 
 
 
@@ -108,7 +109,7 @@ def readFromMessage(tup):
             inst = M(row[0], row[1], row[2], row[3], row[4])
             returnList.append(inst)
         except Exception as e:
-            pass
+            log.loggingInfo(e, 'myDB.py', 'readFromMessage')
     return returnList
 
 
@@ -149,7 +150,7 @@ def readFromHospital(tup):
             inst = P(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11])
             returnList.append(inst)
         except Exception as e:
-            pass
+            log.loggingInfo(e, 'myDB.py', 'readFromHospital')
     return returnList
 
         
@@ -163,7 +164,7 @@ def readFromHospitalName(tup, name):
             inst = P(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11])
             returnList.append(inst)
         except Exception as e:
-            pass
+            log.loggingInfo(e, 'myDB.py', 'readFromHospitalName')
     return returnList
 
 def readFromHospitalUmbrella(tup, name):
@@ -176,7 +177,7 @@ def readFromHospitalUmbrella(tup, name):
             inst = P(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11])
             returnList.append(inst)
         except IndexError as e:
-            pass        
+            log.loggingInfo(e, 'myDB.py', 'readFromHospitalUmbrella')       
     return returnList
 
 def updateBillingHospitalUmbrella(tup, name, fax):
@@ -234,7 +235,7 @@ def readFromNeedlesAll(tup):
             inst = P(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10])
             returnList.append(inst)
         except IndexError as e:
-            pass        
+            log.loggingInfo(e, 'myDB.py', 'readFromNeedlesAll')       
     return returnList
     
 
@@ -248,7 +249,7 @@ def readFromNeedlesName(tup, name):
             inst = P(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10])
             returnList.append(inst)
         except IndexError as e:
-            pass        
+            log.loggingInfo(e, 'myDB.py', 'readFromNeedlesName')      
     return returnList
 
 def readFromNeedlesNameExact(tup, name):
@@ -261,7 +262,7 @@ def readFromNeedlesNameExact(tup, name):
             inst = P(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10])
             returnList.append(inst)
         except IndexError as e:
-            pass        
+            log.loggingInfo(e, 'myDB.py', 'readFromNeedlesNameExact')        
     return returnList
 
 
@@ -276,7 +277,7 @@ def readFromProviderName(tup, name):
             inst = P(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
             returnList.append(inst)
         except IndexError as e:
-            pass        
+            log.loggingInfo(e, 'myDB.py', 'readFromProviderName')        
     return returnList
 
 
@@ -289,7 +290,7 @@ def readFromProvider(tup):
             inst = P(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
             returnList.append(inst)
         except IndexError as e:
-            pass 
+            log.loggingInfo(e, 'myDB.py', 'readFromProvider') 
     return returnList
 
 def readFromNeedles(tup):

@@ -65,8 +65,6 @@ def searchRatio(s1, s2, ratio):
         ss2 = ss2.upper().replace(i.upper(), '')
     match = SequenceMatcher(None, ss1, ss2)
     if match.ratio() >= ratio:
-        #match = match.find_longest_match(0, len(ss1), 0, len(ss2))
-        #print(ss1[match.a:match.a+match.size])
         return True
     
     
@@ -75,4 +73,4 @@ def deepSearch(word, givenList, maxReturn, accuracy):
     try:
         return difflib.get_close_matches(word.upper(), (elem.Name.upper() for elem in givenList), maxReturn, accuracy)
     except Exception as e:
-        log.loggingInfo(e)
+        log.loggingInfo(e, 'find.py', 'deepSearch')

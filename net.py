@@ -92,6 +92,7 @@ def processFacility(location, hospitals = None, singleProvider = None, ratio = 0
                         providerDict[inst] = 1
                         totalPossibleOptions += 1
                 else:
+                    log.loggingInfo('totalPossibleOptions', 'net.py', 'processFacility function') 
                     break
     
     return providerDict, providerFile, toRemove
@@ -131,7 +132,7 @@ def createNX(providerDict, providerFile, toRemove, netSize, weighted):
                 try:
                     race = int(providerFile['race'][elem])
                 except Exception as e:
-                    pass
+                    log.loggingInfo(e, 'net.py', 'createNX function: race') 
                 if phone:
                     phone = phone.replace('(', '').replace(') ', '').replace(' - ', '')
                 else:
@@ -179,7 +180,7 @@ def createNX(providerDict, providerFile, toRemove, netSize, weighted):
                     else:
                         ed.add_edge(singleElement.Name, i[0].Name)
             except Exception as e:
-                print(e)
+                log.loggingInfo(e, 'net.py', 'createNX function: Counter.most_common') 
         elif lessThan4:
             count = Counter(list_of_single_elem)
             try:
@@ -190,7 +191,7 @@ def createNX(providerDict, providerFile, toRemove, netSize, weighted):
                     else:
                         ed.add_edge(lessThan4, i[0].Name)
             except Exception as e:
-                print(e)
+                log.loggingInfo(e, 'net.py', 'createNX function: Counter.most_common2') 
         else:
             for l in list_of_lists[1:]:
                 if key in l:
@@ -236,9 +237,8 @@ def createDicForDB(providerDict, needlesProvider):
                         location = geocode_result[0]['geometry']['location']
                         geo = location['lat'], location['lng']
                         #geo = geoLoc.latlng
-                        print(geo)
                     except Exception as e:
-                        print(e)
+                        log.loggingInfo(e, 'net.py', 'createDicForDB: geolocation') 
                 else:
                     geo = 'NONE'
                 try:
@@ -246,26 +246,9 @@ def createDicForDB(providerDict, needlesProvider):
                     lst.append(inst)
                     pass
                 except Exception as e:
-                    print(e)
+                    log.loggingInfo(e, 'net.py', 'createDicForDB: namedtuple instance')
     print('Total providers:', n)
     return lst
-    '''Provider = namedtuple('Provider', 'Name Address Phone ID Weight')
-    providerDict, providerFile, toRemove = processAll(location)
-    needlesDict = defaultdict(list)
-    providerDict, *rest = processAll(location)
-    for key, value in providerDict.items():
-        inst = Provider(key.Name, key.Address, key.Phone, key.ID, value)
-        for elem in providerFile.index:
-            providerID = providerFile['names_id'][elem]
-            race = providerFile['race'][elem]
-            if providerID == inst.ID:
-                needlesDict[inst].append(race)
-            else:
-                needlesDict[inst] = []
-    for key, value in needlesDict.items():
-        needlesDict[key] = Counter(value)
-        print(Counter(value))
-    return needlesDict'''
 
 def getFaxNeedles(location):
     file = read(location)
@@ -278,7 +261,7 @@ def getFaxNeedles(location):
         try:
             fax = int(fax)
         except ValueError as v:
-            pass
+            log.loggingInfo(v, 'net.py', 'getFaxNeedles: fax')
         if ID not in dic:
             dic[ID] = fax
     return dic

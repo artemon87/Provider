@@ -44,6 +44,7 @@ class ProviderGUI:
         self.win.config(menu=self.menuBar)
         self.helpMenu = Menu(self.menuBar, tearoff=0)
         self.helpMenu.add_command(label="About", command = self._msgBox)
+        self.helpMenu.add_command(label="Exit", command = self._quit)
         self.menuBar.add_cascade(label="Help", menu=self.helpMenu)
         self.monty1 = ttk.LabelFrame(self.tab1, text=' Monty Python ')
         self.monty = ttk.LabelFrame(self.tab1, text=' Monty1 Python ')
@@ -170,7 +171,6 @@ class ProviderGUI:
         self.numberChosen.bind(self.addNetworkSizeChooser)
         self.networkSize['values'] = ('3 links', '5 links', '8 links', '10 links')
         self.networkSize.grid(column=1, row=3, rowspan=1)
-        #self.networkSize.bind(self.addNetworkSizeChooser)
         self.networkSize.current(1)
         self.clientLanguageChooser['values'] = ('Russian', 'Spanish', 'English', 'Unspecified')
         self.clientLanguageChooser.grid(column=1, row=1, rowspan=1)
@@ -216,9 +216,6 @@ class ProviderGUI:
         self.weighted = tk.Checkbutton(self.monty1, text=" Weighted", variable=self.weightGraph)
         self.weighted.grid(column=2, row=3, sticky=tk.W)
         self.weighted.select()
-        '''self.checkClient2 = tk.Checkbutton(self.client2, text="Only Chiro/LMP", variable=self.chClient3)
-        self.checkClient2.grid(column=3, row=0, sticky=tk.W)
-        self.checkClient2.select()'''
 
     def radioButton(self):
         self.rad1 = tk.Radiobutton(self.monty, text='Somehow Accurate', variable=self.radVar, value=1, command=self.radCall)
@@ -258,14 +255,12 @@ class ProviderGUI:
             self.aPlot.set_xticks([])
             self.aPlot.set_yticks([])
         except Exception as e:
-            pass
+            log.loggingDebug(e, 'gui.py', 'clearCanvas method')
 
     def addNetworkSizeChooser(self):
         if self.netSize.get() == 'Build a network':
             print('display option for network size')
             self.networkSize.grid(column=1, row=3, rowspan=1)
-            #self.networkSize.bind(self.addNetworkSizeChooser)
-            pass
         pass
 
     def runUpdateDatabase(self):
@@ -459,4 +454,4 @@ gui.getDateTime()
 try:
     w.mainloop()
 except Exception as e:
-    print(e)
+    log.loggingWarning(e, 'gui.py', 'running mainloop')

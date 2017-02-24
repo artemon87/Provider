@@ -4,6 +4,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
+import log
 
 class textMessage():
     def __init__(self):
@@ -23,7 +24,8 @@ class textMessage():
                '@ptel.com', '@text.republicwireless.com',
                '@tms.suncom.com', '@message.ting.com', '@email.uscc.net',
                '@cingularme.com', '@cspire1.com', '@vtext.com']'''
-        lst = ['@txt.att.net', '@tmomail.net']
+        lst = ['@txt.att.net', '@tmomail.net', '@messaging.sprintpcs.com',
+               '@pm.sprint.com']
         for i in lst:
             fullNumber = str(number) + i
             self.to_List.append(fullNumber)
@@ -57,7 +59,7 @@ class textMessage():
             return True
             server.quit()
         except smtplib.SMTPException as e:
-            print(e)
+            log.loggingWarning(e, 'textMessage.py', 'sendText failed')
             return False
         
         
