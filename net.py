@@ -130,7 +130,10 @@ def createNX(providerDict, providerFile, toRemove, netSize, weighted):
                 phone = str(providerFile['compute_0008'][elem])
                 addr = str(providerFile['compute_0007'][elem])
                 try:
-                    race = int(providerFile['race'][elem])
+                    raceFirst = providerFile['race'][elem]
+                    result = checkForNaN(raceFirst)
+                    if result:
+                        race = int(providerFile['race'][elem])
                 except Exception as e:
                     log.loggingInfo(e, 'net.py', 'createNX function: race') 
                 if phone:
@@ -268,9 +271,11 @@ def getFaxNeedles(location):
         
     
             
-            
-        
-    
+def checkForNaN(elem):
+    if elem == elem:
+        return True
+    else:
+        return False
         
     
 

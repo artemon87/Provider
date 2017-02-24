@@ -21,6 +21,7 @@ from tkinter import messagebox as mBox
 from threading import Thread
 from datetime import datetime
 import time
+import log
 
 
 

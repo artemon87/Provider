@@ -358,9 +358,12 @@ def findProvider(fileToRead, name, ratio, text):
     text.insert(tk.INSERT, 'Please search again...\n')
     return possibleOptions
 
-def treatmentPlan(language, text, location, radius, needlesOnly, avoidPhys, onlyChiro):
+def treatmentPlan(language, text, sLocation, radius, needlesOnly, avoidPhys, onlyChiro):
     radius = float(radius)
-    #gmaps = googlemaps.Client(key='AIzaSyCsATCl3uaPZGRcamcl11Nd1NnaLD8SIew')
+    #gmaps = googlemaps.Client(key = 'AIzaSyBePe2zZ69dI2-YMifPVmNirkarl86Hic4')
+    #gmaps = googlemaps.Client(key = 'AIzaSyBePe2zZ69dI2-YMifPVmNirkarl86Hic4')
+    #gmaps = googlemaps.Client(key = 'AIzaSyD2WQ2msw84ZYXOMSciz6YQtZ8W-PI6xIw') #1
+    #gmaps = googlemaps.Client(key = 'AIzaSyCsATCl3uaPZGRcamcl11Nd1NnaLD8SIew') 
     #   AIzaSyCsATCl3uaPZGRcamcl11Nd1NnaLD8SIew
     print(radius)
     lst = []
@@ -368,20 +371,35 @@ def treatmentPlan(language, text, location, radius, needlesOnly, avoidPhys, only
     lst3 = []
     check = True
     allProviders = True
+    geocode_result = None
     places = ['Phys', 'Physician', 'Physicians', 'Rad', 'Radiology',
               'ER', 'Emergency', 'Imaging', 'Ambulance', 'Fire', 'City of', 'Pathology']
     languageDict = {'Russian': 1, 'Spanish': 2, 'English' : 3, 'Unspecified': 4}
     txPlanDict = {}
-    if ', WA' not in location.upper() or ',WA' not in location.upper() or ' WA' not in location.upper():
-        location = location + ' WA'
-        print(location)
+    if ', WA' not in sLocation.upper() or ',WA' not in sLocation.upper() or ' WA' not in sLocation.upper():
+        sLocation = sLocation + ' WA'
+        print(sLocation)
     DB = connectToDB()
     if not needlesOnly:
         lst2 = readFromHospital(DB)
         lst3 = readFromProvider(DB)
     lst = readFromNeedlesAll(DB)
-    loc1 = geocoder.google(location)
+    loc1 = geocoder.google(sLocation)
+    '''loc1 = None
+    try:
+        geocode_result = gmaps.geocode(sLocation)
+    except Exception as e:
+        print(e)
+        #log.loggingWarning(e, 'searchHelp.py', 'geocode_result = gmaps.geocode(sLocation)')
+    if geocode_result:
+        try:
+            location = geocode_result[0]['geometry']['location']
+            loc1 = location['lat'], location['lng']
+        except Exception as e:
+            print(e)
+            #log.loggingWarning(e, 'searchHelp.py', 'treatmentPlan: couldnt create GEOcoder')'''
     if loc1 is None:
+        clearScreen(text)
         text.insert(tk.INSERT,"Cant find this location. Please try again...\n")
         text.insert(tk.INSERT,"Either enter full address or in this format: [city, state]...\n")
         return
@@ -392,36 +410,39 @@ def treatmentPlan(language, text, location, radius, needlesOnly, avoidPhys, only
             if elem.GEO is not 'NONE' or elem.GEO is not None:
                 loc2 = elem.GEO
                 distance = great_circle(loc1.latlng, loc2).miles
+                #distance = great_circle(loc1, loc2).miles
                 if distance < radius:
                     txPlanDict[elem] = distance
             else:
                 pass
         except Exception as e:
-            log.loggingWarning(e, 'searchHelp.py', 'treatmentPlan: GEO in lst')
+            pass#log.loggingWarning(e, 'searchHelp.py', 'treatmentPlan: GEO in lst')
     if lst2:
         for elem in lst2:
             try:
                 if elem.GEO is not 'NONE' or elem.GEO is not None:
                     loc2 = elem.GEO
-                    distance = great_circle(loc1.latlng, loc2).miles
+                    distance = great_circle(loc1.latlng, loc2).miles 
+                    #distance = great_circle(loc1, loc2).miles
                     if distance < radius:
                         txPlanDict[elem] = distance
                 else:
                     pass
             except Exception as e:
-                log.loggingWarning(e, 'searchHelp.py', 'treatmentPlan: GEO in lst2')
+                pass#log.loggingWarning(e, 'searchHelp.py', 'treatmentPlan: GEO in lst2')
     if lst3:
         for elem in lst3:
             try:
                 if elem.GEO is not 'NONE' or elem.GEO is not None:
                     loc2 = elem.GEO
                     distance = great_circle(loc1.latlng, loc2).miles
+                    #distance = great_circle(loc1, loc2).miles
                     if distance < radius:
                         txPlanDict[elem] = distance
                 else:
                     pass
             except Exception as e:
-                log.loggingWarning(e, 'searchHelp.py', 'treatmentPlan: GEO in lst3')
+                pass#log.loggingWarning(e, 'searchHelp.py', 'treatmentPlan: GEO in lst3')
     clearScreen(text)
     for key, value in txPlanDict.items():
         if avoidPhys:
@@ -441,7 +462,7 @@ def treatmentPlan(language, text, location, radius, needlesOnly, avoidPhys, only
                     if key.RU > 3:
                         printProviderTX(text, key, value, language)
                 except Exception as e:
-                    log.loggingWarning(e, 'searchHelp.py', 'treatmentPlan: RU')
+                    pass#log.loggingWarning(e, 'searchHelp.py', 'treatmentPlan: RU')
                     printProviderTX(text, key, value, language)
             elif languageDict[language] == 2:
                 try:
@@ -449,7 +470,7 @@ def treatmentPlan(language, text, location, radius, needlesOnly, avoidPhys, only
                         printProviderTX(text, key, value, language)
                         #print(key.NAME, 'is only', value,'miles away.', key.ADDRESS)
                 except Exception as e:
-                    log.loggingWarning(e, 'searchHelp.py', 'treatmentPlan: ES')
+                    pass#log.loggingWarning(e, 'searchHelp.py', 'treatmentPlan: ES')
                     printProviderTX(text, key, value, language)
             elif languageDict[language] == 3:
                 try:
@@ -457,7 +478,7 @@ def treatmentPlan(language, text, location, radius, needlesOnly, avoidPhys, only
                         printProviderTX(text, key, value, language)
                         #print(key.NAME, 'is only', value,'miles away.', key.ADDRESS)
                 except Exception as e:
-                    log.loggingWarning(e, 'searchHelp.py', 'treatmentPlan: EN')
+                    pass#log.loggingWarning(e, 'searchHelp.py', 'treatmentPlan: EN')
                     printProviderTX(text, key, value, language)
             elif languageDict[language] == 4:
                 try:
@@ -465,7 +486,7 @@ def treatmentPlan(language, text, location, radius, needlesOnly, avoidPhys, only
                         printProviderTX(text, key, value, language)
                         #print(key.NAME, 'is only', value,'miles away.', key.ADDRESS)
                 except Exception as e:
-                    log.loggingWarning(e, 'searchHelp.py', 'treatmentPlan: ALL languages')
+                    pass#log.loggingWarning(e, 'searchHelp.py', 'treatmentPlan: ALL languages')
                     printProviderTX(text, key, value, language)
             
             
@@ -656,7 +677,7 @@ def updateHospRecordsFax():
                        'KADLEC REGIONAL MEDICAL CENTER' : [5099422701, 5099422701],
                        'KITTITAS VALLEY HEALTHCARE' : [5099627413, 5099627413],
                        'LEGACY SALMON CREEK MEDICAL CENTER' : [3604873419, 3604873419],
-                       'NORTHWEST HOSPITAL' : [2063681920, 2063681920],
+                       'NORTHWEST HOSPITAL' : [2066681920, 2066681920],
                        'MASON GENERAL HOSPITAL' : [3604279592, 3604279592],
                        'SACRED HEART MEDICAL CENTER & CHILDREN’S HOSPITAL' : [5094744815, 'None'],
                        'SEATTLE CHILDREN’S' : [2069853252, 2069853252],
