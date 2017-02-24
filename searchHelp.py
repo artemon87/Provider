@@ -505,7 +505,7 @@ def printProviderTX(text, provider, value, language):
             text.insert(tk.INSERT, language)
             text.insert(tk.INSERT," speeking clients in the past 2 years\n")
     except Exception as e:
-        log.loggingWarning(e, 'searchHelp.py', 'printProviderTX: Weight')
+        pass#log.loggingWarning(e, 'searchHelp.py', 'printProviderTX: Weight')
     text.insert(tk.INSERT,"Full address: ")
     text.insert(tk.INSERT,provider.ADDRESS)
     try:
@@ -513,7 +513,7 @@ def printProviderTX(text, provider, value, language):
             text.insert(tk.INSERT,", ")
             text.insert(tk.INSERT,provider.CITY)
     except Exception as e:
-        log.loggingWarning(e, 'searchHelp.py', 'printProviderTX: City')
+        pass#log.loggingWarning(e, 'searchHelp.py', 'printProviderTX: City')
     text.insert(tk.INSERT,"\n")
     text.insert(tk.INSERT,"Phone: ")
     text.insert(tk.INSERT,provider.PHONE)
@@ -523,7 +523,7 @@ def printProviderTX(text, provider, value, language):
             text.insert(tk.INSERT,"Specialty: ")
             text.insert(tk.INSERT,provider.SPECIALTY)
     except Exception as e:
-        log.loggingWarning(e, 'searchHelp.py', 'printProviderTX: Specialty')
+        pass#log.loggingWarning(e, 'searchHelp.py', 'printProviderTX: Specialty')
     text.insert(tk.INSERT,"\n\n")
 
 def updateFaxInNeedles():
