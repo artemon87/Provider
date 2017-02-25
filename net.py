@@ -18,7 +18,8 @@ def processAll(location):
     toRemove = ['UNKNOWN-MEDICAL PROVIDER', 'Secure Health Information', 'Rubinstein Law Offices',
                 'BISHOP LAW OFFICES, P.S.','ER Hospital visit', 'LAW OFFICES OF MARK A. HAMMER & ASSOCIATES, INC.',
                 'Rx', 'Rx Bartell Drugs', 'Rx Fred Meyer', 'Rx Rite Aid', 'Rx Walgreens',
-                'TOW EXPRESS', 'UNKNOWN-INSURANCE', 'WAGE LOSS', 'bishoplegal', 'Healthport (Smart Document Solutions)']
+                'TOW EXPRESS', 'UNKNOWN-INSURANCE', 'WAGE LOSS', 'bishoplegal', 'Healthport (Smart Document Solutions)',
+                'KISSELMAN LAW FIRM']
     file = read(location)
     providerFile = file.File
     providerDict = file.Dictionary

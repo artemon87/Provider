@@ -166,7 +166,7 @@ class ProviderGUI:
         self.phoneEntered.bind(self.sendText)
 
     def dropDown(self):
-        self.numberChosen['values'] = ('Find Provider', 'Build a network')
+        self.numberChosen['values'] = ('Find Hospital', 'Find Provider', 'Build a network')
         self.numberChosen.grid(column=1, row=1, rowspan=2)
         self.numberChosen.current(0)
         self.numberChosen.bind(self.addNetworkSizeChooser)
@@ -321,40 +321,52 @@ class ProviderGUI:
 
 
     def runSearchTab1(self):
-        node_sizes = createNodeSize(self.getNetworkSize(), self.weightGraph.get()) #####################
-        
-        ratio = self.searchAccuracy() 
-        displayArgs = self.getCheckbox()
-        if self.act.get() == 'Build a network':
-            self.clearCanvas()
-            clearScreen(self.scr)
-            self.scr.insert(tk.INSERT,"Creating Network")
-            #self.createLoadingBullet()
-            fileToRead = ''
-            if self.fName == None:
-                fileToRead ='netRace.xlsx'
-            else:
-                fileToRead = self.fName
-            ed, providerDict = readED(fileToRead, None, self.name.get(), self.getNetworkSize(), ratio, self.weightGraph.get())
-            if len(ed) == 0:
-                clearScreen(self.scr)
-                confirmProvider(fileToRead, self.name.get(), self.scr, displayArgs, ratio)
-                #possibleOptions = findProvider(fileToRead, self.name.get(), ratio, self.scr)
-            else:
-                clearScreen(self.scr)
-                #confirmProvider(fileToRead, self.name.get(), self.scr, displayArgs, ratio)
-                printOutProvider(providerDict, self.scr, displayArgs,ratio)
-                pos=nx.spring_layout(ed)
-                nx.draw_networkx(ed, pos, arrows = True, with_labels = True, ax = self.aPlot, font_size = 9, node_size = node_sizes)
-                self.canvas = FigureCanvasTkAgg(self.figure, master=self.monty2)
-                self.canvas.show()
-                self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-                self.toolbar = NavigationToolbar2TkAgg(self.canvas, self.monty2)
-                self.toolbar.update()
-                self.canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        try:
+            node_sizes = createNodeSize(self.getNetworkSize(), self.weightGraph.get()) #####################
             
-        elif self.act.get() == 'Find Provider':
-            confirmSearchProvider(self.name.get(), self.scr, displayArgs)
+            ratio = self.searchAccuracy() 
+            displayArgs = self.getCheckbox()
+            if self.act.get() == 'Build a network':
+                self.clearCanvas()
+                clearScreen(self.scr)
+                self.scr.insert(tk.INSERT,"Creating Network")
+                #self.createLoadingBullet()
+                fileToRead = ''
+                if self.fName == None:
+                    fileToRead ='netRace.xlsx'
+                else:
+                    fileToRead = self.fName
+                ed, providerDict = readED(fileToRead, None, self.name.get(), self.getNetworkSize(), ratio, self.weightGraph.get())
+                if len(ed) == 0:
+                    clearScreen(self.scr)
+                    confirmProvider(fileToRead, self.name.get(), self.scr, displayArgs, ratio)
+                    #possibleOptions = findProvider(fileToRead, self.name.get(), ratio, self.scr)
+                else:
+                    clearScreen(self.scr)
+                    #confirmProvider(fileToRead, self.name.get(), self.scr, displayArgs, ratio)
+                    printOutProvider(providerDict, self.scr, displayArgs,ratio)
+                    pos=nx.spring_layout(ed)
+                    nx.draw_networkx(ed, pos, arrows = True, with_labels = True, ax = self.aPlot, font_size = 9, node_size = node_sizes)
+                    self.canvas = FigureCanvasTkAgg(self.figure, master=self.monty2)
+                    self.canvas.show()
+                    self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+                    self.toolbar = NavigationToolbar2TkAgg(self.canvas, self.monty2)
+                    self.toolbar.update()
+                    self.canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+                
+            elif self.act.get() == 'Find Provider':
+                confirmSearchProvider(self.name.get(), self.scr, displayArgs, ratio)
+
+            elif self.act.get() == 'Find Hospital':
+                confirmSearchHospital(self.name.get(), self.scr, displayArgs, ratio)
+        except RuntimeError as RE:
+            print(RE)
+            try:
+                self.win.mainloop()
+                main()
+                print('Lounching mainloop()')
+            except Exception as e:
+                log.loggingWarning(e, 'gui.py', 'running mainloop')
         
 
     def clickMe(self, event = None):
@@ -440,19 +452,22 @@ class ProviderGUI:
 
 
 
-
-w = tk.Tk()
-w.title("Python GUI")
-gui = ProviderGUI(w)
-gui.labels()
-gui.bottons()
-gui.searchBar()
-gui.dropDown()
-gui.checkBox()
-gui.radioButton()
-gui.scrollableText()
-gui.getDateTime()
-try:
-    w.mainloop()
-except Exception as e:
-    log.loggingWarning(e, 'gui.py', 'running mainloop')
+def main():
+    w = tk.Tk()
+    w.title("Python GUI")
+    gui = ProviderGUI(w)
+    gui.labels()
+    gui.bottons()
+    gui.searchBar()
+    gui.dropDown()
+    gui.checkBox()
+    gui.radioButton()
+    gui.scrollableText()
+    gui.getDateTime()
+    try:
+        w.mainloop()
+    except Exception as e:
+        log.loggingWarning(e, 'gui.py', 'running mainloop')
+if __name__ == '__main__':
+    print('MAIN launched')
+    main()

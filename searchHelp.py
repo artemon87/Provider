@@ -81,7 +81,7 @@ def fillinDB(upNeedles,upYelp, upHospital, text):
         addNeedlesProvider(needlesList, DB)
     return 0
     
-def confirmSearchProvider(name, text, displayArgs):
+def confirmSearchProvider(name, text, displayArgs, ratio):
     dispName, dispAddr, dispPhone, dispFax, dispSpec, dispInfo = displayArgs
     clearScreen(text)
     lst = []
@@ -129,7 +129,7 @@ def confirmSearchProvider(name, text, displayArgs):
                         text.insert(tk.INSERT, "\n")
                     else:
                         text.insert(tk.INSERT, "Specialty: None\n")
-                looking = findOnChartSwap(elem.NAME, pand, 0.85)
+                looking = findOnChartSwap(elem.NAME, pand, ratio)
                 if len(looking) > 0:
                     text.insert(tk.INSERT, 'ChartSwap: ')
                     text.insert(tk.INSERT, ''.join(str(looking)))
@@ -145,26 +145,11 @@ def confirmSearchProvider(name, text, displayArgs):
 def confirmProvider(fileToRead, name, text, displayArgs, ratio):
     dispName, dispAddr, dispPhone, dispFax, dispSpec, dispInfo = displayArgs
     DB = connectToDB()
-    umbr = {'SWEDISH': False, 'MULTICARE': False, 'PROVIDENCE': False, 'FRANCISACAN': False,
-            'UW MEDICINE': False, 'PEACEHEALTH': False, 'CONFLUENCE': False}
-    facility = ''
     lst = []
     clearScreen(text)
-    for k,v in umbr.items():
-        result = searchFirst(k, name.upper())
-        if result:
-            umbr[k] = True
-            facility = k
-            lst = readFromHospitalUmbrella(DB, facility)
-    if len(lst) == 0:
-        print('Going to Needles DB')
-        lst = readFromNeedlesName(DB, name.upper())
+    print('Going to Needles DB')
+    lst = readFromNeedlesName(DB, name.upper())
     pand = readChartSwap('Washington')
-    if not lst:
-        print('Going to Hospital DB')
-        lst = readFromHospitalName(DB, name.upper())
-        '''print('Going to Provider DB')
-        lst = readFromProviderName(DB, name.upper())'''
     if lst:
         clearScreen(text)
         text.insert(tk.INSERT, "Is that what you are looking for?\n\n")
@@ -186,6 +171,88 @@ def confirmProvider(fileToRead, name, text, displayArgs, ratio):
                     text.insert(tk.INSERT, "\n")
                 else:
                     text.insert(tk.INSERT, "Feneral Phone: None\n")
+            if dispFax:
+                if elem.FAX is not None:
+                    text.insert(tk.INSERT, "General Fax: ")
+                    text.insert(tk.INSERT, elem.FAX)
+                    text.insert(tk.INSERT, "\n")
+                else:
+                    text.insert(tk.INSERT, "General Fax: None\n")
+            if dispInfo:
+                try:
+                    if elem.LINK is not None:
+                        text.insert(tk.INSERT, "Link: ")
+                        text.insert(tk.INSERT, elem.LINK)
+                        text.insert(tk.INSERT, "\n")
+                    else:
+                        text.insert(tk.INSERT, "Link: None\n ")
+                except Exception as e:
+                    log.loggingWarning(e, 'searchHelp.py', 'confirmProvider: info')
+            if dispSpec:
+                try:
+                    if elem.SPECIALTY is not None:
+                        text.insert(tk.INSERT, "Umbrella/Specialty: ")
+                        text.insert(tk.INSERT, elem.SPECIALTY)
+                        text.insert(tk.INSERT, "\n")
+                    else:
+                        text.insert(tk.INSERT, "Umbrella/Specialty: None\n ")
+                except Exception as e:
+                    log.loggingWarning(e, 'searchHelp.py', 'confirmProvider: spec2')
+            looking = findOnChartSwap(elem.NAME, pand, ratio)
+            if len(looking) > 0:
+                try:
+                    text.insert(tk.INSERT, 'ChartSwap: ')
+                    text.insert(tk.INSERT, ''.join(str(looking)))
+                except Exception as e:
+                    log.loggingWarning(e, 'searchHelp.py', 'confirmProvider: chartSwap')
+            text.insert(tk.INSERT,"\n")
+            text.insert(tk.INSERT,"\n")
+    else:
+        findProvider(fileToRead, name, ratio, text)
+        text.insert(tk.INSERT,"Nothing was found. Search again...")
+        text.insert(tk.INSERT,"\n")
+
+
+
+def confirmSearchHospital(name, text, displayArgs, ratio):
+    dispName, dispAddr, dispPhone, dispFax, dispSpec, dispInfo = displayArgs
+    DB = connectToDB()
+    umbr = {'SWEDISH': False, 'MULTICARE': False, 'PROVIDENCE': False, 'FRANCISACAN': False,
+            'UW MEDICINE': False, 'PEACEHEALTH': False, 'CONFLUENCE': False}
+    facility = ''
+    lst = []
+    clearScreen(text)
+    for k,v in umbr.items():
+        result = searchFirst(k, name.upper())
+        if result:
+            umbr[k] = True
+            facility = k
+            lst = readFromHospitalUmbrella(DB, facility)
+    pand = readChartSwap('Washington')
+    if not lst:
+        print('Going to Hospital DB')
+        lst = readFromHospitalName(DB, name.upper())
+    if lst:
+        clearScreen(text)
+        text.insert(tk.INSERT, "Is that what you are looking for?\n\n")
+        for elem in lst:
+            text.insert(tk.INSERT, elem.NAME+ "\n")
+            if dispAddr:
+                if elem.ADDRESS is not None:
+                    text.insert(tk.INSERT, elem.ADDRESS+ "\n")
+                else:
+                    text.insert(tk.INSERT, "Address: None")
+                try:
+                    text.insert(tk.INSERT, elem.CITY+ "\n")
+                except Exception as e:
+                    log.loggingWarning(e, 'searchHelp.py', 'confirmProvider: addr')
+            if dispPhone:
+                if elem.PHONE is not None:
+                    text.insert(tk.INSERT, "General Phone: ")
+                    text.insert(tk.INSERT, elem.PHONE)
+                    text.insert(tk.INSERT, "\n")
+                else:
+                    text.insert(tk.INSERT, "General Phone: None\n")
             if dispFax:
                 if elem.FAX is not None:
                     text.insert(tk.INSERT, "General Fax: ")
@@ -221,22 +288,13 @@ def confirmProvider(fileToRead, name, text, displayArgs, ratio):
             if dispSpec:
                 try:
                     if elem.UMBRELLA is not None:
-                        text.insert(tk.INSERT, "Umbrella/Specialty: ")
+                        text.insert(tk.INSERT, "Umbrella: ")
                         text.insert(tk.INSERT, elem.UMBRELLA)
                         text.insert(tk.INSERT, "\n")
                     else:
                         text.insert(tk.INSERT, "Umbrella/Specialty: None\n ")
                 except Exception as e:
                     log.loggingWarning(e, 'searchHelp.py', 'confirmProvider: spec')
-                try:
-                    if elem.SPECIALTY is not None:
-                        text.insert(tk.INSERT, "Umbrella/Specialty: ")
-                        text.insert(tk.INSERT, elem.SPECIALTY)
-                        text.insert(tk.INSERT, "\n")
-                    else:
-                        text.insert(tk.INSERT, "Umbrella/Specialty: None\n ")
-                except Exception as e:
-                    log.loggingWarning(e, 'searchHelp.py', 'confirmProvider: spec2')
             looking = findOnChartSwap(elem.NAME, pand, ratio)
             if len(looking) > 0:
                 try:
@@ -247,10 +305,11 @@ def confirmProvider(fileToRead, name, text, displayArgs, ratio):
             text.insert(tk.INSERT,"\n")
             text.insert(tk.INSERT,"\n")
     else:
-        findProvider(fileToRead, name, ratio, text)
-        text.insert(tk.INSERT,"Nothing was found. Search again...")
+        #findProvider(fileToRead, name, ratio, text)
+        text.insert(tk.INSERT,"Nothing was found. Search again or update Hospital Database...")
         text.insert(tk.INSERT,"\n")
-        
+
+
 def readED(fileToRead, hosp, name, n, ratio, weighted = None):
     args = processFacility(fileToRead, hosp, name, ratio)
     providerDict, newDict, needlesProvider, ed = createNX(*args, n, weighted)
@@ -360,7 +419,7 @@ def findProvider(fileToRead, name, ratio, text):
 
 def treatmentPlan(language, text, sLocation, radius, needlesOnly, avoidPhys, onlyChiro):
     radius = float(radius)
-    #gmaps = googlemaps.Client(key = 'AIzaSyBePe2zZ69dI2-YMifPVmNirkarl86Hic4')
+    gmaps = googlemaps.Client(key = 'AIzaSyBePe2zZ69dI2-YMifPVmNirkarl86Hic4')
     #gmaps = googlemaps.Client(key = 'AIzaSyBePe2zZ69dI2-YMifPVmNirkarl86Hic4')
     #gmaps = googlemaps.Client(key = 'AIzaSyD2WQ2msw84ZYXOMSciz6YQtZ8W-PI6xIw') #1
     #gmaps = googlemaps.Client(key = 'AIzaSyCsATCl3uaPZGRcamcl11Nd1NnaLD8SIew') 
@@ -384,8 +443,8 @@ def treatmentPlan(language, text, sLocation, radius, needlesOnly, avoidPhys, onl
         lst2 = readFromHospital(DB)
         lst3 = readFromProvider(DB)
     lst = readFromNeedlesAll(DB)
-    loc1 = geocoder.google(sLocation)
-    '''loc1 = None
+    #loc1 = geocoder.google(sLocation)
+    loc1 = None
     try:
         geocode_result = gmaps.geocode(sLocation)
     except Exception as e:
@@ -397,7 +456,7 @@ def treatmentPlan(language, text, sLocation, radius, needlesOnly, avoidPhys, onl
             loc1 = location['lat'], location['lng']
         except Exception as e:
             print(e)
-            #log.loggingWarning(e, 'searchHelp.py', 'treatmentPlan: couldnt create GEOcoder')'''
+            #log.loggingWarning(e, 'searchHelp.py', 'treatmentPlan: couldnt create GEOcoder')
     if loc1 is None:
         clearScreen(text)
         text.insert(tk.INSERT,"Cant find this location. Please try again...\n")
@@ -409,40 +468,40 @@ def treatmentPlan(language, text, sLocation, radius, needlesOnly, avoidPhys, onl
         try:
             if elem.GEO is not 'NONE' or elem.GEO is not None:
                 loc2 = elem.GEO
-                distance = great_circle(loc1.latlng, loc2).miles
-                #distance = great_circle(loc1, loc2).miles
+                #distance = great_circle(loc1.latlng, loc2).miles
+                distance = great_circle(loc1, loc2).miles
                 if distance < radius:
                     txPlanDict[elem] = distance
             else:
                 pass
         except Exception as e:
-            pass#log.loggingWarning(e, 'searchHelp.py', 'treatmentPlan: GEO in lst')
+            pass#log.loggingInfo(e, 'searchHelp.py', 'treatmentPlan: GEO in lst')
     if lst2:
         for elem in lst2:
             try:
                 if elem.GEO is not 'NONE' or elem.GEO is not None:
                     loc2 = elem.GEO
-                    distance = great_circle(loc1.latlng, loc2).miles 
-                    #distance = great_circle(loc1, loc2).miles
+                    #distance = great_circle(loc1.latlng, loc2).miles 
+                    distance = great_circle(loc1, loc2).miles
                     if distance < radius:
                         txPlanDict[elem] = distance
                 else:
                     pass
             except Exception as e:
-                pass#log.loggingWarning(e, 'searchHelp.py', 'treatmentPlan: GEO in lst2')
+                pass#log.loggingInfo(e, 'searchHelp.py', 'treatmentPlan: GEO in lst2')
     if lst3:
         for elem in lst3:
             try:
                 if elem.GEO is not 'NONE' or elem.GEO is not None:
                     loc2 = elem.GEO
-                    distance = great_circle(loc1.latlng, loc2).miles
-                    #distance = great_circle(loc1, loc2).miles
+                    #distance = great_circle(loc1.latlng, loc2).miles
+                    distance = great_circle(loc1, loc2).miles
                     if distance < radius:
                         txPlanDict[elem] = distance
                 else:
                     pass
             except Exception as e:
-                pass#log.loggingWarning(e, 'searchHelp.py', 'treatmentPlan: GEO in lst3')
+                pass#log.loggingInfo(e, 'searchHelp.py', 'treatmentPlan: GEO in lst3')
     clearScreen(text)
     for key, value in txPlanDict.items():
         if avoidPhys:
@@ -462,7 +521,7 @@ def treatmentPlan(language, text, sLocation, radius, needlesOnly, avoidPhys, onl
                     if key.RU > 3:
                         printProviderTX(text, key, value, language)
                 except Exception as e:
-                    pass#log.loggingWarning(e, 'searchHelp.py', 'treatmentPlan: RU')
+                    pass#log.loggingInfo(e, 'searchHelp.py', 'treatmentPlan: RU')
                     printProviderTX(text, key, value, language)
             elif languageDict[language] == 2:
                 try:
@@ -470,7 +529,7 @@ def treatmentPlan(language, text, sLocation, radius, needlesOnly, avoidPhys, onl
                         printProviderTX(text, key, value, language)
                         #print(key.NAME, 'is only', value,'miles away.', key.ADDRESS)
                 except Exception as e:
-                    pass#log.loggingWarning(e, 'searchHelp.py', 'treatmentPlan: ES')
+                    pass#log.loggingInfo(e, 'searchHelp.py', 'treatmentPlan: ES')
                     printProviderTX(text, key, value, language)
             elif languageDict[language] == 3:
                 try:
@@ -478,7 +537,7 @@ def treatmentPlan(language, text, sLocation, radius, needlesOnly, avoidPhys, onl
                         printProviderTX(text, key, value, language)
                         #print(key.NAME, 'is only', value,'miles away.', key.ADDRESS)
                 except Exception as e:
-                    pass#log.loggingWarning(e, 'searchHelp.py', 'treatmentPlan: EN')
+                    pass#log.loggingInfo(e, 'searchHelp.py', 'treatmentPlan: EN')
                     printProviderTX(text, key, value, language)
             elif languageDict[language] == 4:
                 try:
@@ -486,7 +545,7 @@ def treatmentPlan(language, text, sLocation, radius, needlesOnly, avoidPhys, onl
                         printProviderTX(text, key, value, language)
                         #print(key.NAME, 'is only', value,'miles away.', key.ADDRESS)
                 except Exception as e:
-                    pass#log.loggingWarning(e, 'searchHelp.py', 'treatmentPlan: ALL languages')
+                    pass#log.loggingInfo(e, 'searchHelp.py', 'treatmentPlan: ALL languages')
                     printProviderTX(text, key, value, language)
             
             
@@ -505,7 +564,7 @@ def printProviderTX(text, provider, value, language):
             text.insert(tk.INSERT, language)
             text.insert(tk.INSERT," speeking clients in the past 2 years\n")
     except Exception as e:
-        pass#log.loggingWarning(e, 'searchHelp.py', 'printProviderTX: Weight')
+        pass#log.loggingInfo(e, 'searchHelp.py', 'printProviderTX: Weight')
     text.insert(tk.INSERT,"Full address: ")
     text.insert(tk.INSERT,provider.ADDRESS)
     try:
@@ -513,7 +572,7 @@ def printProviderTX(text, provider, value, language):
             text.insert(tk.INSERT,", ")
             text.insert(tk.INSERT,provider.CITY)
     except Exception as e:
-        pass#log.loggingWarning(e, 'searchHelp.py', 'printProviderTX: City')
+        pass#log.loggingInfo(e, 'searchHelp.py', 'printProviderTX: City')
     text.insert(tk.INSERT,"\n")
     text.insert(tk.INSERT,"Phone: ")
     text.insert(tk.INSERT,provider.PHONE)
@@ -523,7 +582,7 @@ def printProviderTX(text, provider, value, language):
             text.insert(tk.INSERT,"Specialty: ")
             text.insert(tk.INSERT,provider.SPECIALTY)
     except Exception as e:
-        pass#log.loggingWarning(e, 'searchHelp.py', 'printProviderTX: Specialty')
+        pass#log.loggingInfo(e, 'searchHelp.py', 'printProviderTX: Specialty')
     text.insert(tk.INSERT,"\n\n")
 
 def updateFaxInNeedles():
