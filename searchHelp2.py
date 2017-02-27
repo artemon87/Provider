@@ -15,9 +15,10 @@ from textMessage import *
 from time import gmtime, strftime
 from hospitalUpdate import *
 from queue import Queue
-#import log
+import log
+import logging
 
-class textQueue:
+'''class textQueue:
     def __init__(self):
         self.queue1 = Queue()
         self.queue2 = Queue()
@@ -44,18 +45,36 @@ class textQueue:
     def getQueue3():
         return self.queue3.get(0)
     def myQueue():
-        pass
+        pass'''
         
 
-myTextQueue = textQueue()
+myTextQueue = Queue()
+myTextQueue2 = Queue()
+myTextQueue3 = Queue()
 
+def writeToQueue1(line):
+    myTextQueue.put(line)
 
+def getQueue1():
+    return myTextQueue.get(0)
 
-def clearScreen(text):
+def writeToQueue2(line):
+    myTextQueue2.put(line)
+
+def getQueue2():
+    return myTextQueue2.get(0)
+
+def writeToQueue3(line):
+    myTextQueue3.put(line)
+
+def getQueue3():
+    return myTextQueue3.get(0)
+
+'''def clearScreen(text):
     try:
         text.delete(1.0,tk.END)
     except Exception as e:
-        log.loggingWarning(e, 'searchHelp.py', 'clearScreen')
+        log.loggingWarning(e, 'searchHelp.py', 'clearScreen')'''
 
 def createTablesInDB():
     DB = connectToDB()
@@ -94,17 +113,18 @@ def fillinDB(upNeedles,upYelp, upHospital, text):
         for c in city:
             for s in spec:
                 result = lookup(s, c)
-                text.insert(tk.INSERT, 'Found ')
+                #text.insert(tk.INSERT, 'Found ')
                 line += 'Found '
-                text.insert(tk.INSERT, len(result))
+                #text.insert(tk.INSERT, len(result))
                 line += str(len(result))
-                text.insert(tk.INSERT, ' ')
+                #text.insert(tk.INSERT, ' ')
                 line += ' '
-                text.insert(tk.INSERT, s+' in ')
-                line += s+' in '+c+'\n'
-                text.insert(tk.INSERT, c+'\n')
+                #text.insert(tk.INSERT, s+' in ')
+                line += str(s)+' in '+str(c)+'\n'
+                #text.insert(tk.INSERT, c+'\n')
                 print('Found',len(result), s, 'in',c)
                 lst.append(result)
+                writeToQueue1(line)
         for elem in lst:
             addProvider(elem, DB)
         if len(lst) == 0:
@@ -127,6 +147,7 @@ def confirmSearchProvider(name, text, displayArgs, ratio):
     DB = connectToDB()
     lst = readFromProviderName(DB, name)
     print('Lengthe of list returned from Provider Database', len(lst))
+    line += 'Found '+ str(len(lst)) +' providers:\n\n'
     pand = readChartSwap('Washington')
     if lst:
         for elem in lst:
@@ -200,13 +221,13 @@ def confirmSearchProvider(name, text, displayArgs, ratio):
                 #text.insert(tk.INSERT,"\n")
                 line += "\n\n"
             except Exception as e:
-                print(e)#log.loggingWarning(e, 'searchHelp.py', 'confirmSearchProvider')
+                log.loggingWarning(e, 'searchHelp.py', 'confirmSearchProvider')
         print('Line is:', line)
     else:
         #text.insert(tk.INSERT,"Nothing was found. Search again or update Yelp Database...")
         line += 'Nothing was found. Search again or update Yelp Database...\n'
         #text.insert(tk.INSERT,"\n")
-    myTextQueue.writeToQueue1(line)
+    writeToQueue1(line)
     
 
 def confirmProvider(fileToRead, name, text, displayArgs, ratio):
@@ -236,7 +257,7 @@ def confirmProvider(fileToRead, name, text, displayArgs, ratio):
                     #text.insert(tk.INSERT, elem.CITY+ "\n")
                     line += str(elem.CITY) + '\n'
                 except Exception as e:
-                    print(e)#log.loggingWarning(e, 'searchHelp.py', 'confirmProvider: addr')
+                    log.loggingWarning(e, 'searchHelp.py', 'confirmProvider: addr')
             if dispPhone:
                 if elem.PHONE is not None:
                     #text.insert(tk.INSERT, "General Phone: ")
@@ -273,7 +294,7 @@ def confirmProvider(fileToRead, name, text, displayArgs, ratio):
                         #text.insert(tk.INSERT, "Link: None\n")
                         line += 'Link: None\n'
                 except Exception as e:
-                    print(e)#log.loggingWarning(e, 'searchHelp.py', 'confirmProvider: info')
+                    log.loggingWarning(e, 'searchHelp.py', 'confirmProvider: info')
             if dispSpec:
                 try:
                     if elem.SPECIALTY is not None:
@@ -287,7 +308,7 @@ def confirmProvider(fileToRead, name, text, displayArgs, ratio):
                         #text.insert(tk.INSERT, "Umbrella/Specialty: None\n")
                         line += 'Umbrella/Specialty: None\n'
                 except Exception as e:
-                    print(e)#log.loggingWarning(e, 'searchHelp.py', 'confirmProvider: spec2')
+                    log.loggingWarning(e, 'searchHelp.py', 'confirmProvider: spec2')
             looking = findOnChartSwap(elem.NAME, pand, ratio)
             if len(looking) > 0:
                 try:
@@ -296,7 +317,7 @@ def confirmProvider(fileToRead, name, text, displayArgs, ratio):
                     #text.insert(tk.INSERT, ''.join(str(looking)))
                     line += ''.join(str(looking)) 
                 except Exception as e:
-                    print(e)#log.loggingWarning(e, 'searchHelp.py', 'confirmProvider: chartSwap')
+                    log.loggingWarning(e, 'searchHelp.py', 'confirmProvider: chartSwap')
             #text.insert(tk.INSERT,"\n")
             #text.insert(tk.INSERT,"\n")
             line += '\n\n'
@@ -305,7 +326,7 @@ def confirmProvider(fileToRead, name, text, displayArgs, ratio):
         #text.insert(tk.INSERT,"Nothing was found. Search again...")
         #text.insert(tk.INSERT,"\n")
         #line += 'Nothing was found. Search again...\n'
-    myTextQueue.writeToQueue1(line)
+    writeToQueue1(line)
 
 
 
@@ -346,7 +367,7 @@ def confirmSearchHospital(name, text, displayArgs, ratio):
                     #text.insert(tk.INSERT, elem.CITY+ "\n")
                     line += str(elem.CITY) + '\n'
                 except Exception as e:
-                    print(e)#log.loggingWarning(e, 'searchHelp.py', 'confirmProvider: addr')
+                    log.loggingWarning(e, 'searchHelp.py', 'confirmProvider: addr')
             if dispPhone:
                 if elem.PHONE is not None:
                     #text.insert(tk.INSERT, "General Phone: ")
@@ -391,7 +412,7 @@ def confirmSearchHospital(name, text, displayArgs, ratio):
                         #text.insert(tk.INSERT, "Billing Fax: None\n")
                         line += 'Billing Fax: NOne'
                 except Exception as e:
-                    print(e)#log.loggingWarning(e, 'searchHelp.py', 'confirmProvider: fax')
+                    log.loggingWarning(e, 'searchHelp.py', 'confirmProvider: fax')
             if dispInfo:
                 try:
                     if elem.LINK is not None:
@@ -405,7 +426,7 @@ def confirmSearchHospital(name, text, displayArgs, ratio):
                         #text.insert(tk.INSERT, "Link: None\n ")
                         line += 'Link: None\n'
                 except Exception as e:
-                    print(e)#log.loggingWarning(e, 'searchHelp.py', 'confirmProvider: info')
+                    log.loggingWarning(e, 'searchHelp.py', 'confirmProvider: info')
             if dispSpec:
                 try:
                     if elem.UMBRELLA is not None:
@@ -419,7 +440,7 @@ def confirmSearchHospital(name, text, displayArgs, ratio):
                         #text.insert(tk.INSERT, "Umbrella/Specialty: None\n ")
                         line += 'Umbrella/Speciakty: None\n'
                 except Exception as e:
-                    print(e)#log.loggingWarning(e, 'searchHelp.py', 'confirmProvider: spec')
+                    log.loggingWarning(e, 'searchHelp.py', 'confirmProvider: spec')
             looking = findOnChartSwap(elem.NAME, pand, ratio)
             if len(looking) > 0:
                 try:
@@ -428,7 +449,7 @@ def confirmSearchHospital(name, text, displayArgs, ratio):
                     #text.insert(tk.INSERT, ''.join(str(looking)))
                     line += ''.join(str(looking))
                 except Exception as e:
-                    print(e)#log.loggingWarning(e, 'searchHelp.py', 'confirmProvider: chartSwap')
+                    log.loggingWarning(e, 'searchHelp.py', 'confirmProvider: chartSwap')
             #text.insert(tk.INSERT,"\n")
             #text.insert(tk.INSERT,"\n")
             line += '\n\n'
@@ -438,7 +459,7 @@ def confirmSearchHospital(name, text, displayArgs, ratio):
         #text.insert(tk.INSERT,"\n")
         line = ''
         line += 'Nothing was found. Search again or update Hospital Database...\n'
-    myTextQueue.writeToQueue1(line)
+    writeToQueue1(line)
 
 
 def readED(fileToRead, hosp, name, n, ratio, weighted = None):
@@ -449,7 +470,7 @@ def readED(fileToRead, hosp, name, n, ratio, weighted = None):
 def printOutProvider(providerDict, text, displayArgs, ratio):
     line = ''
     #clearScreen(text)
-    text.insert(tk.INSERT, "Network was created. Please see Network Graph for details...\n\n")
+    #text.insert(tk.INSERT, "Network was created. Please see Network Graph for details...\n\n")
     line += 'Network was created. Please see Network Graph for details...\n\n'
     print('printOUTProvider launched!')
     dispName, dispAddr, dispPhone, dispFax, dispSpec, dispInfo = displayArgs
@@ -462,8 +483,9 @@ def printOutProvider(providerDict, text, displayArgs, ratio):
         lst = readFromNeedlesNameExact(DB,k.Name)
     if not lst:
         print('Nothing was wound with EXACT name;')
+        line += 'Nothing was found'
     for elem in lst:
-        t#ext.insert(tk.INSERT, elem.NAME+ "\n")
+        #text.insert(tk.INSERT, elem.NAME+ "\n")
         line += str(elem.NAME) + '\n'
         if dispAddr:
             if elem.ADDRESS is not None:
@@ -507,7 +529,7 @@ def printOutProvider(providerDict, text, displayArgs, ratio):
                     #text.insert(tk.INSERT, "Link: None\n ")
                     line += 'Link: None\n'
             except Exception as e:
-                print(e)#log.loggingWarning(e, 'searchHelp.py', 'printOutProvider: link')
+                log.loggingWarning(e, 'searchHelp.py', 'printOutProvider: link')
             try:
                 if elem.WEIGHT is not None:
                     #text.insert(tk.INSERT, "Popularity: ")
@@ -518,7 +540,7 @@ def printOutProvider(providerDict, text, displayArgs, ratio):
                     line += ' clients served for the last 2 years\n'
 
             except Exception as e:
-                print(e)#log.loggingWarning(e, 'searchHelp.py', 'printOutProvidr: weight')
+                log.loggingWarning(e, 'searchHelp.py', 'printOutProvidr: weight')
         #text.insert(tk.INSERT, "\n")
         pand = readChartSwap('Washington')
         looking = findOnChartSwap(elem.NAME, pand, ratio)
@@ -529,12 +551,12 @@ def printOutProvider(providerDict, text, displayArgs, ratio):
                 #text.insert(tk.INSERT, ''.join(str(looking)))
                 line += ''.join(str(looking))
             except Exception as e:
-                print(e)#log.loggingWarning(e, 'searchHelp.py', 'printOutProvider: ChartSwap')
+                log.loggingWarning(e, 'searchHelp.py', 'printOutProvider: ChartSwap')
         #text.insert(tk.INSERT,"\n")
         #text.insert(tk.INSERT,"\n")
         line += '\n\n'
     #text.insert(tk.INSERT,"Nothing was found with your search term\n")
-    myTextQueue.writeToQueue1(line)
+    writeToQueue1(line)
 
 
 def findProvider(fileToRead, name, ratio, text):
@@ -563,7 +585,7 @@ def findProvider(fileToRead, name, ratio, text):
         try:
             possibleOptions = deepSearch(possibleOptions[0].Name, newList, 10, 0.2)
         except Exception as e:
-            print(e)#log.loggingWarning(e, 'searchHelp.py', 'findProvider: possibleOptions')
+            log.loggingWarning(e, 'searchHelp.py', 'findProvider: possibleOptions')
     #try:
         #text.delete(1.0,tk.END)
     #except Exception as e:
@@ -576,16 +598,18 @@ def findProvider(fileToRead, name, ratio, text):
     #text.insert(tk.INSERT,"\n")
     line += '\n'
     #text.insert(tk.INSERT, 'Please search again...\n')
-    myTextQueue.writeToQueue1(line)
+    writeToQueue1(line)
 
 def treatmentPlan(language, text, sLocation, radius, needlesOnly, avoidPhys, onlyChiro):
+    logging.getLogger("requests").setLevel(logging.WARNING)
+    logging.getLogger("urllib3").setLevel(logging.WARNING)
+    line = ''
     radius = float(radius)
     gmaps = googlemaps.Client(key = 'AIzaSyBePe2zZ69dI2-YMifPVmNirkarl86Hic4')
     #gmaps = googlemaps.Client(key = 'AIzaSyBePe2zZ69dI2-YMifPVmNirkarl86Hic4')
     #gmaps = googlemaps.Client(key = 'AIzaSyD2WQ2msw84ZYXOMSciz6YQtZ8W-PI6xIw') #1
     #gmaps = googlemaps.Client(key = 'AIzaSyCsATCl3uaPZGRcamcl11Nd1NnaLD8SIew') 
     #   AIzaSyCsATCl3uaPZGRcamcl11Nd1NnaLD8SIew
-    print(radius)
     lst = []
     lst2 = []
     lst3 = []
@@ -610,18 +634,21 @@ def treatmentPlan(language, text, sLocation, radius, needlesOnly, avoidPhys, onl
         geocode_result = gmaps.geocode(sLocation)
     except Exception as e:
         print(e)
-        #log.loggingWarning(e, 'searchHelp.py', 'geocode_result = gmaps.geocode(sLocation)')
+        log.loggingWarning(e, 'searchHelp.py', 'geocode_result = gmaps.geocode(sLocation)')
     if geocode_result:
         try:
             location = geocode_result[0]['geometry']['location']
             loc1 = location['lat'], location['lng']
         except Exception as e:
             print(e)
-            #log.loggingWarning(e, 'searchHelp.py', 'treatmentPlan: couldnt create GEOcoder')
+            log.loggingWarning(e, 'searchHelp.py', 'treatmentPlan: couldnt create GEOcoder')
     if loc1 is None:
-        clearScreen(text)
-        text.insert(tk.INSERT,"Cant find this location. Please try again...\n")
-        text.insert(tk.INSERT,"Either enter full address or in this format: [city, state]...\n")
+        #clearScreen(text)
+        #text.insert(tk.INSERT,"Cant find this location. Please try again...\n")
+        #text.insert(tk.INSERT,"Either enter full address or in this format: [city, state]...\n")
+        line += 'Cant find this location. Please try again...\n'
+        line += 'Either enter full address or in this format: [city, state]...\n'
+        writeToQueue2(line)
         return
     loc2 = None
     distance = float
@@ -636,7 +663,7 @@ def treatmentPlan(language, text, sLocation, radius, needlesOnly, avoidPhys, onl
             else:
                 pass
         except Exception as e:
-            print(e)#log.loggingInfo(e, 'searchHelp.py', 'treatmentPlan: GEO in lst')
+            log.loggingInfo(e, 'searchHelp.py', 'treatmentPlan: GEO in lst')
     if lst2:
         for elem in lst2:
             try:
@@ -649,7 +676,7 @@ def treatmentPlan(language, text, sLocation, radius, needlesOnly, avoidPhys, onl
                 else:
                     pass
             except Exception as e:
-                print(e)#log.loggingInfo(e, 'searchHelp.py', 'treatmentPlan: GEO in lst2')
+                log.loggingInfo(e, 'searchHelp.py', 'treatmentPlan: GEO in lst2')
     if lst3:
         for elem in lst3:
             try:
@@ -662,8 +689,8 @@ def treatmentPlan(language, text, sLocation, radius, needlesOnly, avoidPhys, onl
                 else:
                     pass
             except Exception as e:
-                print(e)#log.loggingInfo(e, 'searchHelp.py', 'treatmentPlan: GEO in lst3')
-    clearScreen(text)
+                log.loggingInfo(e, 'searchHelp.py', 'treatmentPlan: GEO in lst3')
+    #clearScreen(text)
     for key, value in txPlanDict.items():
         if avoidPhys:
             check = checkForSpecialties(key.NAME, places)
@@ -680,71 +707,97 @@ def treatmentPlan(language, text, sLocation, radius, needlesOnly, avoidPhys, onl
             if languageDict[language] == 1:
                 try:
                     if key.RU > 3:
-                        printProviderTX(text, key, value, language)
+                        line += printProviderTX(text, key, value, language)
+                        #writeToQueue2(line)
                 except Exception as e:
-                    pass#log.loggingInfo(e, 'searchHelp.py', 'treatmentPlan: RU')
-                    printProviderTX(text, key, value, language)
+                    log.loggingInfo(e, 'searchHelp.py', 'treatmentPlan: RU')
+                    line += printProviderTX(text, key, value, language)
             elif languageDict[language] == 2:
                 try:
                     if key.ES > 3:
-                        printProviderTX(text, key, value, language)
+                        line += printProviderTX(text, key, value, language)
+                        #writeToQueue2(line)
                         #print(key.NAME, 'is only', value,'miles away.', key.ADDRESS)
                 except Exception as e:
-                    print(e)#log.loggingInfo(e, 'searchHelp.py', 'treatmentPlan: ES')
-                    printProviderTX(text, key, value, language)
+                    log.loggingInfo(e, 'searchHelp.py', 'treatmentPlan: ES')
+                    line += printProviderTX(text, key, value, language)
             elif languageDict[language] == 3:
                 try:
                     if key.EN > 3:
-                        printProviderTX(text, key, value, language)
+                        line += printProviderTX(text, key, value, language)
+                        #writeToQueue2(line)
                         #print(key.NAME, 'is only', value,'miles away.', key.ADDRESS)
                 except Exception as e:
-                    print(e)#log.loggingInfo(e, 'searchHelp.py', 'treatmentPlan: EN')
-                    printProviderTX(text, key, value, language)
+                    log.loggingInfo(e, 'searchHelp.py', 'treatmentPlan: EN')
+                    line += printProviderTX(text, key, value, language)
             elif languageDict[language] == 4:
                 try:
                     if key.RU >= 0 or key.ES >= 0 or key.EN >= 0:
-                        printProviderTX(text, key, value, language)
+                        line += printProviderTX(text, key, value, language)
+                        #writeToQueue2(line)
                         #print(key.NAME, 'is only', value,'miles away.', key.ADDRESS)
                 except Exception as e:
-                    print(e)#log.loggingInfo(e, 'searchHelp.py', 'treatmentPlan: ALL languages')
-                    printProviderTX(text, key, value, language)
-            
+                    log.loggingInfo(e, 'searchHelp.py', 'treatmentPlan: ALL languages')
+                    line += printProviderTX(text, key, value, language)
+    writeToQueue2(line)
             
     return True
 
 def printProviderTX(text, provider, value, language):
-    text.insert(tk.INSERT,provider.NAME)
-    text.insert(tk.INSERT," is only ")
-    text.insert(tk.INSERT,round(value, 2))
-    text.insert(tk.INSERT," miles away from you\n")
+    line = ''
+    #text.insert(tk.INSERT,provider.NAME)
+    line += str(provider.NAME)
+    #text.insert(tk.INSERT," is only ")
+    line += ' is only '
+    #text.insert(tk.INSERT,round(value, 2))
+    line += str(round(value, 2))
+    #text.insert(tk.INSERT," miles away from you\n")
+    line += ' miles away from you\n'
     try:
         if provider.WEIGHT:
-            text.insert(tk.INSERT,"There were ")
-            text.insert(tk.INSERT,provider.WEIGHT)
-            text.insert(tk.INSERT," ")
-            text.insert(tk.INSERT, language)
-            text.insert(tk.INSERT," speeking clients in the past 2 years\n")
+            #text.insert(tk.INSERT,"There were ")
+            line += 'There were '
+            #text.insert(tk.INSERT,provider.WEIGHT)
+            line += str(provider.WEIGHT)
+            #text.insert(tk.INSERT," ")
+            line += ' '
+            #text.insert(tk.INSERT, language)
+            line += str(language)
+            #text.insert(tk.INSERT," speeking clients in the past 2 years\n")
+            line += ' speeking clients in the past 2 years\n'
     except Exception as e:
-        print(e)#log.loggingInfo(e, 'searchHelp.py', 'printProviderTX: Weight')
-    text.insert(tk.INSERT,"Full address: ")
-    text.insert(tk.INSERT,provider.ADDRESS)
+        log.loggingInfo(e, 'searchHelp.py', 'printProviderTX: Weight')
+    #text.insert(tk.INSERT,"Full address: ")
+    line += 'Full Address: '
+    #text.insert(tk.INSERT,provider.ADDRESS)
+    line += str(provider.ADDRESS)
     try:
         if provider.CITY:
-            text.insert(tk.INSERT,", ")
-            text.insert(tk.INSERT,provider.CITY)
+            #text.insert(tk.INSERT,", ")
+            line += ', '
+            #text.insert(tk.INSERT,provider.CITY)
+            line += str(provider.CITY)
     except Exception as e:
-        print(e)#log.loggingInfo(e, 'searchHelp.py', 'printProviderTX: City')
-    text.insert(tk.INSERT,"\n")
-    text.insert(tk.INSERT,"Phone: ")
-    text.insert(tk.INSERT,provider.PHONE)
+        log.loggingInfo(e, 'searchHelp.py', 'printProviderTX: City')
+    #text.insert(tk.INSERT,"\n")
+    line +='\n'
+    #text.insert(tk.INSERT,"Phone: ")
+    line += 'Phone: '
+    #text.insert(tk.INSERT,provider.PHONE)
+    line += str(provider.PHONE)
     try:
         if provider.SPECIALTY:
-            text.insert(tk.INSERT,"\n")
-            text.insert(tk.INSERT,"Specialty: ")
-            text.insert(tk.INSERT,provider.SPECIALTY)
+            #text.insert(tk.INSERT,"\n")
+            line += '\n'
+            #text.insert(tk.INSERT,"Specialty: ")
+            line += 'Specialty: '
+            #text.insert(tk.INSERT,provider.SPECIALTY)
+            line += str(provider.SPECIALTY)
     except Exception as e:
-        print(e)#log.loggingInfo(e, 'searchHelp.py', 'printProviderTX: Specialty')
-    text.insert(tk.INSERT,"\n\n")
+        log.loggingInfo(e, 'searchHelp.py', 'printProviderTX: Specialty')
+    #text.insert(tk.INSERT,"\n\n")
+    line += '\n\n'
+    return line
 
 def updateFaxInNeedles():
     DB = connectToDB()
@@ -766,7 +819,7 @@ def updateHospitalGeoLocation():
                 location = geocode_result[0]['geometry']['location']
                 geo = location['lat'], location['lng']
             except Exception as e:
-                print(e)#log.loggingWarning(e, 'searchHelp.py', 'updateHospitalGeoLocation')
+                log.loggingWarning(e, 'searchHelp.py', 'updateHospitalGeoLocation')
         else:
             geo = 'NONE'
         inst = P(i.NAME, geo)
@@ -794,7 +847,7 @@ def updateProviderGeoLocation():
                     geo = location['lat'], location['lng']
                     n += 1
                 except Exception as e:
-                    print(e)#log.loggingWarning(e, 'searchHelp.py', 'updateProviderGeoLocation')
+                    log.loggingWarning(e, 'searchHelp.py', 'updateProviderGeoLocation')
                 inst = P(i.NAME, i.PHONE, geo)
                 lstWithGeo.append(inst)
                 if n >= 2000:
@@ -824,7 +877,7 @@ def updateProviderMissingGeoLocation():
                         geo = location['lat'], location['lng']
                         n += 1
                     except Exception as e:
-                        print(e)#log.loggingWarning(e, 'searchHelp.py', 'updateProviderMissingGeoLocation')
+                        log.loggingWarning(e, 'searchHelp.py', 'updateProviderMissingGeoLocation')
                     inst = P(i.NAME, i.PHONE, geo)
                     lstWithGeo.append(inst)
                     if n >= 2000:
@@ -851,24 +904,31 @@ def sendMessageToClient(msg, number, filePath, popUp, attachment = None):
         popUp.showinfo('Confirmation', 'Message failed')
 
 def displaySentMessages(text):
+    line = ''
     DB = connectToDB()
     lst = readFromMessage(DB)
     for elem in lst:
-        text.insert(tk.INSERT,"ID: ")
-        text.insert(tk.INSERT,elem.ID)
-        text.insert(tk.INSERT,". Sent to: ")
-        text.insert(tk.INSERT, elem.Number)
-        text.insert(tk.INSERT,"\n")
-        text.insert(tk.INSERT, "Message: ")
-        text.insert(tk.INSERT, elem.Note)
-        text.insert(tk.INSERT, "Sent on: ")
-        text.insert(tk.INSERT, elem.Date)
-        text.insert(tk.INSERT, "\n")
+        #text.insert(tk.INSERT,"ID: ")
+        line += 'ID: ' + str(elem.ID) + ' .Sent to: '+str(elem.Number)+'\nMessage: '+str(elem.Note)+'Sent on: '+str(elem.Date)+'\n'
+        #text.insert(tk.INSERT,elem.ID)
+        #line += str(elem.ID)
+        #text.insert(tk.INSERT,". Sent to: ")
+        #line += '. Sent to: '
+        #text.insert(tk.INSERT, elem.Number)
+        #text.insert(tk.INSERT,"\n")
+        #text.insert(tk.INSERT, "Message: ")
+        #text.insert(tk.INSERT, elem.Note)
+        #text.insert(tk.INSERT, "Sent on: ")
+        #text.insert(tk.INSERT, elem.Date)
+        #text.insert(tk.INSERT, "\n")
         if elem.Attachment:
-            text.insert(tk.INSERT,"Attachment: ")
-            text.insert(tk.INSERT,elem.Attachment)
-            text.insert(tk.INSERT,"\n")
-        text.insert(tk.INSERT,"\n")
+            #text.insert(tk.INSERT,"Attachment: ")
+            #text.insert(tk.INSERT,elem.Attachment)
+            #text.insert(tk.INSERT,"\n")
+            line += 'Attachment: '+str(elem.Attachment)+'\n'
+        #text.insert(tk.INSERT,"\n")
+        line += '\n'
+    writeToQueue3(line)
 
 def updateHospRecordsFax():
     #2534266408, (206) 215-2757

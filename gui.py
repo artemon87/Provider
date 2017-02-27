@@ -120,11 +120,13 @@ class ProviderGUI:
         self.scr = scrolledtext.ScrolledText(self.monty, width=70, height=14, wrap=tk.WORD)
         self.scrClient = scrolledtext.ScrolledText(self.client3, width=70, height=30, wrap=tk.WORD)
         self.messageEntry = scrolledtext.ScrolledText(self.messageTextEntry, width=70, height=15, wrap=tk.WORD)
-        self.sentMessages = scrolledtext.ScrolledText(self.messageSentEntry, width=70, height=5, wrap=tk.WORD)
+        self.sentMessages = scrolledtext.ScrolledText(self.messageSentEntry, width=70, height=10, wrap=tk.WORD)
         self.figure = Figure(figsize=(7,6), dpi=85)
         self.aPlot = self.figure.add_subplot(111)
         self.canvas = None
         self.toolbar = None
+        self.ed = None
+        self.providerDict = None
 
         
     def labels(self):
@@ -296,10 +298,10 @@ class ProviderGUI:
         ################################
         self.createThreadSentMessages()
         ################################
-        print('Sending text')
 
     def runMessageSentDB(self):
         self.createThreadSentMessages()
+        self.updateQueue3()
 
     def sendText(self):
         self.createThreadSendMessage()
@@ -310,25 +312,30 @@ class ProviderGUI:
             self.scrClient.insert(tk.INSERT,".")
 
     def tab4Call(self, event=None):
+        self.clearScreen(self.sentMessages)
         self.runMessageSentDB()
 
     
     def searchMe(self, evcent = None):
-        clearScreen(self.scrClient)
+        self.clearScreen(self.scrClient)
         self.scrClient.insert(tk.INSERT,"Searching...")
         #self.createLoadingBullet()
         ###################################
-        #self.createThreadSearchTreatment()
-        self.searchTXPlan()
+        self.createThreadSearchTreatment()
+        self.updateQueue2()
+        #self.searchTXPlan()
         ###################################
             
     def listOfSentMessages(self):
-        clearScreen(self.sentMessages)
+        #clearScreen(self.sentMessages)
         displaySentMessages(self.sentMessages)
         
 
     def searchTXPlan(self):
-        treatmentPlan(self.act2.get(), self.scrClient, self.name2.get(), self.act3.get(), self.chClient.get(), self.chClient2.get(), self.chClient3.get())
+        try:
+            treatmentPlan(self.act2.get(), self.scrClient, self.name2.get(), self.act3.get(), self.chClient.get(), self.chClient2.get(), self.chClient3.get())
+        except Exception as e:
+            print(e)
 
     def confirmProviderGUI(self):
         if self.fName == None:
@@ -338,7 +345,7 @@ class ProviderGUI:
         confirmProvider(fileToRead, self.name.get(), self.scr, self.getCheckbox(), self.searchAccuracy() )
 
     def printOutProviderGUI(self):
-        printOutProvider(providerDict, self.scr, self.getCheckbox(),self.searchAccuracy() )
+        printOutProvider(self.providerDict, self.scr, self.getCheckbox(),self.searchAccuracy() )
 
     def confirmSearchProviderGUI(self):
         confirmSearchProvider(self.name.get(), self.scr, self.getCheckbox(), self.searchAccuracy() )
@@ -350,11 +357,15 @@ class ProviderGUI:
     def runSearchTab1(self):
         try:
             node_sizes = createNodeSize(self.getNetworkSize(), self.weightGraph.get()) #####################
-            
+            self.ed = None
+            self.providerDict = None
             ratio = self.searchAccuracy() 
             displayArgs = self.getCheckbox()
+            self.clearScreen(self.scr)
+            self.clearCanvas()
+            self.scr.insert(tk.INSERT, 'Searching...')
             if self.act.get() == 'Build a network':
-                self.clearCanvas()
+                #self.clearCanvas()
                 self.clearScreen(self.scr)
                 self.scr.insert(tk.INSERT,"Creating Network")
                 #self.createLoadingBullet()
@@ -364,6 +375,8 @@ class ProviderGUI:
                 else:
                     fileToRead = self.fName
                 ed, providerDict = readED(fileToRead, None, self.name.get(), self.getNetworkSize(), ratio, self.weightGraph.get())
+                self.ed = ed
+                self.providerDict = providerDict
                 if len(ed) == 0:
                     self.clearScreen(self.scr)
                     #confirmProvider(fileToRead, self.name.get(), self.scr, displayArgs, ratio)
@@ -513,19 +526,43 @@ class ProviderGUI:
         print(messages)
 
     def updateQueue1(self):
-        #try:
-        print('updateQueue1 launched')
-        line = textQueue.getQueue1()
-        len(line)
-        print(line)
-        if line:
-            self.scr.delete(1.0, tk.END)
-            self.scr.insert(tk.INSERT, str(line))
-        else:
-            self.win.after(100, self.updateQueue1)
+        try:
+            line = getQueue1()
+            if line:
+                self.scr.delete(1.0, tk.END)
+                self.scr.insert(tk.INSERT, str(line))
+            else:
+                self.win.after(100, self.updateQueue1)
                 #self.win.update_idletasks()
-        '''except Exception as e:
-            print(e)'''
+        except Exception as e:
+            print(e)
+            self.win.after(100, self.updateQueue1)
+
+    def updateQueue2(self):
+        try:
+            line = getQueue2()
+            if line:
+                self.scrClient.delete(1.0, tk.END)
+                self.scrClient.insert(tk.INSERT, str(line))
+            else:
+                self.win.after(100, self.updateQueue1)
+                #self.win.update_idletasks()
+        except Exception as e:
+            print(e)
+            self.win.after(100, self.updateQueue2)
+
+    def updateQueue3(self):
+        try:
+            line = getQueue3()
+            if line:
+                self.sentMessages.delete(1.0, tk.END)
+                self.sentMessages.insert(tk.INSERT, str(line))
+            else:
+                self.win.after(100, self.updateQueue3)
+                #self.win.update_idletasks()
+        except Exception as e:
+            print(e)
+            self.win.after(100, self.updateQueue3)
 
 
 
