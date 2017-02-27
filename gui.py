@@ -5,7 +5,7 @@ from tkinter import Menu
 from tkinter import messagebox as mBox
 from net import *
 from find import *
-from searchHelp import *
+from searchHelp2 import *
 import networkx as nx
 import matplotlib
 matplotlib.use("TkAgg")
@@ -248,6 +248,12 @@ class ProviderGUI:
         elif self.netSize.get() == '10 links':
             return 10
 
+    def clearScreen(self, text):
+        try:
+            text.delete(1.0,tk.END)
+        except Exception as e:
+            log.loggingWarning(e, 'searchHelp.py', 'clearScreen')
+
     def clearCanvas(self):
         try:
             self.canvas.get_tk_widget().destroy()
@@ -287,7 +293,9 @@ class ProviderGUI:
         '''sendMessageToClient'''
         msg = self.messageEntry.get('1.0', tk.END)
         sendMessageToClient(msg, self.phone.get(), self.fName2, mBox, self.fDir2)
+        ################################
         self.createThreadSentMessages()
+        ################################
         print('Sending text')
 
     def runMessageSentDB(self):
@@ -307,9 +315,12 @@ class ProviderGUI:
     
     def searchMe(self, evcent = None):
         clearScreen(self.scrClient)
-        self.scrClient.insert(tk.INSERT,"Searching")
+        self.scrClient.insert(tk.INSERT,"Searching...")
         #self.createLoadingBullet()
-        self.createThreadSearchTreatment()
+        ###################################
+        #self.createThreadSearchTreatment()
+        self.searchTXPlan()
+        ###################################
             
     def listOfSentMessages(self):
         clearScreen(self.sentMessages)
@@ -319,6 +330,22 @@ class ProviderGUI:
     def searchTXPlan(self):
         treatmentPlan(self.act2.get(), self.scrClient, self.name2.get(), self.act3.get(), self.chClient.get(), self.chClient2.get(), self.chClient3.get())
 
+    def confirmProviderGUI(self):
+        if self.fName == None:
+            fileToRead ='netRace.xlsx'
+        else:
+            fileToRead = self.fName
+        confirmProvider(fileToRead, self.name.get(), self.scr, self.getCheckbox(), self.searchAccuracy() )
+
+    def printOutProviderGUI(self):
+        printOutProvider(providerDict, self.scr, self.getCheckbox(),self.searchAccuracy() )
+
+    def confirmSearchProviderGUI(self):
+        confirmSearchProvider(self.name.get(), self.scr, self.getCheckbox(), self.searchAccuracy() )
+
+    def confirmSearchHospitalGUI(self):
+        confirmSearchHospital(self.name.get(), self.scr, self.getCheckbox(), self.searchAccuracy() )
+    
 
     def runSearchTab1(self):
         try:
@@ -328,7 +355,7 @@ class ProviderGUI:
             displayArgs = self.getCheckbox()
             if self.act.get() == 'Build a network':
                 self.clearCanvas()
-                clearScreen(self.scr)
+                self.clearScreen(self.scr)
                 self.scr.insert(tk.INSERT,"Creating Network")
                 #self.createLoadingBullet()
                 fileToRead = ''
@@ -338,13 +365,17 @@ class ProviderGUI:
                     fileToRead = self.fName
                 ed, providerDict = readED(fileToRead, None, self.name.get(), self.getNetworkSize(), ratio, self.weightGraph.get())
                 if len(ed) == 0:
-                    clearScreen(self.scr)
-                    confirmProvider(fileToRead, self.name.get(), self.scr, displayArgs, ratio)
+                    self.clearScreen(self.scr)
+                    #confirmProvider(fileToRead, self.name.get(), self.scr, displayArgs, ratio)
+                    self.createThreadConfirmProvider()
+                    self.updateQueue1()
                     #possibleOptions = findProvider(fileToRead, self.name.get(), ratio, self.scr)
                 else:
-                    clearScreen(self.scr)
+                    self.clearScreen(self.scr)
                     #confirmProvider(fileToRead, self.name.get(), self.scr, displayArgs, ratio)
-                    printOutProvider(providerDict, self.scr, displayArgs,ratio)
+                    #printOutProvider(providerDict, self.scr, displayArgs,ratio)
+                    self.createThreadPrintOutProvider()
+                    self.updateQueue1()
                     pos=nx.spring_layout(ed)
                     nx.draw_networkx(ed, pos, arrows = True, with_labels = True, ax = self.aPlot, font_size = 9, node_size = node_sizes)
                     self.canvas = FigureCanvasTkAgg(self.figure, master=self.monty2)
@@ -355,14 +386,18 @@ class ProviderGUI:
                     self.canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
                 
             elif self.act.get() == 'Find Provider':
-                confirmSearchProvider(self.name.get(), self.scr, displayArgs, ratio)
+                #confirmSearchProvider(self.name.get(), self.scr, displayArgs, ratio)
+                self.createThreadSearchProvider()
+                self.updateQueue1()
 
             elif self.act.get() == 'Find Hospital':
-                confirmSearchHospital(self.name.get(), self.scr, displayArgs, ratio)
+                #confirmSearchHospital(self.name.get(), self.scr, displayArgs, ratio)
+                self.createThreadSearchHospital()
+                self.updateQueue1()
         except RuntimeError as RE:
             print(RE)
             try:
-                self.win.mainloop()
+                #self.win.after(2000, main)
                 main()
                 print('Lounching mainloop()')
             except Exception as e:
@@ -370,7 +405,10 @@ class ProviderGUI:
         
 
     def clickMe(self, event = None):
-        self.createThreadRun()
+        #########################
+        #self.createThreadRun()
+        self.runSearchTab1()
+        #########################
 
 
     def getCheckbox(self):
@@ -449,6 +487,45 @@ class ProviderGUI:
         messages.setDaemon(True)
         messages.start()
         print(messages)
+
+    def createThreadConfirmProvider(self):
+        messages = Thread(target=self.confirmProviderGUI)
+        messages.setDaemon(True)
+        messages.start()
+        print(messages)
+
+    def createThreadPrintOutProvider(self):
+        messages = Thread(target=self.printOutProviderGUI)
+        messages.setDaemon(True)
+        messages.start()
+        print(messages)
+
+    def createThreadSearchProvider(self):
+        messages = Thread(target=self.confirmSearchProviderGUI)
+        messages.setDaemon(True)
+        messages.start()
+        print(messages)
+
+    def createThreadSearchHospital(self):
+        messages = Thread(target=self.confirmSearchHospitalGUI)
+        messages.setDaemon(True)
+        messages.start()
+        print(messages)
+
+    def updateQueue1(self):
+        #try:
+        print('updateQueue1 launched')
+        line = textQueue.getQueue1()
+        len(line)
+        print(line)
+        if line:
+            self.scr.delete(1.0, tk.END)
+            self.scr.insert(tk.INSERT, str(line))
+        else:
+            self.win.after(100, self.updateQueue1)
+                #self.win.update_idletasks()
+        '''except Exception as e:
+            print(e)'''
 
 
 
