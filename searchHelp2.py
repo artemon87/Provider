@@ -351,7 +351,7 @@ def confirmSearchHospital(name, text, displayArgs, ratio):
         lst = readFromHospitalName(DB, name.upper())
     if lst:
         #clearScreen(text)
-        text.insert(tk.INSERT, "Is that what you are looking for?\n\n")
+        #text.insert(tk.INSERT, "Is that what you are looking for?\n\n")
         line += 'Is that what you are looking for?\n\n'
         for elem in lst:
             #text.insert(tk.INSERT, elem.NAME+ "\n")
