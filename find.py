@@ -3,7 +3,7 @@ import log
 from difflib import SequenceMatcher
 
 roles = [ '-', "'s",'Health', 'Clinic','Ph.d', 'Ph.D', 'WA', 'Facility', 'MD', 'DC', 'ND', 'LMP', 'Dr', 'Doctor']
-roles2 = [ '-', "'s",'Health', 'Medical', 'Center' , 'Hospital','Ph.d', 'Ph.D', 'WA', 'Facility', 'MD', 'DC', 'ND', 'LMP', 'Dr', 'Doctor', 'Imaging ', 'D.C.', 'D.C.,', 'Dr.']
+roles2 = [ '-', "'s",'Health', 'Center' , 'Hospital','Ph.d', 'Ph.D', 'WA', 'Facility', 'MD', 'DC', 'ND', 'LMP', 'Dr', 'Doctor', 'D.C.', 'D.C.,', 'Dr.']
 
 
 def checkForSpecialties(word, lst):

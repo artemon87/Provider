@@ -10,7 +10,7 @@ import networkx as nx
 import matplotlib
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
-#import ToolTip as tt
+import ToolTip as tt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
 import numpy as np
@@ -29,6 +29,7 @@ class ProviderGUI:
     def __init__(self, root):
         self.win = root
         self.createWidgets()
+        self.tips()
 
     def createWidgets(self):
         self.tabControl = ttk.Notebook(self.win)
@@ -52,7 +53,7 @@ class ProviderGUI:
         self.mngFilesFrame = ttk.LabelFrame(self.tab1, text=' Manage Files: ')
         self.phoneNumber = ttk.LabelFrame(self.tab4, text=' Enter phone number here: ')
         self.messageTextEntry = ttk.LabelFrame(self.tab4, text=' Message')
-        self.messageSentEntry = ttk.LabelFrame(self.tab4, text=' Sent Mesages')
+        self.messageSentEntry = ttk.LabelFrame(self.tab4, text=' Sent Mesagges')
         self.fileAttachmentEntry = ttk.LabelFrame(self.tab4, text=' File')
         self.infoZone = ttk.LabelFrame(self.tab1, text = ' Info ')
         #self.textMessagePhone = ttk.LabelFrame(self.tab4, text = ' Phone Number here ')
@@ -120,13 +121,26 @@ class ProviderGUI:
         self.scr = scrolledtext.ScrolledText(self.monty, width=70, height=14, wrap=tk.WORD)
         self.scrClient = scrolledtext.ScrolledText(self.client3, width=70, height=30, wrap=tk.WORD)
         self.messageEntry = scrolledtext.ScrolledText(self.messageTextEntry, width=70, height=15, wrap=tk.WORD)
-        self.sentMessages = scrolledtext.ScrolledText(self.messageSentEntry, width=70, height=10, wrap=tk.WORD)
+        self.sentMessages = scrolledtext.ScrolledText(self.messageSentEntry, width=70, height=12, wrap=tk.WORD)
         self.figure = Figure(figsize=(7,6), dpi=85)
         self.aPlot = self.figure.add_subplot(111)
         self.canvas = None
         self.toolbar = None
         self.ed = None
         self.providerDict = None
+
+    def tips(self):
+        tt.createToolTip(self.browseButton, 'Use only if you have excel spreadsheet available')
+        tt.createToolTip(self.tab2, 'Network Graph page')
+        tt.createToolTip(self.tab1, 'Main page')
+        tt.createToolTip(self.tab3, 'Treatment lookup page')
+        tt.createToolTip(self.tab3, 'Text Messaging page')
+        tt.createToolTip(self.messageTextEntry, 'Type your message here')
+        tt.createToolTip(self.messageSentEntry, 'Here is a list of all your sent messages (Duplicates omitted)')
+        tt.createToolTip(self.browseButton2, 'Browse for a file that you would like to send with your message')
+        tt.createToolTip(self.networkSize, "Number of edges in provider's network")
+        #tt.createToolTip(self.weightGraph, "If Checked: Edges will be in different sizes based on weight and popularity")
+        
 
         
     def labels(self):
@@ -297,6 +311,7 @@ class ProviderGUI:
         sendMessageToClient(msg, self.phone.get(), self.fName2, mBox, self.fDir2)
         ################################
         self.createThreadSentMessages()
+        self.updateQueue3()
         ################################
 
     def runMessageSentDB(self):
@@ -431,11 +446,11 @@ class ProviderGUI:
         accuracy = self.radVar.get()
         ratio = float
         if accuracy == 1:
-            ratio = 0.50
+            ratio = 0.65
         elif accuracy == 2:
-            ratio = 0.75
+            ratio = 0.80
         elif accuracy == 3:
-            ratio = 0.90
+            ratio = 0.95
         return ratio
             
 	

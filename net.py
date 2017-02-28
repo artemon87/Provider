@@ -174,6 +174,8 @@ def createNX(providerDict, providerFile, toRemove, netSize, weighted):
     for key, value in providerDict.items():
         inst = ProviderWeighted(key.Name, key.Address, key.Phone, key.ID, value)
         ed.add_node(key.Name)
+        if ed.number_of_nodes() > 1:
+            ed.remove_node(key.Name)
         if singleElement:
             count = Counter(list_of_single_elem)
             try:

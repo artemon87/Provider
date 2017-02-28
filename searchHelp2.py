@@ -575,13 +575,13 @@ def findProvider(fileToRead, name, ratio, text):
         print('Less than 1 providers found')
         possibleOptions = searchFirstDict(name, providerDict)
     if len(possibleOptions) == 0:
-        clearScreen(text)
+        #clearScreen(text)
         #text.insert(tk.INSERT,"Nothing was found with your search term\n")
         #text.insert(tk.INSERT, 'Please try again...\n')
         line += 'Nothing was found with your search term\nPlease try again...\n'
         return
     else:
-        clearScreen(text)
+        #clearScreen(text)
         try:
             possibleOptions = deepSearch(possibleOptions[0].Name, newList, 10, 0.2)
         except Exception as e:
@@ -739,6 +739,8 @@ def treatmentPlan(language, text, sLocation, radius, needlesOnly, avoidPhys, onl
                 except Exception as e:
                     log.loggingInfo(e, 'searchHelp.py', 'treatmentPlan: ALL languages')
                     line += printProviderTX(text, key, value, language)
+    if len(line) == 0:
+        line += 'Nothing was found with your request. Try again...\n'
     writeToQueue2(line)
             
     return True
