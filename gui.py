@@ -48,15 +48,14 @@ class ProviderGUI:
         self.helpMenu.add_command(label="About", command = self._msgBox)
         self.helpMenu.add_command(label="Exit", command = self._quit)
         self.menuBar.add_cascade(label="Help", menu=self.helpMenu)
-        self.monty1 = ttk.LabelFrame(self.tab1, text=' Monty Python ')
-        self.monty = ttk.LabelFrame(self.tab1, text=' Monty1 Python ')
+        self.monty1 = ttk.LabelFrame(self.tab1, text=' Provider Lookup ')
+        self.monty = ttk.LabelFrame(self.tab1, text=' Display Result ')
         self.mngFilesFrame = ttk.LabelFrame(self.tab1, text=' Manage Files: ')
         self.phoneNumber = ttk.LabelFrame(self.tab4, text=' Enter phone number here: ')
         self.messageTextEntry = ttk.LabelFrame(self.tab4, text=' Message')
         self.messageSentEntry = ttk.LabelFrame(self.tab4, text=' Sent Mesagges')
         self.fileAttachmentEntry = ttk.LabelFrame(self.tab4, text=' File')
         self.infoZone = ttk.LabelFrame(self.tab1, text = ' Info ')
-        #self.textMessagePhone = ttk.LabelFrame(self.tab4, text = ' Phone Number here ')
         self.browseButton = ttk.Button(self.mngFilesFrame, text="Browse ...",command=self.getFileName)
         self.browseButton2 = ttk.Button(self.fileAttachmentEntry, text="Browse ...",command=self.getFileNameForAttachment)
         self.fName = None #name of a file to browse
@@ -89,7 +88,6 @@ class ProviderGUI:
         self.clientLable1 = ttk.Label(self.client, text="Enter client's location:").grid(column=0, row=0) #drop down box
         self.clientLable2 = ttk.Label(self.client, text="Language").grid(column=1, row=0) #drop down box
         self.clientLable3 = ttk.Label(self.client, text="Travel Distance").grid(column=2, row=0) #drop down box
-        #self.clientLable4 = ttk.Label(self.client, text="Check this box if you looking for Needles providers only").grid(column=0, row=2) #drop down box
         self.clientLocation = ttk.Entry(self.client, width=35, textvariable=self.name2) #name entered
         self.phoneEntered = ttk.Entry(self.phoneNumber, width=40, textvariable=self.phone) #name entered
         self.sentMessageButton = ttk.Button(self.phoneNumber, text="Send", command=self.sendText) 
@@ -128,18 +126,17 @@ class ProviderGUI:
         self.toolbar = None
         self.ed = None
         self.providerDict = None
+        self.updatingThread = None
 
     def tips(self):
         tt.createToolTip(self.browseButton, 'Use only if you have excel spreadsheet available')
         tt.createToolTip(self.tab2, 'Network Graph page')
-        tt.createToolTip(self.tab1, 'Main page')
-        tt.createToolTip(self.tab3, 'Treatment lookup page')
-        tt.createToolTip(self.tab3, 'Text Messaging page')
+        tt.createToolTip(self.updateDB, "Check Database that you would like to update and click 'Update Database' button")
         tt.createToolTip(self.messageTextEntry, 'Type your message here')
         tt.createToolTip(self.messageSentEntry, 'Here is a list of all your sent messages (Duplicates omitted)')
         tt.createToolTip(self.browseButton2, 'Browse for a file that you would like to send with your message')
-        tt.createToolTip(self.networkSize, "Number of edges in provider's network")
-        #tt.createToolTip(self.weightGraph, "If Checked: Edges will be in different sizes based on weight and popularity")
+        tt.createToolTip(self.networkSize, "Number of edges in provider's network. Useful only when you Build a network")
+        tt.createToolTip(self.numberChosen, "Find Hospital: find hospital in WA state\nFind Provider: find any medical provider\nBuild a network: create network from Needles database")
         
 
         
@@ -161,7 +158,6 @@ class ProviderGUI:
         self.messageTextEntry.grid(column=0, row=2, padx=20, pady=4)
         self.messageSentEntry.grid(column=0, row=4, padx=20, pady=4)
         self.fileAttachmentEntry.grid(column=0, row=3, padx=20, pady=4)
-        #self.textMessagePhone.grid(column=0, row=0, padx=60, pady=4)
         self.tab4.bind("<Button-3>", self.tab4Call)
 
     def bottons(self):
@@ -185,7 +181,6 @@ class ProviderGUI:
         self.numberChosen['values'] = ('Find Hospital', 'Find Provider', 'Build a network')
         self.numberChosen.grid(column=1, row=1, rowspan=2)
         self.numberChosen.current(0)
-        self.numberChosen.bind(self.addNetworkSizeChooser)
         self.networkSize['values'] = ('3 links', '5 links', '8 links', '10 links')
         self.networkSize.grid(column=1, row=3, rowspan=1)
         self.networkSize.current(1)
@@ -280,39 +275,37 @@ class ProviderGUI:
         except Exception as e:
             log.loggingDebug(e, 'gui.py', 'clearCanvas method')
 
-    def addNetworkSizeChooser(self):
-        if self.netSize.get() == 'Build a network':
-            print('display option for network size')
-            self.networkSize.grid(column=1, row=3, rowspan=1)
-        pass
 
     def runUpdateDatabase(self):
+        mBox.showinfo('Database Information', 'Stay in touch.\nUpdating takes some time (1-10 minutes)')
+        self.scr.insert(tk.INSERT,"Updating...")
         self.createThreadUpdateDatabase()
+        self.updateQueue1()
+        
 
     def updateDatabase(self):
-        mBox.showinfo('Database Information', 'Stay in touch.\nUpdating takes some time (1-10 minutes)')
         upNeedles = self.chAddl1.get()
         upYelp = self.chAddl2.get()
         upHospital = self.chAddl3.get()
         print('Needles: ',upNeedles, 'Yelp:', upYelp,'Hospital:', upHospital)
-        self.updateDB.configure(text='Updating...')
-        self.createLoadingBullet()
+        #self.updateDB.configure(text='Updating...')
+        #self.createLoadingBullet()
         result = fillinDB(upNeedles,upYelp, upHospital, self.scr)
         if result == 0:
             mBox.showinfo('Database Information', 'Database successfully finished updating.\n')
-            self.updateDB.configure(text='Update Database')
+            #self.updateDB.configure(text='Update Database')
         else:
             mBox.showinfo('Database Information', 'Please launch Yelp.com on your webbrowser.\nAnd confirm that you are not a robot')
         updateProviderMissingGeoLocation()
 
+    '''Function that takes veriables and passes them to sendMessageToClient function
+       located in searchHelp.py file. Then new thread is created to display list
+       of all sent messages'''
     def sendMessageProcess(self):
-        '''sendMessageToClient'''
         msg = self.messageEntry.get('1.0', tk.END)
         sendMessageToClient(msg, self.phone.get(), self.fName2, mBox, self.fDir2)
-        ################################
         self.createThreadSentMessages()
         self.updateQueue3()
-        ################################
 
     def runMessageSentDB(self):
         self.createThreadSentMessages()
@@ -334,13 +327,11 @@ class ProviderGUI:
     def searchMe(self, evcent = None):
         self.clearScreen(self.scrClient)
         self.scrClient.insert(tk.INSERT,"Searching...")
-        #self.createLoadingBullet()
-        ###################################
         self.createThreadSearchTreatment()
         self.updateQueue2()
         #self.searchTXPlan()
-        ###################################
-            
+
+
     def listOfSentMessages(self):
         #clearScreen(self.sentMessages)
         displaySentMessages(self.sentMessages)
@@ -371,6 +362,8 @@ class ProviderGUI:
 
     def runSearchTab1(self):
         try:
+            if self.updatingThread.isAlive():
+                mBox.showinfo('Database Information', 'Even though you can still lookup providers,\nwhen update is done screen will be cleared\n(only when updating Yelp database)\n')
             node_sizes = createNodeSize(self.getNetworkSize(), self.weightGraph.get()) #####################
             self.ed = None
             self.providerDict = None
@@ -380,10 +373,8 @@ class ProviderGUI:
             self.clearCanvas()
             self.scr.insert(tk.INSERT, 'Searching...')
             if self.act.get() == 'Build a network':
-                #self.clearCanvas()
                 self.clearScreen(self.scr)
                 self.scr.insert(tk.INSERT,"Creating Network")
-                #self.createLoadingBullet()
                 fileToRead = ''
                 if self.fName == None:
                     fileToRead ='netRace.xlsx'
@@ -487,10 +478,10 @@ class ProviderGUI:
         print(runT)
 
     def createThreadUpdateDatabase(self):
-        runUpdate = Thread(target=self.updateDatabase)
-        runUpdate.setDaemon(True)
-        runUpdate.start()
-        print(runUpdate)
+        self.updatingThread = Thread(target=self.updateDatabase)
+        self.updatingThread.setDaemon(True)
+        self.updatingThread.start()
+        print(self.updatingThread)
 
     def createThreadSearchTreatment(self):
         searchTX = Thread(target=self.searchTXPlan)
@@ -511,34 +502,34 @@ class ProviderGUI:
         print(loading)
 
     def createThreadSentMessages(self):
-        messages = Thread(target=self.listOfSentMessages)
-        messages.setDaemon(True)
-        messages.start()
-        print(messages)
+        sentMessages = Thread(target=self.listOfSentMessages)
+        sentMessages.setDaemon(True)
+        sentMessages.start()
+        print(sentMessages)
 
     def createThreadConfirmProvider(self):
-        messages = Thread(target=self.confirmProviderGUI)
-        messages.setDaemon(True)
-        messages.start()
-        print(messages)
+        threadCP = Thread(target=self.confirmProviderGUI)
+        threadCP.setDaemon(True)
+        threadCP.start()
+        print(threadCP)
 
     def createThreadPrintOutProvider(self):
-        messages = Thread(target=self.printOutProviderGUI)
-        messages.setDaemon(True)
-        messages.start()
-        print(messages)
+        threadPOP = Thread(target=self.printOutProviderGUI)
+        threadPOP.setDaemon(True)
+        threadPOP.start()
+        print(threadPOP)
 
     def createThreadSearchProvider(self):
-        messages = Thread(target=self.confirmSearchProviderGUI)
-        messages.setDaemon(True)
-        messages.start()
-        print(messages)
+        threadSP = Thread(target=self.confirmSearchProviderGUI)
+        threadSP.setDaemon(True)
+        threadSP.start()
+        print(threadSP)
 
     def createThreadSearchHospital(self):
-        messages = Thread(target=self.confirmSearchHospitalGUI)
-        messages.setDaemon(True)
-        messages.start()
-        print(messages)
+        threadSH = Thread(target=self.confirmSearchHospitalGUI)
+        threadSH.setDaemon(True)
+        threadSH.start()
+        print(threadSH)
 
     def updateQueue1(self):
         try:
@@ -546,6 +537,20 @@ class ProviderGUI:
             if line:
                 self.scr.delete(1.0, tk.END)
                 self.scr.insert(tk.INSERT, str(line))
+            else:
+                self.win.after(100, self.updateQueue1)
+                #self.win.update_idletasks()
+        except Exception as e:
+            print(e)
+            self.win.after(100, self.updateQueue1)
+
+    def updateQueue1ForUpdates(self):
+        try:
+            line = getQueue1()
+            if line:
+                #self.scr.delete(1.0, tk.END)
+                self.scr.insert(tk.INSERT, str(line))
+                self.win.after(100, self.updateQueue1)
             else:
                 self.win.after(100, self.updateQueue1)
                 #self.win.update_idletasks()

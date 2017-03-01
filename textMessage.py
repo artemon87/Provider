@@ -44,7 +44,6 @@ class textMessage():
                 base = MIMEBase('application', 'octet-stream')
                 base.set_payload((img).read())
                 encoders.encode_base64(base)
-                #base.add_header('Content-Disposition', "filename")
                 msg.attach(base)
             server = smtplib.SMTP(self.host, self.port)
             server.ehlo()

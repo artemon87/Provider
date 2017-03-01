@@ -18,34 +18,6 @@ from queue import Queue
 import log
 import logging
 
-'''class textQueue:
-    def __init__(self):
-        self.queue1 = Queue()
-        self.queue2 = Queue()
-        self.queue3 = Queue()
-
-    def writeToQueue1(self, line):
-        self.queue1.put(line)
-
-    def writeToQueue2(self, line):
-        self.queue2.put(line)
-
-    def writeToQueue3(self, line):
-        self.queue3.put(line)
-
-    @staticmethod 
-    def getQueue1():
-        return queue1.get(0)
-
-    @staticmethod
-    def getQueue2():
-        return self.queue2.get(0)
-
-    @staticmethod
-    def getQueue3():
-        return self.queue3.get(0)
-    def myQueue():
-        pass'''
         
 
 myTextQueue = Queue()
@@ -93,6 +65,8 @@ def createNeedlesList():
     return needlesList
 
 def fillinDB(upNeedles,upYelp, upHospital, text):
+    logging.getLogger("requests").setLevel(logging.WARNING)
+    logging.getLogger("urllib3").setLevel(logging.WARNING)
     line = ''
     #clearScreen(text)
     totalSleep = 0
@@ -114,21 +88,21 @@ def fillinDB(upNeedles,upYelp, upHospital, text):
             for s in spec:
                 result = lookup(s, c)
                 #text.insert(tk.INSERT, 'Found ')
-                line += 'Found '
+                line += 'Found '+str(len(result))+' '+str(s)+' in '+str(c)+'\n'
                 #text.insert(tk.INSERT, len(result))
-                line += str(len(result))
+                #line += str(len(result))
                 #text.insert(tk.INSERT, ' ')
-                line += ' '
+                #line += ' '
                 #text.insert(tk.INSERT, s+' in ')
-                line += str(s)+' in '+str(c)+'\n'
+                #line += str(s)+' in '+str(c)+'\n'
                 #text.insert(tk.INSERT, c+'\n')
                 print('Found',len(result), s, 'in',c)
                 lst.append(result)
-                writeToQueue1(line)
-        for elem in lst:
-            addProvider(elem, DB)
+        writeToQueue1(line)
         if len(lst) == 0:
             return -1
+        for elem in lst:
+            addProvider(elem, DB)
     if upHospital:
         print('Started updating hospitals')
         hosp = findAllHospitals()
