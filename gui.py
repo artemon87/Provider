@@ -362,8 +362,9 @@ class ProviderGUI:
 
     def runSearchTab1(self):
         try:
-            if self.updatingThread.isAlive():
-                mBox.showinfo('Database Information', 'Even though you can still lookup providers,\nwhen update is done screen will be cleared\n(only when updating Yelp database)\n')
+            if self.updatingThread:
+                if self.updatingThread.isAlive():
+                    mBox.showinfo('Database Information', 'Even though you can still lookup providers,\nwhen update is done screen will be cleared\n(only when updating Yelp database)\n')
             node_sizes = createNodeSize(self.getNetworkSize(), self.weightGraph.get()) #####################
             self.ed = None
             self.providerDict = None
@@ -415,12 +416,12 @@ class ProviderGUI:
                 self.updateQueue1()
         except RuntimeError as RE:
             print(RE)
-            try:
+            '''try:
                 #self.win.after(2000, main)
                 main()
                 print('Lounching mainloop()')
             except Exception as e:
-                log.loggingWarning(e, 'gui.py', 'running mainloop')
+                log.loggingWarning(e, 'gui.py', 'running mainloop')'''
         
 
     def clickMe(self, event = None):
@@ -446,11 +447,7 @@ class ProviderGUI:
             
 	
     def radCall(self):
-        r = self.radVar.get()
-        if r == 1:
-                pass
-        if r == 2:
-                pass
+        pass
 
     def _msgBox(self):
         mBox.showinfo('Provider Network info box','Created by Artem Kovtunenko\n Version 1.0')
@@ -602,6 +599,7 @@ def main():
         w.mainloop()
     except Exception as e:
         log.loggingWarning(e, 'gui.py', 'running mainloop')
+
 if __name__ == '__main__':
     print('MAIN launched')
     main()
