@@ -66,12 +66,11 @@ class ProviderGUI:
         self.file2 = tk.StringVar()
         self.entryLen = 60
         self.fileEntry = ttk.Entry(self.mngFilesFrame, width=60,textvariable=self.file)
-        self.fileEntry.grid(column=1, row=0, padx = 40, pady = 5)
         self.fileEntry2 = ttk.Entry(self.fileAttachmentEntry, width=40,textvariable=self.file2)
-        self.fileEntry2.grid(column=1, row=0, padx = 40, pady = 5)
         self.monty2 = ttk.LabelFrame(self.tab2, text=' Provider Network')
         self.client = ttk.LabelFrame(self.tab3, text=' Seach Box ')
         self.client2 = ttk.LabelFrame(self.tab3, text=' Filter')
+        self.client4 = ttk.LabelFrame(self.tab3, text=' Sort')
         self.client3 = ttk.LabelFrame(self.tab3, text=' Plan ')
         self.time = ttk.Label(self.infoZone, text='Date and Time of Launch')
         self.timeZone = tk.StringVar()
@@ -112,12 +111,13 @@ class ProviderGUI:
         self.chAddl2 = tk.IntVar() #checkbox8
         self.chAddl3 = tk.IntVar() #checkbox9
         self.radVar = tk.IntVar() #radio button
+        self.radVar2 = tk.IntVar() #radio button
         self.chClient = tk.IntVar() #checkbox10
         self.chClient2 = tk.IntVar() #checkbox11
         self.chClient3 = tk.IntVar() #checkbox12
         self.weightGraph = tk.IntVar() #checkbox13
-        self.scr = scrolledtext.ScrolledText(self.monty, width=70, height=14, wrap=tk.WORD)
-        self.scrClient = scrolledtext.ScrolledText(self.client3, width=70, height=30, wrap=tk.WORD)
+        self.scr = scrolledtext.ScrolledText(self.monty, width=70, height=16, wrap=tk.WORD)
+        self.scrClient = scrolledtext.ScrolledText(self.client3, width=70, height=27, wrap=tk.WORD)
         self.messageEntry = scrolledtext.ScrolledText(self.messageTextEntry, width=70, height=15, wrap=tk.WORD)
         self.sentMessages = scrolledtext.ScrolledText(self.messageSentEntry, width=70, height=12, wrap=tk.WORD)
         self.figure = Figure(figsize=(7,6), dpi=85)
@@ -154,11 +154,14 @@ class ProviderGUI:
         self.client.grid(column=0, row=0, padx=20, pady=4)
         self.client2.grid(column=0, row=2, padx=20, pady=4)
         self.client3.grid(column=0, row=4, padx=20, pady=4)
+        self.client4.grid(column=0, row=3, padx=20, pady=4)
         self.phoneNumber.grid(column=0, row=0, padx=60, pady=4)
         self.messageTextEntry.grid(column=0, row=2, padx=20, pady=4)
         self.messageSentEntry.grid(column=0, row=4, padx=20, pady=4)
         self.fileAttachmentEntry.grid(column=0, row=3, padx=20, pady=4)
         self.tab4.bind("<Button-3>", self.tab4Call)
+        self.fileEntry.grid(column=1, row=0, padx = 40, pady = 5)
+        self.fileEntry2.grid(column=1, row=0, padx = 40, pady = 5)
 
     def bottons(self):
         self.action.grid(column=2, row=1)
@@ -237,6 +240,15 @@ class ProviderGUI:
         self.rad5 = tk.Radiobutton(self.monty, text='Most Acurate', variable=self.radVar, value=3, command=self.radCall)
         self.rad5.grid(column=2, row=7, sticky=tk.W)
         self.rad5.select()
+
+        self.rad1 = tk.Radiobutton(self.client4, text='Sort by Name', variable=self.radVar2, value=1, command=self.radCall2)
+        self.rad1.grid(column=0, row=0, sticky=tk.W)
+        self.rad4 = tk.Radiobutton(self.client4, text='Sort by Popularity', variable=self.radVar2, value=2, command=self.radCall2)
+        self.rad4.grid(column=1, row=0, sticky=tk.W)
+        self.rad5 = tk.Radiobutton(self.client4, text='Sort by Distance', variable=self.radVar2, value=3, command=self.radCall2)
+        self.rad5.grid(column=2, row=0, sticky=tk.W)
+        self.rad5.select()
+        
 
     def scrollableText(self):
         self.scr.grid(column=0, columnspan=3)
@@ -339,7 +351,7 @@ class ProviderGUI:
 
     def searchTXPlan(self):
         try:
-            treatmentPlan(self.act2.get(), self.scrClient, self.name2.get(), self.act3.get(), self.chClient.get(), self.chClient2.get(), self.chClient3.get())
+            treatmentPlan(self.act2.get(), self.scrClient, self.name2.get(), self.act3.get(), self.chClient.get(), self.chClient2.get(), self.chClient3.get(), self.radVar2.get())
         except Exception as e:
             print(e)
 
@@ -447,6 +459,9 @@ class ProviderGUI:
             
 	
     def radCall(self):
+        pass
+
+    def radCall2(self):
         pass
 
     def _msgBox(self):
