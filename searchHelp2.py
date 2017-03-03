@@ -87,17 +87,19 @@ def updNeedlesSpecialty():
     updateNeedlesSpecialty(DB, lst)
 
     
-def fillinDB(upNeedles,upYelp, upHospital, text):
+def fillinDB(upNeedles,upYelp, upHospital, text, city_name):
     logging.getLogger("requests").setLevel(logging.WARNING)
     logging.getLogger("urllib3").setLevel(logging.WARNING)
     line = ''
-    totalSleep = 0
     createTablesInDB()
     DB = connectToDB()
     lst = []
-    city = ['Seattle,WA', 'Federal Way,WA', 'Tacoma,WA', 'Bellevue,WA',
-            'Everett,WA', 'Renton,WA', 'Lake City,WA', 'Sammamish,WA',
-            'Lynnwood,WA']
+    if city_name:
+        city = [city_name]
+    else:
+        city = ['Wenatchee,WA', 'Seattle,WA', 'Federal Way,WA', 'Tacoma,WA', 'Bellevue,WA',
+                'Everett,WA', 'Renton,WA', 'Lake City,WA', 'Sammamish,WA',
+                'Lynnwood,WA',]
     spec = ['Chiropractors', 'Chiropractic','Urgent Care', 'Orthopedic Doctor', 'Physical Therapy',
             'Pediatrics', 'Physicians', 'Massage Therapy', 'Diagnostic Imaging',
             'Medical Clinic', 'Family Practice']

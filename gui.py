@@ -64,23 +64,29 @@ class ProviderGUI:
         self.fDir2 = None #dir of an attachment
         self.file = tk.StringVar()
         self.file2 = tk.StringVar()
+        self.name = tk.StringVar() #search name
+        self.name2 = tk.StringVar() #search location
+        self.phone = tk.StringVar() #phonenumber
+        self.act = tk.StringVar()
+        self.act2 = tk.StringVar()
+        self.act3 = tk.StringVar()
+        self.netSize = tk.StringVar()
+        self.city_name = tk.StringVar()
         self.entryLen = 60
         self.fileEntry = ttk.Entry(self.mngFilesFrame, width=60,textvariable=self.file)
+        self.cityName = ttk.Entry(self.infoZone, width=20,textvariable=self.city_name)
         self.fileEntry2 = ttk.Entry(self.fileAttachmentEntry, width=40,textvariable=self.file2)
         self.monty2 = ttk.LabelFrame(self.tab2, text=' Provider Network')
         self.client = ttk.LabelFrame(self.tab3, text=' Seach Box ')
         self.client2 = ttk.LabelFrame(self.tab3, text=' Filter')
         self.client4 = ttk.LabelFrame(self.tab3, text=' Sort')
         self.client3 = ttk.LabelFrame(self.tab3, text=' Plan ')
-        self.time = ttk.Label(self.infoZone, text='Date and Time of Launch')
+        self.time = ttk.Label(self.infoZone, text="Enter City, State")
         self.timeZone = tk.StringVar()
         self.timeZoneLabel = ttk.Label(self.infoZone, textvariable=self.timeZone)
         self.aLabel = ttk.Label(self.monty1, text="Search Box") #label
         self.action = ttk.Button(self.monty1, text="Run", command=self.clickMe) #button
         self.updateDB = ttk.Button(self.infoZone, text='Update Database', comman=self.runUpdateDatabase)
-        self.name = tk.StringVar() #search name
-        self.name2 = tk.StringVar() #search location
-        self.phone = tk.StringVar() #phonenumber
         self.nameEntered = ttk.Entry(self.monty1, width=40, textvariable=self.name) #name entered
         self.aLabel2 = ttk.Label(self.monty1, text="Choose an action:").grid(column=1, row=0) #drop down box
         self.netSizeLabel = ttk.Label(self.monty1, text="Network size:").grid(column=1, row=1) #drop down box
@@ -90,10 +96,6 @@ class ProviderGUI:
         self.clientLocation = ttk.Entry(self.client, width=35, textvariable=self.name2) #name entered
         self.phoneEntered = ttk.Entry(self.phoneNumber, width=40, textvariable=self.phone) #name entered
         self.sentMessageButton = ttk.Button(self.phoneNumber, text="Send", command=self.sendText) 
-        self.act = tk.StringVar()
-        self.act2 = tk.StringVar()
-        self.act3 = tk.StringVar()
-        self.netSize = tk.StringVar()
         self.clientLanguageChooser = ttk.Combobox(self.client, width=8, textvariable=self.act2)
         self.clientDistanceChooser = ttk.Combobox(self.client, width=8, textvariable=self.act3)
         self.searchButton = ttk.Button(self.client, text="Search", command=self.searchMe) #button
@@ -131,6 +133,7 @@ class ProviderGUI:
     def tips(self):
         tt.createToolTip(self.browseButton, 'Use only if you have excel spreadsheet available')
         tt.createToolTip(self.tab2, 'Network Graph page')
+        tt.createToolTip(self.cityName, 'Enter [city],[state] if you need to update database with certain city only; otherwise, skip')
         tt.createToolTip(self.updateDB, "Check Database that you would like to update and click 'Update Database' button")
         tt.createToolTip(self.messageTextEntry, 'Type your message here')
         tt.createToolTip(self.messageSentEntry, 'Here is a list of all your sent messages (Duplicates omitted)')
@@ -142,8 +145,8 @@ class ProviderGUI:
         
     def labels(self):
         self.aLabel.grid(column=0, row=0)
-        self.time.grid(column=0, row=0)
-        self.timeZoneLabel.grid(column=0,row=1, padx=20, pady=4)
+        #self.time.grid(column=2, row=0)
+        #self.timeZoneLabel.grid(column=0,row=1, padx=20, pady=4)
         self.infoZone.grid(column = 0, row = 3 , sticky = 'WE', padx=20, pady=4)
         self.monty1.grid(column=0, row=0, padx=20, pady=4)
         self.monty2.grid(column=0, row=0, padx=20, pady=4)
@@ -161,11 +164,12 @@ class ProviderGUI:
         self.fileAttachmentEntry.grid(column=0, row=3, padx=20, pady=4)
         self.tab4.bind("<Button-3>", self.tab4Call)
         self.fileEntry.grid(column=1, row=0, padx = 40, pady = 5)
+        self.cityName.grid(column=2, row=1, padx = 5, pady = 5)
         self.fileEntry2.grid(column=1, row=0, padx = 40, pady = 5)
 
     def bottons(self):
         self.action.grid(column=2, row=1)
-        self.updateDB.grid(column=3, row=1)
+        self.updateDB.grid(column=0, row=1)
         self.searchButton.grid(column=3, row=1)
         self.sentMessageButton.grid(column=3, row=1)
 
@@ -302,11 +306,11 @@ class ProviderGUI:
         upYelp = self.chAddl2.get()
         upHospital = self.chAddl3.get()
         print('Needles: ',upNeedles, 'Yelp:', upYelp,'Hospital:', upHospital)
-        result = fillinDB(upNeedles,upYelp, upHospital, self.scr)
-        if result == 0:
-            mBox.showinfo('Database Information', 'Database successfully finished updating.\n')
-        else:
+        result = fillinDB(upNeedles,upYelp, upHospital, self.scr, self.city_name.get())
+        if result == -1 :
             mBox.showinfo('Database Information', 'Please launch Yelp.com on your webbrowser.\nAnd confirm that you are not a robot')
+        else:
+            mBox.showinfo('Database Information', 'Database successfully finished updating.\n')
         updateProviderMissingGeoLocation()
 
     '''Function that takes veriables and passes them to sendMessageToClient function
