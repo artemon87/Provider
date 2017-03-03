@@ -302,12 +302,9 @@ class ProviderGUI:
         upYelp = self.chAddl2.get()
         upHospital = self.chAddl3.get()
         print('Needles: ',upNeedles, 'Yelp:', upYelp,'Hospital:', upHospital)
-        #self.updateDB.configure(text='Updating...')
-        #self.createLoadingBullet()
         result = fillinDB(upNeedles,upYelp, upHospital, self.scr)
         if result == 0:
             mBox.showinfo('Database Information', 'Database successfully finished updating.\n')
-            #self.updateDB.configure(text='Update Database')
         else:
             mBox.showinfo('Database Information', 'Please launch Yelp.com on your webbrowser.\nAnd confirm that you are not a robot')
         updateProviderMissingGeoLocation()
@@ -343,11 +340,9 @@ class ProviderGUI:
         self.scrClient.insert(tk.INSERT,"Searching...")
         self.createThreadSearchTreatment()
         self.updateQueue2()
-        #self.searchTXPlan()
 
 
     def listOfSentMessages(self):
-        #clearScreen(self.sentMessages)
         displaySentMessages(self.sentMessages)
         
 
@@ -379,7 +374,7 @@ class ProviderGUI:
             if self.updatingThread:
                 if self.updatingThread.isAlive():
                     mBox.showinfo('Database Information', 'Even though you can still lookup providers,\nwhen update is done screen will be cleared\n(only when updating Yelp database)\n')
-            node_sizes = createNodeSize(self.getNetworkSize(), self.weightGraph.get()) #####################
+            node_sizes = createNodeSize(self.getNetworkSize(), self.weightGraph.get())
             self.ed = None
             self.providerDict = None
             ratio = self.searchAccuracy() 
@@ -400,14 +395,10 @@ class ProviderGUI:
                 self.providerDict = providerDict
                 if len(ed) == 0:
                     self.clearScreen(self.scr)
-                    #confirmProvider(fileToRead, self.name.get(), self.scr, displayArgs, ratio)
                     self.createThreadConfirmProvider()
                     self.updateQueue1()
-                    #possibleOptions = findProvider(fileToRead, self.name.get(), ratio, self.scr)
                 else:
                     self.clearScreen(self.scr)
-                    #confirmProvider(fileToRead, self.name.get(), self.scr, displayArgs, ratio)
-                    #printOutProvider(providerDict, self.scr, displayArgs,ratio)
                     self.createThreadPrintOutProvider()
                     self.updateQueue1()
                     pos=nx.spring_layout(ed)
@@ -420,29 +411,18 @@ class ProviderGUI:
                     self.canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
                 
             elif self.act.get() == 'Find Provider':
-                #confirmSearchProvider(self.name.get(), self.scr, displayArgs, ratio)
                 self.createThreadSearchProvider()
                 self.updateQueue1()
 
             elif self.act.get() == 'Find Hospital':
-                #confirmSearchHospital(self.name.get(), self.scr, displayArgs, ratio)
                 self.createThreadSearchHospital()
                 self.updateQueue1()
         except RuntimeError as RE:
             print(RE)
-            '''try:
-                #self.win.after(2000, main)
-                main()
-                print('Lounching mainloop()')
-            except Exception as e:
-                log.loggingWarning(e, 'gui.py', 'running mainloop')'''
         
 
     def clickMe(self, event = None):
-        #########################
-        #self.createThreadRun()
         self.runSearchTab1()
-        #########################
 
 
     def getCheckbox(self):
@@ -562,7 +542,6 @@ class ProviderGUI:
         try:
             line = getQueue1()
             if line:
-                #self.scr.delete(1.0, tk.END)
                 self.scr.insert(tk.INSERT, str(line))
                 self.win.after(100, self.updateQueue1)
             else:
