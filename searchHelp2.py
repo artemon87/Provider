@@ -60,6 +60,33 @@ def createNeedlesList():
     needlesList = createDicForDB(dictWeighted, needlesProvider)
     return needlesList
 
+def updProviderSpecialty():
+    lst = []
+    DB = connectToDB()
+    dic = {'Chiropractic': 'Chiropractors', 'Family Practice': 'Family Practice Near Me',
+           'Medical Clinic' : 'Medical Clinic Near Me', 'Pediatrics' : 'Pediatrics Near Me',
+           'Physicians' : 'Physicians Near Me'}
+    Cor = namedtuple('Cor', 'Specialty oldSpecialty')
+    for k,v in dic.items():
+        inst = Cor(k, v)
+        lst.append(inst)
+    updateProviderSpecialty(DB, lst)
+
+def updNeedlesSpecialty():
+    lst = []
+    DB = connectToDB()
+    list_of_items = [['Chiropractic', 'Chiropractic'], ['Chiropractic', 'Chiro'], ['Chiropractic', 'DC'],
+           ['Chiropractic', 'D.C.'], ['Hospital' , 'Medical Center'], ['Hospital' , 'Hospital'],
+           ['Urgent Care' , 'Urgent Care'], ['Massage Therapy' , 'Massage'], ['Massage Therapy' , 'LMP'],
+           ['Family Practice' , 'Medicine'], ['Family Practice' , 'MD'], ['Family Practice' , 'M.D.']]
+    Cor = namedtuple('Cor', 'Specialty Name')
+    for i in list_of_items:
+        inst = Cor(i[0], i[1])
+        print(i[0], i[1])
+        lst.append(inst)
+    updateNeedlesSpecialty(DB, lst)
+
+    
 def fillinDB(upNeedles,upYelp, upHospital, text):
     logging.getLogger("requests").setLevel(logging.WARNING)
     logging.getLogger("urllib3").setLevel(logging.WARNING)
@@ -511,6 +538,7 @@ def treatmentPlan(language, text, sLocation, radius, needlesOnly, avoidPhys, onl
                 log.loggingInfo(e, 'searchHelp.py', 'treatmentPlan: GEO in lst3')
     list_of_items = []
     single_list = []
+    list_of_items_tup = []
     for key, value in txPlanDict.items():
         if avoidPhys:
             check = checkForSpecialties(key.NAME, places)
@@ -518,54 +546,74 @@ def treatmentPlan(language, text, sLocation, radius, needlesOnly, avoidPhys, onl
             if languageDict[language] == 1:
                 try:
                     if key.RU > 3:
-                        l , single_list = printProviderTX(text, key, value, language)
+                        l , single_list, inst = printProviderTX(text, key, value, language)
                         line += l
                 except Exception as e:
                     log.loggingInfo(e, 'searchHelp.py', 'treatmentPlan: RU')
-                    l , single_list = printProviderTX(text, key, value, language)
+                    l , single_list, inst = printProviderTX(text, key, value, language)
                     line += l
             elif languageDict[language] == 2:
                 try:
                     if key.ES > 3:
-                        l , single_list = printProviderTX(text, key, value, language)
+                        l , single_list, inst = printProviderTX(text, key, value, language)
                         line += l
                 except Exception as e:
                     log.loggingInfo(e, 'searchHelp.py', 'treatmentPlan: ES')
-                    l , single_list = printProviderTX(text, key, value, language)
+                    l , single_list, inst = printProviderTX(text, key, value, language)
                     line += l
             elif languageDict[language] == 3:
                 try:
                     if key.EN > 3:
-                        l , single_list = printProviderTX(text, key, value, language)
+                        l , single_list, inst = printProviderTX(text, key, value, language)
                         line += l
                 except Exception as e:
                     log.loggingInfo(e, 'searchHelp.py', 'treatmentPlan: EN')
-                    l , single_list = printProviderTX(text, key, value, language)
+                    l , single_list, inst = printProviderTX(text, key, value, language)
                     line += l
             elif languageDict[language] == 4:
                 try:
                     if key.RU >= 0 or key.ES >= 0 or key.EN >= 0:
-                        l , single_list = printProviderTX(text, key, value, language)
+                        l , single_list, inst = printProviderTX(text, key, value, language)
                         line += l
                 except Exception as e:
                     log.loggingInfo(e, 'searchHelp.py', 'treatmentPlan: ALL languages')
-                    l , single_list = printProviderTX(text, key, value, language)
+                    l , single_list, inst = printProviderTX(text, key, value, language)
                     line += l
             if single_list:
                 list_of_items.append(single_list)
+                list_of_items_tup.append(inst)
                 single_list = []
-                
+    
+    newString = ''
+    mySortedList = None
+    mySortedList2 = None
     if sortBy == 1:
         mySortedList = sorted(list_of_items, key =lambda  x: x[0])
+        mySortedList2 = sorted(list_of_items_tup, key =lambda  x: x.Name)
     elif needlesOnly and sortBy == 2:
         mySortedList = sorted(list_of_items, key =lambda  x: int(x[5]), reverse=True)
+        mySortedList2 = sorted(list_of_items_tup, key =lambda  x: int(x.Pop), reverse=True)
+    elif sortBy == 4:
+        mySortedList2 = sorted(list_of_items_tup, key =lambda  x: str(x.Spec))
     else:
         mySortedList = sorted(list_of_items, key =lambda  x: float(x[2]))
-
-    finalPrint = [inner for outer in mySortedList for inner in outer]
+        mySortedList2 = sorted(list_of_items_tup, key =lambda  x: float(x.Dis))
+    for i in mySortedList2:
+        newString += str(i.Name) + ' is only '+str(i.Dis)+' miles away from you\n'
+        if i.Pop:
+            newString += 'There were '+str(i.Pop) +' '+ str(i.Lan) + ' speeking clients in the past 2 years\n'
+        newString += 'Full Address: '+str(i.Addr)
+        if i.City:
+            newString += ', '+str(i.City)
+        newString += '\nPhone: '+str(i.Phone)
+        if i.Spec:
+            newString += '\nSpecialty: '+str(i.Spec)
+        newString += '\n\n'
+    '''finalPrint = [inner for outer in mySortedList for inner in outer]'''
     if len(line) == 0:
         line += 'Nothing was found with your request. Try again...\n'
-    writeToQueue2(''.join(finalPrint))
+    #writeToQueue2(''.join(finalPrint))
+    writeToQueue2(newString)
             
     return True
 
@@ -581,6 +629,8 @@ def printProviderTX(text, provider, value, language):
     single_list.append(str(round(value, 2)))
     line += ' miles away from you\n'
     single_list.append(' miles away from you\n')
+    pop = None
+    lan = None
     try:
         if provider.WEIGHT:
             line += 'There were '
@@ -599,6 +649,7 @@ def printProviderTX(text, provider, value, language):
     single_list.append('Full Address: ')
     addr = str(provider.ADDRESS)
     single_list.append(str(provider.ADDRESS))
+    city = None
     try:
         if provider.CITY:
             line += ', '
@@ -613,6 +664,7 @@ def printProviderTX(text, provider, value, language):
     single_list.append('Phone: ')
     phone = str(provider.PHONE)
     single_list.append(str(provider.PHONE))
+    spec = None
     try:
         if provider.SPECIALTY:
             line += '\n'
@@ -625,8 +677,10 @@ def printProviderTX(text, provider, value, language):
         log.loggingInfo(e, 'searchHelp.py', 'printProviderTX: Specialty')
     line += '\n\n'
     single_list.append('\n\n')
-    
-    return line, single_list
+    if not spec:
+        spec = 'Needles provider: undefined'
+    inst = NT(name, dis, pop, lan, addr, city, phone, spec)
+    return line, single_list, inst
 
 def updateFaxInNeedles():
     DB = connectToDB()

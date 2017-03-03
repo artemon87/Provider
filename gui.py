@@ -241,13 +241,15 @@ class ProviderGUI:
         self.rad5.grid(column=2, row=7, sticky=tk.W)
         self.rad5.select()
 
-        self.rad1 = tk.Radiobutton(self.client4, text='Sort by Name', variable=self.radVar2, value=1, command=self.radCall2)
-        self.rad1.grid(column=0, row=0, sticky=tk.W)
-        self.rad4 = tk.Radiobutton(self.client4, text='Sort by Popularity', variable=self.radVar2, value=2, command=self.radCall2)
-        self.rad4.grid(column=1, row=0, sticky=tk.W)
-        self.rad5 = tk.Radiobutton(self.client4, text='Sort by Distance', variable=self.radVar2, value=3, command=self.radCall2)
-        self.rad5.grid(column=2, row=0, sticky=tk.W)
-        self.rad5.select()
+        self.rad10 = tk.Radiobutton(self.client4, text='Sort by Name', variable=self.radVar2, value=1, command=self.radCall2)
+        self.rad10.grid(column=0, row=0, sticky=tk.W)
+        self.rad11 = tk.Radiobutton(self.client4, text='Sort by Popularity', variable=self.radVar2, value=2, command=self.radCall2)
+        self.rad11.grid(column=1, row=0, sticky=tk.W)
+        self.rad12 = tk.Radiobutton(self.client4, text='Sort by Distance', variable=self.radVar2, value=3, command=self.radCall2)
+        self.rad12.grid(column=2, row=0, sticky=tk.W)
+        self.rad12.select()
+        self.rad13 = tk.Radiobutton(self.client4, text='Sort by Specialty', variable=self.radVar2, value=4, command=self.radCall2)
+        self.rad13.grid(column=3, row=0, sticky=tk.W)
         
 
     def scrollableText(self):

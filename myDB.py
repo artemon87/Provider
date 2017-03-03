@@ -225,6 +225,17 @@ def updateProviderGEO(tup, provider):
         tup.cursor.execute(sqlRetrive, [str(elem.Geo), elem.Name, elem.Phone])
     tup.connection.commit()
 
+def updateProviderSpecialty(tup, provider):
+    for elem in provider:
+        sqlRetrive = '''UPDATE PROVIDER SET SPECIALTY = ? WHERE SPECIALTY = ?'''
+        tup.cursor.execute(sqlRetrive, [str(elem.Specialty), str(elem.oldSpecialty)])
+    tup.connection.commit()
+
+def updateNeedlesSpecialty(tup, provider):
+    for elem in provider:
+        sqlRetrive = '''UPDATE NEEDLES SET SPECIALTY = ? WHERE NAME like ? or NAME like ? or NAME like ?'''
+        tup.cursor.execute(sqlRetrive, [str(elem.Specialty), ('%'+elem.Name+'%'), (elem.Name+'%'), ('%'+elem.Name)])
+    tup.connection.commit()
 
 def readFromNeedlesAll(tup):
     P = namedtuple('P', 'NAME ADDRESS PHONE FAX SPECIALTY ID GEO WEIGHT RU ES EN')
