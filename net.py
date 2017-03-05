@@ -7,6 +7,8 @@ import networkx as nx
 from find import *
 import googlemaps
 import geocoder
+import os
+from myDB import *
 
 def read(location):
     Profile = namedtuple('Profile', 'File Dictionary')
@@ -97,7 +99,130 @@ def processFacility(location, hospitals = None, singleProvider = None, ratio = 0
                     break
     
     return providerDict, providerFile, toRemove
+
+
+def createJsonFile():
+    providerDict, providerFile, toRemove = processAll('/Users/tata/Documents/Provider/Provider/Provider/netRace.xlsx')
+    Provider = namedtuple('Provider', 'Name Address Phone ID')
+    ProviderWeighted = namedtuple('ProviderWeighted', 'Name Address Phone ID Weight')
+    needlesProvider = defaultdict(set)
+    lst = []
+    list_of_lists = []
+    list_of_single_elem = []
+    list_of_races = []
+    ed = nx.Graph()
+    current = prev = 0
+    for elem in providerFile.index:
+        prev = current
+        current = providerFile['casenum'][elem]
+        if current == prev:
+            if providerFile['compute_0005'][elem] not in toRemove:
+                phone = str(providerFile['compute_0008'][elem])
+                addr = str(providerFile['compute_0007'][elem])
+                if phone:
+                    phone = phone.replace('(', '').replace(') ', '').replace(' - ', '')
+                else:
+                    phone = 'NONE'
+                if addr:
+                    addr = addr.replace('\n\n', ' ')
+                else:
+                    addr = 'NONE'
+                instP = Provider(providerFile['compute_0005'][elem],
+                                addr,
+                                phone,
+                                providerFile['names_id'][elem])
+                lst.append(instP)
+                
+        else:
+            prov = None
+            for k, v in providerDict.items():
+                inst = ProviderWeighted(k.Name, k.Address, k.Phone, k.ID, v)
+                if k in lst:
+                    for i in lst:
+                        if k != i:
+                            needlesProvider[inst].add(i)                       
+            #list_of_lists.append(lst)
+            lst = []
+    line = ''
+    line += '[\n'
+    for k,v in needlesProvider.items():
+        line += '{"name":"'+str(k.Name)+',"size":'+str(k.Weight)+',"imports":['
+        for i in v:
+            line +='"'+str(i.Name)+'"'
+            line +=','
+        line = line[:-1]
+        line += ']},\n'
+    line += ']'
+    file = open('jsonFile.txt', 'w')
+    file.write(line)
+
+
+def createCSV():
+    DB = setupDB()
+    lst = readFromNeedlesAll(DB)
+    line = ''
+    line += 'id,value\n'
+    line += 'provider,\n'
+    new_lst = sorted(lst, key = lambda x:str(x.SPECIALTY))
+    current = past = None
+    for i in new_lst:
+        current = str(i.SPECIALTY)
+        if current != past:
+            line += 'provider.'
+            line += str(i.SPECIALTY).replace(' ', '')
+            line += '\n'
+            past = current
+        else:
+            line += 'provider.'
+            spec = str(i.SPECIALTY).replace(' ', '').replace('\n', '')
+            line += spec
+            line +='.'
+            name = str(i.NAME).replace('\n', '').replace(',', '').replace('.', '')
+            line += name
+            line += ','
+            line += str(i.WEIGHT)
+            line += '\n'
+    file = open('flare.csv', 'w')
+    file.write(line)
     
+def createJason():
+    DB = setupDB()
+    lst = readFromNeedlesAll(DB)
+    firstTime = True
+    line = ''
+    line += '{\n'
+    line += '"name": "provider",\n'
+    line += '"children": [\n'
+    new_lst = sorted(lst, key = lambda x:str(x.SPECIALTY))
+    current = past = None
+    for i in new_lst:
+        current = str(i.SPECIALTY)
+        if current != past and not firstTime:
+            line = line[:-2]
+            line += '\n]\n},\n'
+            firstTime = True
+        if current != past and firstTime:
+            line += '{\n'
+            line += '"name": "'
+            line += str(i.SPECIALTY)
+            line += '",\n'
+            line += '"children" : [\n'
+            past = current
+            firstTime = False
+        else:
+            line += '{"name": "'
+            name = str(i.NAME).replace('\n', '').replace(',', '').replace('.', '')
+            line += name
+            line +='", "size": '
+            line += str(i.WEIGHT)
+            line += '},\n'
+    line = line[:-2]
+    line += '\n]\n}\n]\n}'
+    file = open('flare.json', 'w')
+    file.write(line)
+        
+    
+        
     
 
 def createNX(providerDict, providerFile, toRemove, netSize, weighted):

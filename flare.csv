@@ -1,0 +1,325 @@
+id,value
+provider,
+provider.Chiropractic
+provider.Chiropractic.ALL WAYS CHIROPRACTIC,6
+provider.Chiropractic.AXIS CHIROPRACTIC ,2
+provider.Chiropractic.BAZE CHIROPRACTIC PLLC,3
+provider.Chiropractic.BEL RED CHIROPRACTIC WELLNESS,3
+provider.Chiropractic.BURIEN CHIROPRACTIC,3
+provider.Chiropractic.BURIEN CHIROPRACTIC,3
+provider.Chiropractic.CHIROPRACTIC WELLNESS ,1
+provider.Chiropractic.CHIROPRACTIC PREMIER ,3
+provider.Chiropractic.CLARK CHIROPRACTIC,4
+provider.Chiropractic.CORBIN CHIROPRACTIC,2
+provider.Chiropractic.CROSSROADS CHIROPRACTIC CENTER,10
+provider.Chiropractic.DESAUTEL CHIROPRACTIC,27
+provider.Chiropractic.DISCOVER CHIROPRACTIC,3
+provider.Chiropractic.DOWNEY CHIROPRACTIC ,1
+provider.Chiropractic.DYNAMIC CHIROS,35
+provider.Chiropractic.HANSON CHIROPRACTIC,4
+provider.Chiropractic.HEALTHQUEST CHIROPRACTIC,5
+provider.Chiropractic.HEHN DC DR MARTIN ,1
+provider.Chiropractic.HERRERA CHIROPRACTIC,71
+provider.Chiropractic.JEX CHIROPRACTIC,4
+provider.Chiropractic.KENMORE CHIROPRACTIC ,2
+provider.Chiropractic.KENT CHIROPRACTIC PLLC,45
+provider.Chiropractic.MARC-ANTHONY CHIROPRACTIC,20
+provider.Chiropractic.MARC-ANTHONY CHIROPRACTIC ,33
+provider.Chiropractic.MIDWAY CHIROPRACTIC,11
+provider.Chiropractic.MILLER DC DR JOHN ,3
+provider.Chiropractic.MYOMEDI CHIROPRACTIC,141
+provider.Chiropractic.NYREN CHIROPRACTIC CENTER,2
+provider.Chiropractic.OTHELLO CHIROPRACTIC,2
+provider.Chiropractic.PACIFIC HWY CHIROPRACTIC ,43
+provider.Chiropractic.PALMER CHIROPRACTIC,21
+provider.Chiropractic.PREMIER CHIROPRACTIC ,94
+provider.Chiropractic.PREMIER CHIROPRACTIC  PLLC  # 3,28
+provider.Chiropractic.PUGET PARK CHIROPRACTIC,3
+provider.Chiropractic.PURE CHIROPRACTIC CENTER,6
+provider.Chiropractic.QUAM CHIRO CENTER,43
+provider.Chiropractic.RENAISSANCE CHIROPRACRIC ,14
+provider.Chiropractic.ROMERO DC DR LEO ,4
+provider.Chiropractic.SEA-TAC CHIROPRACTIC,1
+provider.Chiropractic.TACOMA MALL CHIROPRACTIC,24
+provider.Chiropractic.TORRES DC DR GABRIEL ,71
+provider.Chiropractic.TORRES DC DR GABRIEL ,292
+provider.Chiropractic.TORRES DC GABRIEL ,111
+provider.Chiropractic.WATSON CHIROPRACTIC,3
+provider.Chiropractic.WHEELER DC DR STEVEN ,3
+provider.Chiropractic.WRIGHT LIFE CHIROPRACTIC LLC,70
+provider.Chiropractic.ZOHRABIAN DC ARA,12
+provider.Chiropractic.ZOHRABIAN DC ARA,15
+provider.Chiropractic.ZOHRABIAN DC DR ARA ,11
+provider.DiagnosticImaging
+provider.DiagnosticImaging.BELLEVUE MEDICAL IMAGING,6
+provider.DiagnosticImaging.CDI,74
+provider.DiagnosticImaging.CENTER FOR DIAGNOSTIC IMAGING,1
+provider.DiagnosticImaging.CENTRAL PIERCE FIRE/RESCUE,3
+provider.DiagnosticImaging.COLUMBIA IMAGING,4
+provider.DiagnosticImaging.EDMONDS IMAGING,2
+provider.DiagnosticImaging.EVERGREEN RADIA IMAGING CENTER,6
+provider.DiagnosticImaging.INLAND MEDICAL IMAGING,1
+provider.DiagnosticImaging.IRAD MEDICAL IMAGING,14
+provider.DiagnosticImaging.MEDICAL IMAGING NORTHWEST ,15
+provider.DiagnosticImaging.OVERLAKE IMAGING ASSOCIATES PS,42
+provider.DiagnosticImaging.RADIA MEDICAL IMAGING ,69
+provider.DiagnosticImaging.RADIA MEDICAL IMAGING - ISSAQUAH,2
+provider.DiagnosticImaging.SOUTH SOUND RADIOLOGY,2
+provider.DiagnosticImaging.TACOMA RADIOLOGY,3
+provider.DiagnosticImaging.TRA MEDICAL IMAGING ,81
+provider.DiagnosticImaging.TRANSPORT ,1
+provider.DiagnosticImaging.VANTAGE RADIOLOGY & DIAGNOSTIC SERVICES,23
+provider.DiagnosticImaging.VIA RADIOLOGY,18
+provider.DiagnosticImaging.YAKIMA VALLEY RADIOLOGY,1
+provider.FamilyPractice
+provider.FamilyPractice.ARSHINOVA MD MS BELLA ,3
+provider.FamilyPractice.EASTSIDE FAMILY MEDICAL CLINIC,1
+provider.FamilyPractice.EDMONDS FAMILY CARE,1
+provider.FamilyPractice.EDMONDS FAMILY MEDICINE ,10
+provider.FamilyPractice.EMERGENCY MEDICINE ASSOCIATES,1
+provider.FamilyPractice.EVERGREEN INTEGRATED MEDICINE LLP,2
+provider.FamilyPractice.FAMILY CARE OF KENT,2
+provider.FamilyPractice.FLOW NATURAL MEDICINE & ACUPUNCTURE,17
+provider.FamilyPractice.HASANOGLU MD DR KAYA ,21
+provider.FamilyPractice.KUTSY MD DR ROMAN ,2
+provider.FamilyPractice.MEADOWS FAMILY CHIROPRACTIC,5
+provider.FamilyPractice.MILMAN MD IRINA ,19
+provider.FamilyPractice.MONROE CHIROPRACTIC & ALTERNATIVE MEDICINE CENTER,1
+provider.FamilyPractice.MULCAHY FAMILY CHIROPRACTIC,1
+provider.FamilyPractice.MUSNIK MD DR DAVID ,2
+provider.FamilyPractice.NATUROPATHIC FAMILY AND SENIOR CENTER ,4
+provider.FamilyPractice.NORDQUIST FAMILY CHIROPRACTIC,9
+provider.FamilyPractice.NORTH SOUND EMERGENCY MEDICINE,14
+provider.FamilyPractice.OH MD KYLE  ,9
+provider.FamilyPractice.PENALVER MD DR OVIDIO M ,5
+provider.FamilyPractice.PRENTICE FAMILY CHIROPRACTIC ,28
+provider.FamilyPractice.REDONDO FAMILY CHIROPRACTIC,9
+provider.FamilyPractice.SANCHEZ  MD RAMON ,2
+provider.FamilyPractice.SHIN MD CHANG  ,3
+provider.FamilyPractice.SIMMONS FAMILY CHIROPRACTIC,6
+provider.FamilyPractice.TACOMA CENTRAL FAMILY MEDICINE,1
+provider.FamilyPractice.TOTEM LAKE FAMILY MEDICINE,1
+provider.Hospital
+provider.Hospital.CHILDREN'S HOSPITAL,14
+provider.Hospital.COVINGTON HOSPITAL MEDICAL SERVICES ,3
+provider.Hospital.ER HOSPITAL VISIT ,3
+provider.Hospital.EVERGREEN HOSPITAL ,27
+provider.Hospital.GOOD SAMARITAN HOSPITAL,9
+provider.Hospital.HARBORVIEW MEDICAL CENTER,33
+provider.Hospital.HIGHLINE COMMUNITY HOSPITAL,17
+provider.Hospital.MARY BRIDGE CHILDREN'S HOSPITAL AND HEALTH CENTER,7
+provider.Hospital.MUSCULOSKELETAL MEDICAL CENTER,1
+provider.Hospital.NORTHWEST HOSPITAL,18
+provider.Hospital.OVERLAKE HOSPITAL,47
+provider.Hospital.PACIFIC MEDICAL CENTER,1
+provider.Hospital.PACIFIC MEDICAL CENTER (NORTHGATE),3
+provider.Hospital.PROVIDENCE EVERETT MEDICAL CENTER,13
+provider.Hospital.SEATTLE CHILDREN'S HOSPITAL,4
+provider.Hospital.SKAGIT VALLEY HOSPITAL,16
+provider.Hospital.SKAGIT VALLEY MEDICAL CENTER ,2
+provider.Hospital.ST CLARE HOSPITAL,7
+provider.Hospital.ST FRANCIS HOSPITAL,32
+provider.Hospital.ST JOSEPH HOSPITAL,9
+provider.Hospital.ST JOSEPH'S MEDICAL CENTER,3
+provider.Hospital.SWEDISH MEDICAL CENTER,27
+provider.Hospital.SWEDISH MEDICAL CENTER,36
+provider.Hospital.SWEDISH MEDICAL CENTER - FIRST HILL,4
+provider.Hospital.SWEDISH MEDICAL CENTER-EVERETT,16
+provider.Hospital.TACOMA GENERAL HOSPITAL,29
+provider.Hospital.UW MEDICAL CENTER,52
+provider.Hospital.VALLEY GENERAL HOSPITAL,2
+provider.Hospital.VALLEY MEDICAL CENTER,53
+provider.Hospital.WENATCHEE VALLEY HOSPITAL,1
+provider.MassageTherapy
+provider.MassageTherapy.COMFORT MASSAGE,56
+provider.MassageTherapy.LIFE CHIROPRACTIC & MASSAGE,7
+provider.MassageTherapy.LMP,832
+provider.MassageTherapy.LUTSKOV LMP MS YULIYA ,2
+provider.MassageTherapy.MONROE THERAPEUTIC MASSAGE ,2
+provider.MassageTherapy.NEWPORT MASSAGE THERAPY ,1
+provider.MassageTherapy.RAVIKOVICH LMP ALEXANDER ,17
+provider.MassageTherapy.RAVIKOVICH LMP ALEXANDER  ,27
+provider.MassageTherapy.SOLTYS LMP IRINA ,13
+provider.MassageTherapy.THERAPEUTIC HERBAL MASSAGE,4
+provider.MassageTherapy.VYSOTSKY LMP VICTOR ,136
+provider.MassageTherapy.YAKUBETS LMP MS LYUBOV ,17
+provider.MassageTherapy.ZHUKOVSKA LMP MS ZORYANA ,1
+provider.MassageTherapy.ZRAZHEVSKIY LMP MR SERGEY ,3
+provider.MedicalClinic
+provider.MedicalClinic.ACCIDENT & INJURY CLINIC,15
+provider.MedicalClinic.BELLEVUE CHIROPRACTIC CLINIC,1
+provider.MedicalClinic.CHC-EVERETT-112TH ST CLINIC,4
+provider.MedicalClinic.DOCTORS CLINIC OF POULSBO,1
+provider.MedicalClinic.EAST HILL MULTICARE CLINIC ,1
+provider.MedicalClinic.EASTGATE CLINIC,2
+provider.MedicalClinic.EASTSIDE MASSAGE CLINIC ,1
+provider.MedicalClinic.EVERETT ACCIDENT & INJURY CLINIC LLC,80
+provider.MedicalClinic.EVERETT CLINIC ,5
+provider.MedicalClinic.FEDERAL WAY UW PHYSICIANS CLINIC,3
+provider.MedicalClinic.FRALEY CHIROPRACTIC CLINIC,3
+provider.MedicalClinic.KARMEL MEDICAL CLINIC,3
+provider.MedicalClinic.KENT PRIMARY CARE CLINIC,1
+provider.MedicalClinic.LAKE SERENE CLINIC,1
+provider.MedicalClinic.LAKE SHORE CLINIC,1
+provider.MedicalClinic.LAKESHORE CLINIC,1
+provider.MedicalClinic.MULLEN DECAMP TOFTNESS CHIROPRACTOR CLINIC ,4
+provider.MedicalClinic.MULTICARE CLINIC,8
+provider.MedicalClinic.MULTICARE CLINIC,6
+provider.MedicalClinic.NEOSPINE CLINIC,1
+provider.MedicalClinic.NORTHWEST CHIROPRACTIC CLINIC,2
+provider.MedicalClinic.NORTHWEST SPINE CLINIC,1
+provider.MedicalClinic.NW CHIROPRACTIC CLINIC,19
+provider.MedicalClinic.OVERLAKE MEDICAL CLINICS LLC OMC ISSAQUAH MEDICAL ,3
+provider.MedicalClinic.PAIN AND INJURY REHABILITATION CLINICS,2
+provider.MedicalClinic.POLYCLINIC ,2
+provider.MedicalClinic.PROVIDENCE MEDALIA WALK IN CLINIC,1
+provider.MedicalClinic.RAINIER CHIROPRACTIC CLINIC,35
+provider.MedicalClinic.SEA MAR CHC-SEATTLE MEDICAL CLINIC,21
+provider.MedicalClinic.SOUTH HILL GENERAL MED CLINIC,1
+provider.MedicalClinic.SURPRISE LAKE MEDICAL CLINIC,2
+provider.MedicalClinic.THE EVERETT CLINIC - EVERETT ,8
+provider.MedicalClinic.UW MEDICINE KENT/DES MOINES CLINIC ,2
+provider.MedicalClinic.VALLEY CHILDREN'S CLINIC ,6
+provider.MedicalClinic.VIRGINIA MASON CLINIC ,4
+provider.MedicalClinic.WENATCHEE VALLEY CLINIC,1
+provider.None
+provider.None.ACUPUNCTURE,6
+provider.None.ALVAREZ ESQ MR STEVE R ,1
+provider.None.AMBULANCE,13
+provider.None.AMERICAN MEDICAL RESPONSE,2
+provider.None.AMERICAN MEDICAL RESPONSE,6
+provider.None.AMR,53
+provider.None.ASSOCIATED ER PHYSICIANS,69
+provider.None.AUBURN WAY WELLNESS,63
+provider.None.BACK AND NECK PAIN CENTERS,1
+provider.None.BACK TO HEALTH,2
+provider.None.BACK TO HEALTH,2
+provider.None.BALLARD EMERGENCY PHYSICIANS,5
+provider.None.BELLEVUE BONE & JOINT PHYSICIANS,3
+provider.None.BELLEVUE FIRE DEPARTMENT,16
+provider.None.CASCADE ER PHYSICIANS,31
+provider.None.CASCADE REHAB ASSOCIATES,1
+provider.None.CASCADE REHABILITATION ,1
+provider.None.CELLNETIX PATHOLOGY ,6
+provider.None.CEP PORTLAND ER PHYS ,9
+provider.None.CHC SNOHOMISH COUNTY ,4
+provider.None.CITY OF BELLEVUE,6
+provider.None.CITY OF TACOMA,1
+provider.None.COLUMBIA BASIN HEALTH ASSOC,3
+provider.None.COMMUNITY HEALTH CARE,3
+provider.None.CONFLUENCE HEALTH,2
+provider.None.COUNTRY DOCTOR,1
+provider.None.DOCTORS OF BELLEVUE-REDMOND,4
+provider.None.EAST PIERCE FIRE RESCUE,1
+provider.None.EASTSIDE EMERGENCY PHYSICIANS,14
+provider.None.EDMONDS ER PHYS,16
+provider.None.EMERGENCY GROUPS OFFICE,32
+provider.None.EMERGENCY PHYSICIAN ,1
+provider.None.EVERGREEN EMERGENCY SERVICES ,32
+provider.None.EVERGREEN HEALTHCARE,1
+provider.None.EVERGREEN MEDICAL GROUP,2
+provider.None.FALCK NORTHWEST,2
+provider.None.FIRE DEPARTMENT ,15
+provider.None.FRANCISCAN HEALTH SYSTEM,15
+provider.None.GAN DR CHI ,4
+provider.None.GROUP HEALTH,8
+provider.None.GROUP HEALTH ,5
+provider.None.GROUP HEALTH COOPERATIVE ,1
+provider.None.HEALTH POINT-AUBURN,2
+provider.None.HEALTH POINT-REDMOND,2
+provider.None.HEALTHPOINT-RENTON,3
+provider.None.HEALTHPOINT-SEATAC,1
+provider.None.HIGHLINE ER PHYS,28
+provider.None.HIGHLINE MEDICAL GROUP,10
+provider.None.HIGHLINE RADIOLOGISTS,1
+provider.None.KING COUNTY FPD 43,2
+provider.None.KIRKLAND FIRE DEPARTMENT,4
+provider.None.KISSELMAN LAW FIRM,1
+provider.None.LABCORP,1
+provider.None.MARYSVILLE FIRE DISTRICT,1
+provider.None.MCBRIDE SCICCHITANO & LEACOX PC,1
+provider.None.MED DATA ASSOCIATED FUND,3
+provider.None.MOUNT RAINIER NEUROLOGY,3
+provider.None.NEUROLOGICAL ASSOCIATES OF WASHINGTON,1
+provider.None.NEUROSURGICAL CONSULTANTS OF WA,1
+provider.None.NORTHSOUND EMERGENCY PHYSICIANS ,1
+provider.None.NORTHWEST EMERGENCY PHYSICIANS,4
+provider.None.NORTHWEST EMERGENCY PHYSICIANS,31
+provider.None.NORTHWEST RADIOLGY,6
+provider.None.NOVIKOV IGOR ,2
+provider.None.OLYMPIA EMERGENCY SERVICES ,1
+provider.None.OLYMPIC SPORT & SPINE REHABILITATION,2
+provider.None.ORTHOPAEDIC SPECIALISTS,1
+provider.None.OVERLAKE EYE CARE,1
+provider.None.PACIFIC FIRE MEDICAL SERVICES PLLC,3
+provider.None.PACIFIC MEDICAL INC ,7
+provider.None.PACLAB,1
+provider.None.PEAK SPORTS AND SPINE ,4
+provider.None.POLLCOK DR STEPHANIE  ,3
+provider.None.PROGRESSIVE MEDICAL DIAGNOSTIC ,3
+provider.None.PROGRESSIVE WELLNESS CENTER,11
+provider.None.PROVIDENCE ,5
+provider.None.PUGET SOUND ORTHOPAEDIC,1
+provider.None.PUGET SOUND PHYSICIANS PLLC,56
+provider.None.REDMOND FIRE DEPARTMENT,1
+provider.None.RENTON HIGHLANDS PRIMARY CARE,1
+provider.None.RURAL METRO OF GREATER SEATTLE INC,12
+provider.None.SCHIFF DR STAN ,3
+provider.None.SEA MAR - SOUTH PARK ,10
+provider.None.SEA MAR-BURIEN CAMPUS,3
+provider.None.SEATTLE EMERGENCY PHYS INC,16
+provider.None.SEATTLE NEUROLOGY PS,4
+provider.None.SEATTLE RADIOLOGISTS,33
+provider.None.SEATTLE SPINE INSTITUTE,1
+provider.None.SHORELINE FIRE DEPARTMENT,3
+provider.None.SKAGIT RADIOLGOY,11
+provider.None.SNOHOMISH COUNTY FIRE DISTRICT,1
+provider.None.SNOHOMISH COUNTY FIRE DISTRICT # 4,1
+provider.None.SNOHOMISH COUNTY FIRE DISTRICT 3,1
+provider.None.SNOHOMISH FIRE DISTRICT # 1,1
+provider.None.SNOHOMISH FIRE DISTRICT # 7 ,1
+provider.None.SPINE INSTITUTE NW,14
+provider.None.ST CLARE ER PHYSICIANS,1
+provider.None.ST FRANCIS ER PHYSICIANS ,28
+provider.None.ST JOSEPH ER PHYS,7
+provider.None.SUMMIT RIHABILITATION,7
+provider.None.SWEDISH FIRST HILL PHARMACY,1
+provider.None.SWEDISH PHYSICIAN DIVISION,2
+provider.None.SWEDISH PHYSICIANS - GREENLAKE ,1
+provider.None.SWEDISH PHYSICIANS-BELLEVUE,2
+provider.None.TACOMA EMERGENCY CARE PHY,40
+provider.None.THERAPEUTIC ASSOCIATES,1
+provider.None.TRI-MED AMBULANCE,46
+provider.None.TURRUBIATE DR ARIC ,71
+provider.None.US HEALTHWORKS OF WA,2
+provider.None.UW PHYS,70
+provider.None.VALLEY RADIOLOGISTS,52
+provider.None.WELLNESS ONE OF BELLEVUE,7
+provider.None.WELLNESS ONE OF EASTGATE,1
+provider.None.WEST CAMPUS SPORT,3
+provider.OrthopedicDoctor
+provider.OrthopedicDoctor.PROLIANCE ORTHOPAEDIC SPORTS MEDICINE ,1
+provider.OrthopedicDoctor.PROLIANCE SURGEONS,3
+provider.OrthopedicDoctor.PROLIANCE SURGEONS,3
+provider.OrthopedicDoctor.PROLIANCE SURGEONS ,1
+provider.Pediatrics
+provider.Pediatrics.PEDIATRICS NORTHWEST,19
+provider.Pediatrics.WOODCREEK PEDIATRICS,1
+provider.PhysicalTherapy
+provider.PhysicalTherapy.APPLE PHYSICAL THERAPY,1
+provider.PhysicalTherapy.ATLAS PHYSICAL THERAPY & INDUSTRIAL REHABILITATION,2
+provider.PhysicalTherapy.AXIS PHYSICAL THERAPY ,3
+provider.PhysicalTherapy.BEL-RED PHYSICAL THERAPY ,2
+provider.PhysicalTherapy.BELLEVUE PHYSICAL THERAPY ,1
+provider.PhysicalTherapy.COLUMBIA PHYSICAL THERAPY,4
+provider.PhysicalTherapy.EPIC PT,2
+provider.PhysicalTherapy.EPIC PT,10
+provider.PhysicalTherapy.EPIC PT,1
+provider.PhysicalTherapy.GREENWOOD PHYSICAL THERAPY,2
+provider.PhysicalTherapy.MTI PHYSICAL THERAPY,2
+provider.PhysicalTherapy.MURPHY'S CORNER PHYSICAL THERAPY,2
+provider.PhysicalTherapy.MVP PHYSICAL THERAPY,8
+provider.PhysicalTherapy.PT ,21
+provider.UrgentCare
+provider.UrgentCare.KENT URGENT CARE,6
+provider.UrgentCare.REDMOND URGENT CARE,3

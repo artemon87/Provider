@@ -22,6 +22,7 @@ from threading import Thread
 from datetime import datetime
 import time
 import log
+import webbrowser
 
 
 
@@ -45,9 +46,12 @@ class ProviderGUI:
         self.menuBar = Menu(self.win)
         self.win.config(menu=self.menuBar)
         self.helpMenu = Menu(self.menuBar, tearoff=0)
+        self.helpMenu2 = Menu(self.menuBar, tearoff=0)
         self.helpMenu.add_command(label="About", command = self._msgBox)
         self.helpMenu.add_command(label="Exit", command = self._quit)
+        self.helpMenu2.add_command(label='Show Provider Map', command=self._openPage)
         self.menuBar.add_cascade(label="Help", menu=self.helpMenu)
+        self.menuBar.add_cascade(label="File", menu=self.helpMenu2)
         self.monty1 = ttk.LabelFrame(self.tab1, text=' Provider Lookup ')
         self.monty = ttk.LabelFrame(self.tab1, text=' Display Result ')
         self.mngFilesFrame = ttk.LabelFrame(self.tab1, text=' Manage Files: ')
@@ -266,6 +270,10 @@ class ProviderGUI:
         self.win.quit()
         self.win.destroy()
         exit()
+
+    def _openPage(self):
+        url = 'file:///Users/tata/Documents/Provider/Provider/Provider/index.html'
+        webbrowser.open_new(url)
 
     def getNetworkSize(self):
         if self.netSize.get() == '3 links':

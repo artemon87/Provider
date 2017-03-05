@@ -75,14 +75,19 @@ def updProviderSpecialty():
 def updNeedlesSpecialty():
     lst = []
     DB = connectToDB()
-    list_of_items = [['Chiropractic', 'Chiropractic'], ['Chiropractic', 'Chiro'], ['Chiropractic', 'DC'],
-           ['Chiropractic', 'D.C.'], ['Hospital' , 'Medical Center'], ['Hospital' , 'Hospital'],
+    list_of_items = [['Hospital' , 'Medical Center'], ['Hospital' , 'Hospital'],
            ['Urgent Care' , 'Urgent Care'], ['Massage Therapy' , 'Massage'], ['Massage Therapy' , 'LMP'],
-           ['Family Practice' , 'Medicine'], ['Family Practice' , 'MD'], ['Family Practice' , 'M.D.']]
+           ['Family Practice' , 'Medicine'], ['Family Practice' , 'MD'], ['Family Practice' , 'M.D.'],['Family Practice', 'DR'],
+           ['Physical Therapy', 'PT'], ['Physical Therapy', 'Physical'], ['Diagnostic Imaging', 'Radiolog'],
+           ['Diagnostic Imaging', 'Imaging'], ['Diagnostic Imaging', 'CDI'], ['Diagnostic Imaging', 'TRA'],
+           ['Orthopedic Doctor', 'Orthopedic'], ['Orthopedic Doctor', 'Proliance'], ['Pediatrics', 'Pediatric'],
+           ['Medical Clinic', 'Clinic'], ['Family Practice', 'Family Medicine'],
+           ['Ambulance' ,'AMR'], ['Ambulance', 'Ambulance'], ['Ambulance', 'Fire'], ['Er Phys', 'ER'], ['ER Phys', 'Emergency'],
+           ['ER Phys', 'Phys'], ['Chiropractic', 'Chiropractic'], ['Chiropractic', 'Chiro'], ['Chiropractic', 'DC'],
+           ['Chiropractic', 'D.C.'], ['Chiropractic', 'Wellness']]
     Cor = namedtuple('Cor', 'Specialty Name')
     for i in list_of_items:
         inst = Cor(i[0], i[1])
-        print(i[0], i[1])
         lst.append(inst)
     updateNeedlesSpecialty(DB, lst)
 
