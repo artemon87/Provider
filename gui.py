@@ -23,6 +23,7 @@ from datetime import datetime
 import time
 import log
 import webbrowser
+import platform
 
 
 
@@ -272,8 +273,14 @@ class ProviderGUI:
         exit()
 
     def _openPage(self):
-        url = 'file:///Users/tata/Documents/Provider/Provider/Provider/index.html'
-        webbrowser.open_new(url)
+        if platform.system() == 'Windows':
+            firefoxPath = 'C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe'
+            webbrowser.register('firefox', None, webbrowser.BackgroundBrowser(firefoxPath), 1)
+            url = 'file:///C:/Users/user/Documents/S/Prov/Provider/index.html'
+            webbrowser.get('firefox').open_new(url)
+        else:
+            url = 'file:///Users/tata/Documents/Provider/Provider/Provider/index.html'
+            webbrowser.open_new(url)
 
     def getNetworkSize(self):
         if self.netSize.get() == '3 links':
