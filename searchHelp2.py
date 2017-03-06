@@ -136,6 +136,10 @@ def fillinDB(upNeedles,upYelp, upHospital, text, city_name):
     
 def confirmSearchProvider(name, text, displayArgs, ratio):
     line = ''
+    if not name or name == '':
+        line += 'Nothing was entered\nEnter name again...'
+        writeToQueue1(line)
+        return
     dispName, dispAddr, dispPhone, dispFax, dispSpec, dispInfo = displayArgs
     lst = []
     DB = connectToDB()
@@ -198,6 +202,10 @@ def confirmSearchProvider(name, text, displayArgs, ratio):
 
 def confirmProvider(fileToRead, name, text, displayArgs, ratio):
     line = ''
+    if not name or name == '':
+        line += 'Nothing was entered\nEnter name again...'
+        writeToQueue1(line)
+        return
     dispName, dispAddr, dispPhone, dispFax, dispSpec, dispInfo = displayArgs
     DB = connectToDB()
     lst = []

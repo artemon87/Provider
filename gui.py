@@ -386,6 +386,11 @@ class ProviderGUI:
             if self.updatingThread:
                 if self.updatingThread.isAlive():
                     mBox.showinfo('Database Information', 'Even though you can still lookup providers,\nwhen update is done screen will be cleared\n(only when updating Yelp database)\n')
+            if not self.name.get() or self.name.get() == '':
+                self.clearScreen(self.scr)
+                self.scr.insert(tk.INSERT, 'Nothing was entered\nEnter name again...')
+                return
+
             node_sizes = createNodeSize(self.getNetworkSize(), self.weightGraph.get())
             self.ed = None
             self.providerDict = None
