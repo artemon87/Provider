@@ -837,12 +837,12 @@ def updateHospRecordsFax():
         updateBillingHospitalName(DB, key, value[1])
 
 def createNodeSize(links, weighted = None):
-    startSize = 300
+    startSize = 450
     nodeSizes = []
     for i in range(links + 1):
         nodeSizes.append(startSize)
         if weighted:
-            startSize += 300
+            startSize += 50
     return nodeSizes
         
     
