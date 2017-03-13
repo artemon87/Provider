@@ -605,7 +605,7 @@ class ProviderGUI:
 
 def main():
     w = tk.Tk()
-    w.title("Python GUI")
+    w.title("PRONET")
     gui = ProviderGUI(w)
     gui.labels()
     gui.bottons()

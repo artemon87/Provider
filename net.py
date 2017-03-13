@@ -308,6 +308,7 @@ def createNX(providerDict, providerFile, toRemove, netSize, weighted):
                 for i in count:
                     if weighted:
                         ed.add_edge(singleElement.Name, i[0].Name, weight = i[1])
+                        print(i[0].Name,  i[1])
                     else:
                         ed.add_edge(singleElement.Name, i[0].Name)
             except Exception as e:
