@@ -24,6 +24,7 @@ import time
 import log
 import webbrowser
 import platform
+import sys
 
 
 
@@ -478,16 +479,22 @@ class ProviderGUI:
         self.timeZone.set(datetime.now().strftime(fmtStrZone))
         
     def getFileName(self):
-        self.fDir = path.dirname(__file__)
-        self.fName = fd.askopenfilename(parent=self.win, initialdir=self.fDir)
-        self.fileEntry.delete(0, tk.END)
-        self.fileEntry.insert(0, self.fName)
+        try:
+            self.fDir = path.dirname(sys.argv[0])
+            self.fName = fd.askopenfilename(parent=self.win, initialdir=self.fDir)
+            self.fileEntry.delete(0, tk.END)
+            self.fileEntry.insert(0, self.fName)
+        except Exception as e:
+            log.loggingDebug(e, 'gui.py', 'getFileName')
 
     def getFileNameForAttachment(self):
-        self.fDir2 = path.dirname(__file__)
-        self.fName2 = fd.askopenfilename(parent=self.win, initialdir=self.fDir2)
-        self.fileEntry2.delete(0, tk.END)
-        self.fileEntry2.insert(0, self.fName2)
+        try:
+            self.fDir2 = path.dirname(sys.argv[0])
+            self.fName2 = fd.askopenfilename(parent=self.win, initialdir=self.fDir2)
+            self.fileEntry2.delete(0, tk.END)
+            self.fileEntry2.insert(0, self.fName2)
+        except Exception as e:
+            log.loggingDebug(e, 'gui.py', 'getFileName')
 
     def createThreadRun(self):
         runT = Thread(target=self.runSearchTab1)

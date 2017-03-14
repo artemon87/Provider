@@ -8,7 +8,7 @@ os.environ['TCL_LIBRARY'] = "C:\\Users\\user\\AppData\\Local\\Programs\\Python\\
 os.environ['TK_LIBRARY'] = "C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python35-32\\tcl\\tk8.6"
 # Dependencies are automatically detected, but it might need fine tuning.
 build_exe_options = {"packages": ["tkinter", "networkx", "pandas", "geocoder", "numpy",
-                                  "email", "geopy", "googlemaps"], "include_files": ["C:\\Users\\user\\Documents\\S\\Prov\\Provider\\app.log", "C:\\Users\\user\\Documents\\S\\Prov\\Provider\\ChartSwap.xlsx",
+                                  "email", "geopy", "googlemaps", "smtplib", "os"], "include_files": ["C:\\Users\\user\\Documents\\S\\Prov\\Provider\\app.log", "C:\\Users\\user\\Documents\\S\\Prov\\Provider\\ChartSwap.xlsx",
                      "C:\\Users\\user\\Documents\\S\\Prov\\Provider\\ChartSwapSearching.py", "C:\\Users\\user\\Documents\\S\\Prov\\Provider\\find.py",
                       "C:\\Users\\user\\Documents\\S\\Prov\\Provider\\HospitalFile.py", "C:\\Users\\user\\Documents\\S\\Prov\\Provider\\HospitalsBS.py",
                       "C:\\Users\\user\\Documents\\S\\Prov\\Provider\\HospitalsInTheUS.xlsx",
